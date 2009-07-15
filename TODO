@@ -1,0 +1,4 @@
+- ModuleFactory should be able to pass variable arguments to newely created modules.
+  this should be done with a class specialized on that
+
+
