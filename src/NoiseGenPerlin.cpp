@@ -14,9 +14,11 @@
 
 #include "NoiseGenPerlin.h"
 
+
+
 NoiseGenPerlin::NoiseGenPerlin() : AbstractModule() {
   noise::module::Perlin myModule;
-  addVisualRepresentation();
+//   addVisualRepresentation();
 // 1. [done] create primary graphical module
 // 2. create delegate exports for properties:
 //      - all module specific paramters

@@ -26,7 +26,6 @@ mainWidget::mainWidget(QMainWindow *parent) : QMainWindow(parent) {
   connect(scene, SIGNAL(createModule(QString, QPoint)),
           moduleFactory,SLOT(createModule(QString, QPoint)));
 
-  load_modules();
   dockWidget->setWidget(&moduleWidget);
 }
 
@@ -35,10 +34,10 @@ mainWidget::~mainWidget() {
   delete scene;
 }
 
-void mainWidget::load_modules(){
-  // all modules listed here will be added to the moduleFactory automatically on init
-  NoiseGenPerlinInterface* ngpi = new NoiseGenPerlinInterface();
-}
+// void mainWidget::load_modules(){
+//   // all modules listed here will be added to the moduleFactory automatically on init
+//   NoiseGenPerlinInterface* ngpi = new NoiseGenPerlinInterface();
+// }
 
 void mainWidget::save(){
   QMessageBox::information(this,"information","call to save()");
