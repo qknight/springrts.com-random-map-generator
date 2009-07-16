@@ -13,7 +13,8 @@ HEADERS += src/graphicsScene.h \
  src/AbstractModule.h \
  src/NoiseGenPerlin.h \
  src/ModuleFactory.h \
- src/ModuleWidget.h
+ src/ModuleWidget.h \
+ src/NoiseGenRidgedMulti.h
 SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/modulePort.cpp \
  src/modulePortConnection.cpp \
@@ -23,7 +24,8 @@ SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/ModuleFactory.cpp \
  src/mainWidget.cpp \
  src/ModuleWidget.cpp \
- src/registermodule_macro.cpp
+ src/registermodule_macro.cpp \
+ src/NoiseGenRidgedMulti.cpp
 FORMS += ui/GraphicsView.ui \
  ui/moduleWidget.ui
 

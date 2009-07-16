@@ -13,7 +13,7 @@ mainWidget::mainWidget(QMainWindow *parent) : QMainWindow(parent) {
   scene = new graphicsScene();
   // this is the initial initalisation which must contain a scene, later no
   // scene argument is needed anymore
-  moduleFactory = ModuleFactory::Instance(scene);
+  moduleFactory = ModuleFactory::Instance();
 
   graphicsView->setScene(scene);
   graphicsView->show();
@@ -27,6 +27,7 @@ mainWidget::mainWidget(QMainWindow *parent) : QMainWindow(parent) {
           moduleFactory,SLOT(createModule(QString, QPoint)));
 
   dockWidget->setWidget(&moduleWidget);
+  moduleFactory->ListLoadableModules();
 }
 
 mainWidget::~mainWidget() {

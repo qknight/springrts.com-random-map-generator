@@ -23,8 +23,6 @@ class NoiseGenPerlin : public AbstractModule {
     NoiseGenPerlin();
     ~NoiseGenPerlin();
     QString identify();
-  private:
-    void addVisualRepresentation();
 };
 
 #endif

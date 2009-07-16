@@ -1,25 +1,22 @@
 //
-// C++ Implementation: NoiseGenPerlin
+// C++ Implementation: NoiseGenRidgedMulti
 //
 // Description:
 //
 //
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2007
+// Author: Joachim Schiele <js@lastlog.de>, (C) 2009
 //
 // Copyright: See COPYING file that comes with this distribution
 //
 //
 
-// http://libnoise.sourceforge.net/docs/classnoise_1_1module_1_1Perlin.html
-
-#include "NoiseGenPerlin.h"
+#include "NoiseGenRidgedMulti.h"
 #include "registermodule_macro.cpp"
 
-// macro to register the module
-M_REGISTER(NoiseGenPerlin);
+M_REGISTER(NoiseGenRidgedMulti);
 
-NoiseGenPerlin::NoiseGenPerlin() : AbstractModule() {
-  noise::module::Perlin myModule;
+NoiseGenRidgedMulti::NoiseGenRidgedMulti() : AbstractModule() {
+//   noise::module::Perlin myModule;
 //   addVisualRepresentation();
 // 1. [done] create primary graphical module
 // 2. create delegate exports for properties:
@@ -38,48 +35,48 @@ NoiseGenPerlin::NoiseGenPerlin() : AbstractModule() {
 
 
 /*  double   GetLacunarity () const
-     Returns the lacunarity of the Perlin noise.
+  Returns the lacunarity of the Perlin noise.
   noise::NoiseQuality   GetNoiseQuality () const
-     Returns the quality of the Perlin noise.
+  Returns the quality of the Perlin noise.
   int   GetOctaveCount () const
-     Returns the number of octaves that generate the Perlin noise.
+  Returns the number of octaves that generate the Perlin noise.
   double   GetPersistence () const
-     Returns the persistence value of the Perlin noise.
+  Returns the persistence value of the Perlin noise.
   int   GetSeed () const
-     Returns the seed value used by the Perlin-noise function.
+  Returns the seed value used by the Perlin-noise function.
   virtual int   GetSourceModuleCount () const
-     Returns the number of source modules required by this noise module.
+  Returns the number of source modules required by this noise module.
   virtual double   GetValue (double x, double y, double z) const
-     Generates an output value given the coordinates of the specified input value.
+  Generates an output value given the coordinates of the specified input value.
 
 
   void   SetLacunarity (double lacunarity)
-     Sets the lacunarity of the Perlin noise.
+  Sets the lacunarity of the Perlin noise.
 
   void   SetNoiseQuality (noise::NoiseQuality noiseQuality)
-     Sets the quality of the Perlin noise.
+  Sets the quality of the Perlin noise.
 
   void   SetOctaveCount (int octaveCount)
-     Sets the number of octaves that generate the Perlin noise.
+  Sets the number of octaves that generate the Perlin noise.
 
   void   SetPersistence (double persistence)
-     Sets the persistence value of the Perlin noise.
+  Sets the persistence value of the Perlin noise.
 
   void   SetSeed (int seed)
-     Sets the seed value used by the Perlin-noise function.*/
+  Sets the seed value used by the Perlin-noise function.*/
 }
 
 
-NoiseGenPerlin::~NoiseGenPerlin() {
+NoiseGenRidgedMulti::~NoiseGenRidgedMulti() {
   // delete all Ports
   // delete graphical module
 }
 
-QString NoiseGenPerlin::identify() {
+QString NoiseGenRidgedMulti::identify() {
   return ID;
 }
 
-// void NoiseGenPerlin::addVisualRepresentation() {
+// void NoiseGenRidgedMulti::addVisualRepresentation() {
 //   visualModuleItem* vn = new visualModuleItem();
 //   QPoint scenePos = property("scenePos").toPoint();
 //   vn->moveBy(scenePos.x(), scenePos.y());

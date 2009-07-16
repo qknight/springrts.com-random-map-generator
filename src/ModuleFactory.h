@@ -47,7 +47,7 @@ class ModuleFactory : public QObject {
     void save();
     void load();
   protected:
-    ModuleFactory(graphicsScene* scene);
+    ModuleFactory();
     ModuleFactory(const ModuleFactory&);
     ModuleFactory& operator = (const ModuleFactory&);
     ~ModuleFactory();

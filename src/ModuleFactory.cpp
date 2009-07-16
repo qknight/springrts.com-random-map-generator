@@ -2,7 +2,8 @@
 // C++ Implementation: ModuleFactory
 //
 // Description:
-//
+//  this is an object factory used for save/load functionality in cpp.
+//  it is realized in form of a singleton pattern
 //
 // Author: Joachim Schiele <js@lastlog.de>, (C) 2008
 //
@@ -13,36 +14,35 @@
 
 ModuleFactory* ModuleFactory::privateInstance = NULL;
 
-ModuleFactory::ModuleFactory(graphicsScene* scene) {
+ModuleFactory::ModuleFactory() {
     qDebug("constructor ModuleFactory");
-    m_scene = scene;
 }
 
 ModuleFactory::~ModuleFactory() { }
 
-ModuleFactory* ModuleFactory::Instance(graphicsScene* scene) {
-  if (privateInstance == NULL) {
-    qDebug() << "created ModuleFactory::Instance(graphicsScene* scene)";
-    privateInstance = new ModuleFactory(scene);
-  } else  {
-    qDebug() << "error: duplicated attempt detected in creating a ModuleFactory instance which already existed but still graphicsScene* as arguemnt was given";
-    exit(0);
-  }
-  return privateInstance;
-}
-
 ModuleFactory* ModuleFactory::Instance() {
   if (privateInstance == NULL) {
-    qDebug() << "ModuleFactory::Instance(graphicsScene* scene) wasn't initialized yet, execution stopping!";
-    exit(0);
+    qDebug() << "created ModuleFactory::Instance()";
+    privateInstance = new ModuleFactory();
+//   } else  {
+//     qDebug() << "error: duplicated attempt detected in creating a ModuleFactory instance which already existed but still graphicsScene* as arguemnt was given";
+//     exit(0);
   }
   return privateInstance;
 }
 
+// ModuleFactory* ModuleFactory::Instance() {
+//   if (privateInstance == NULL) {
+//     qDebug() << "ModuleFactory::Instance() wasn't initialized yet, execution stopping!";
+//     exit(0);
+//   }
+//   return privateInstance;
+// }
+
 // will only work if the ModuleFactory singleton is initialized already
-graphicsScene* ModuleFactory::scene() {
-  return m_scene;
-}
+// graphicsScene* ModuleFactory::scene() {
+//   return m_scene;
+// }
 
 bool ModuleFactory::RegisterModule(QString ModuleId, CreateModuleCallback CreateFn) {
     // BUG add handles for duplicated Register attempts
