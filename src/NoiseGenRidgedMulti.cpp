@@ -8,7 +8,6 @@
 //
 // Copyright: See COPYING file that comes with this distribution
 //
-//
 
 #include "NoiseGenRidgedMulti.h"
 #include "registermodule_macro.cpp"
@@ -65,7 +64,6 @@ NoiseGenRidgedMulti::NoiseGenRidgedMulti() : AbstractModule() {
   void   SetSeed (int seed)
   Sets the seed value used by the Perlin-noise function.*/
 }
-
 
 NoiseGenRidgedMulti::~NoiseGenRidgedMulti() {
   // delete all Ports

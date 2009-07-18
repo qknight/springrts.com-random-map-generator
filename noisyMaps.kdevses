@@ -1,9 +1,9 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="6" >
+ <DocsAndViews NumberOfDocuments="9" >
   <Doc0 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/mainWidget.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/mainWidget.h" >
    <View0 Encoding="" Type="Source" />
@@ -18,8 +18,17 @@
    <View0 Encoding="" Type="Source" />
   </Doc4>
   <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/NoiseGenPerlin.h" >
-   <View0 Encoding="" line="24" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/TODO" >
+   <View0 Encoding="" Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/registermodule_macro.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/ModuleFactory.cpp" >
+   <View0 Encoding="" line="71" Type="Source" />
+  </Doc8>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

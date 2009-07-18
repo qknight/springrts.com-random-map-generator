@@ -12,12 +12,10 @@
 #ifndef ABSTRACTMODULE_H
 #define ABSTRACTMODULE_H
 
-#include <QUuid>
+// #include <QUuid>
 #include <QObject>
 #include "ModuleFactory.h"
 #include "ModuleWidget.h"
-
-// qRegisterMetaType<AbstractModule*>("AbstractModule*");
 
 class AbstractModule : public QObject {
   Q_OBJECT
@@ -27,12 +25,8 @@ class AbstractModule : public QObject {
     virtual QString identify()=0;
 
   private:
-//     virtual void load()=0;
-//     virtual void save()=0;
-//     void remove()=0;
-    QUuid id();
-    QString label();
 //     bool virtual setProperty(const char * name, const QVariant & value )=0;
+    bool status; // this represents if the module is in ready state or not for further processing
   protected:
     ModuleWidget moduleWidget;
 };

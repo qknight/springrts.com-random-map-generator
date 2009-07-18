@@ -15,14 +15,14 @@
 ModuleFactory* ModuleFactory::privateInstance = NULL;
 
 ModuleFactory::ModuleFactory() {
-    qDebug("constructor ModuleFactory");
+//     qDebug("constructor ModuleFactory");
 }
 
 ModuleFactory::~ModuleFactory() { }
 
 ModuleFactory* ModuleFactory::Instance() {
   if (privateInstance == NULL) {
-    qDebug() << "created ModuleFactory::Instance()";
+//     qDebug() << "created ModuleFactory::Instance()";
     privateInstance = new ModuleFactory();
 //   } else  {
 //     qDebug() << "error: duplicated attempt detected in creating a ModuleFactory instance which already existed but still graphicsScene* as arguemnt was given";

@@ -9,13 +9,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-
 // http://libnoise.sourceforge.net/docs/classnoise_1_1module_1_1Perlin.html
 
 #include "NoiseGenPerlin.h"
 #include "registermodule_macro.cpp"
 
-// macro to register the module
 M_REGISTER(NoiseGenPerlin);
 
 NoiseGenPerlin::NoiseGenPerlin() : AbstractModule() {

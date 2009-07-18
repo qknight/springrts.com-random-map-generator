@@ -39,7 +39,6 @@ class RMI_##_##CLASSNAME {                                                      
                                                                                      \
 RMI_##_##CLASSNAME::RMI_##_##CLASSNAME() {                                           \
   const QString Id = ID;                                                             \
-  qDebug() << Id << "::CTor";                                                        \
   ModuleFactory::Instance()->RegisterModule(Id, RMI_##_##CLASSNAME::CreateModule);   \
 }                                                                                    \
                                                                                      \

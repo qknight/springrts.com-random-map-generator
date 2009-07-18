@@ -7,16 +7,9 @@
 #include <QMessageBox>
 
 #include "ui_GraphicsView.h"
-#include "modulePortConnection.h"
 #include "graphicsScene.h"
 #include "ModuleFactory.h"
 #include "ModuleWidget.h"
-
-
-
-// #include "NoiseGenPerlinInterface.h"
-
-// qRegisterMetaType(AbstractModule*);
 
 class mainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
   Q_OBJECT
@@ -29,7 +22,6 @@ class mainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
     graphicsScene* scene;
     ModuleWidget moduleWidget;
     void setupMenus();
-//     void load_modules();
 
   private slots:
     void save();

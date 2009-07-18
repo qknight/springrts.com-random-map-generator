@@ -14,7 +14,9 @@ HEADERS += src/graphicsScene.h \
  src/NoiseGenPerlin.h \
  src/ModuleFactory.h \
  src/ModuleWidget.h \
- src/NoiseGenRidgedMulti.h
+ src/NoiseGenRidgedMulti.h \
+ src/Model.h \
+ src/DataStorage.h
 SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/modulePort.cpp \
  src/modulePortConnection.cpp \
@@ -25,13 +27,16 @@ SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/mainWidget.cpp \
  src/ModuleWidget.cpp \
  src/registermodule_macro.cpp \
- src/NoiseGenRidgedMulti.cpp
+ src/NoiseGenRidgedMulti.cpp \
+ src/Model.cpp \
+ src/DataStorage.cpp
 FORMS += ui/GraphicsView.ui \
  ui/moduleWidget.ui
 
 TARGET =debug/noisyMaps
 CONFIG += debug/
-CONFIG += warn_on
+CONFIG += warn_on \
+ debug
 
 INCLUDEPATH += /usr/include/noise/ src/
 
@@ -43,5 +48,11 @@ UI_SOURCES_DIR = tmp
 MOC_DIR = tmp
 OBJECTS_DIR = tmp
 QMAKE_CLEAN = debug/*
-DISTFILES += TODO
+DISTFILES += TODO \
+ README
 
+CONFIG -= release
+
+QT += xml \
+opengl \
+webkit

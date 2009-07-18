@@ -1,0 +1,23 @@
+Q) what is this all about?
+A) this projects as create as a frontend for libnoise to generate maps
+   for the rts spring
+
+Q) what is special about this map generator? (when it's done)
+A) it is completely procedural and therefore a whole map can be generated
+   based on a few noisegen modules.
+    this means: - the recipe is some xml (1-2kb)
+                - the output map (outmap.sd7 is 1-30mb+)
+
+Q) what advantages does this bring?
+A) - very small map definition file (xml) which can be compiled on demand
+   - a map can be remixed easiliy: just open the xml file in the editor,
+     make minor changes which affect the produced map by a big amount.
+     (ever thought: mars.sd7 is a great concept but he,
+     please change the terrain a little bit next game?)
+   - one can see the source of a map, this helps to improve a map over time as:
+     - rebalancing of resources
+     - fixes in textures can be applied easily afterwars
+   - shorter download times. less waste of bandwidth!
+
+Q) are there any screenshots of the editor or maps?
+A) see http://lastlog.de/misc/spring/
