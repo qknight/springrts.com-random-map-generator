@@ -9,7 +9,7 @@
     <keywords>
       <keyword>Qt</keyword>
     </keywords>
-    <projectname>QGraphicsSceneExample</projectname>
+    <projectname>noisyMaps</projectname>
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
@@ -95,7 +95,7 @@
       <designerintegration>ExternalDesigner</designerintegration>
       <root>/usr/qt/3</root>
       <qmake>/usr/bin/qmake</qmake>
-      <designer>/usr/bin/designer</designer>
+      <designer>/usr/qt/3/bin/designer</designer>
       <designerpluginpaths/>
     </qt>
     <codecompletion>
@@ -163,13 +163,16 @@
       <autokdesu>false</autokdesu>
       <envvars/>
       <runarguments>
-        <QGraphicsSceneExample/>
+        <noisyMaps/>
+        <noisyMaps/>
       </runarguments>
       <cwd>
-        <QGraphicsSceneExample>/home/joachim/Desktop/projects/spring-map-creation/QGraphicsSceneExample</QGraphicsSceneExample>
+        <noisyMaps>/home/joachim/Desktop/projects/spring-map-creation/noisyMaps</noisyMaps>
+        <noisyMaps>/home/joachim/Desktop/projects/spring-map-creation/noisyMaps</noisyMaps>
       </cwd>
       <debugarguments>
-        <QGraphicsSceneExample/>
+        <noisyMaps/>
+        <noisyMaps/>
       </debugarguments>
     </run>
     <make>
@@ -202,7 +205,7 @@
   </cppsupportpart>
   <ctagspart>
     <customArguments/>
-    <customTagfilePath>/home/joachim/Desktop/projects/QGraphicsSceneExample/tags</customTagfilePath>
+    <customTagfilePath>/home/joachim/Desktop/projects/noisyMaps/tags</customTagfilePath>
     <activeTagsFiles/>
   </ctagspart>
   <kdevdocumentation>

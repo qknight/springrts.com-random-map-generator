@@ -16,7 +16,8 @@ HEADERS += src/graphicsScene.h \
  src/ModuleWidget.h \
  src/NoiseGenRidgedMulti.h \
  src/Model.h \
- src/DataStorage.h
+ src/DataStorage.h \
+ src/NoiseGenBillow.h
 SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/modulePort.cpp \
  src/modulePortConnection.cpp \
@@ -29,7 +30,8 @@ SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/registermodule_macro.cpp \
  src/NoiseGenRidgedMulti.cpp \
  src/Model.cpp \
- src/DataStorage.cpp
+ src/DataStorage.cpp \
+ src/NoiseGenBillow.cpp
 FORMS += ui/GraphicsView.ui \
  ui/moduleWidget.ui
 
@@ -53,6 +55,4 @@ DISTFILES += TODO \
 
 CONFIG -= release
 
-QT += xml \
-opengl \
-webkit
+QT += xml

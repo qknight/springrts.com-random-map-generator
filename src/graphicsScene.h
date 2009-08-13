@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QDebug>
 #include <QGraphicsSceneContextMenuEvent>
+#include "ModuleFactory.h"
 
 /**
   @author Joachim Schiele <js@lastlog.de>
@@ -26,16 +27,14 @@ class graphicsScene : public QGraphicsScene {
     Q_OBJECT
 public:
     graphicsScene();
-    ~graphicsScene();
+//     ~graphicsScene();
 private:
+    ModuleFactory* moduleFactory;
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QMenu menu;
     QPoint screenPos;
 public slots:
-    void appendToQMenuBox(QString ModuleID);
     void menuSelectionMade(QAction* action);
-signals:
-    void createModule(QString ModuleID, QPoint pos);
 };
 
 #endif

@@ -17,12 +17,13 @@
 #define MODULEFACTORY_H
 
 /**
-	@author Joachim Schiele <js@lastlog.de>
+  @author Joachim Schiele <js@lastlog.de>
 */
 #include <QMap>
 #include <QMenu>
 #include <QPoint>
 #include <QDebug>
+#include <QVector>
 #include "AbstractModule.h"
 #include "graphicsScene.h"
 
@@ -30,11 +31,11 @@ class graphicsScene;
 class AbstractModule;
 
 class ModuleFactory : public QObject {
-  Q_OBJECT
-  typedef AbstractModule* (*CreateModuleCallback)();
-  typedef QMap<QString, CreateModuleCallback> CallbackMap;
+    Q_OBJECT
+    typedef AbstractModule* (*CreateModuleCallback)();
+    typedef QMap<QString, CreateModuleCallback> CallbackMap;
 
-  public:
+public:
     // this two Instance functions are allowed to call the constructor
     static ModuleFactory* Instance(graphicsScene* scene);
     static ModuleFactory* Instance();
@@ -42,26 +43,31 @@ class ModuleFactory : public QObject {
 
     bool RegisterModule(QString ModuleId, CreateModuleCallback CreateFn);
     bool UnregisterModule(QString ModuleID);
-    void ListLoadableModules();
-    void ListLoadedModules();
+
+    QVector<QString> LoadableModuleNames();
+    int  LoadableModulesCount();
+    int  LoadedModulesCount();
+
     void save();
     void load();
-  protected:
+    void createModule(QString ModuleID, QPoint pos);
+    void ListLoadableModules();
+    void ListLoadedModules();
+protected:
     ModuleFactory();
     ModuleFactory(const ModuleFactory&);
     ModuleFactory& operator = (const ModuleFactory&);
     ~ModuleFactory();
-  private:
-    QMap<QString, CreateModuleCallback> callbacks_;
-    QList<AbstractModule*> loadedModules;
+private:
+    QMap<QString, CreateModuleCallback> loadableModules;  // modules which could be loaded
+    QList<AbstractModule*> loadedModules;                 // modules which are already loaded
     graphicsScene* m_scene;
     static ModuleFactory* privateInstance;
-  private:
+private:
     AbstractModule* CreateModule(QString ModuleID, QPoint pos);
 //     unsigned int DestroyModule(QUuid Id); // todo add that on demand
-  signals:
+signals:
     void appendToQMenuBox(QString ModuleID);
-  public slots:
-    void createModule(QString ModuleID, QPoint pos);
+
 };
 #endif

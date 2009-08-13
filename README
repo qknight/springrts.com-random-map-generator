@@ -9,7 +9,7 @@ A) it is completely procedural and therefore a whole map can be generated
                 - the output map (outmap.sd7 is 1-30mb+)
 
 Q) what advantages does this bring?
-A) - very small map definition file (xml) which can be compiled on demand
+A) - 'very small (size::kbytes)' map definition file (xml) which can be compiled on demand
    - a map can be remixed easiliy: just open the xml file in the editor,
      make minor changes which affect the produced map by a big amount.
      (ever thought: mars.sd7 is a great concept but he,

@@ -21,14 +21,14 @@ ModuleFactory::ModuleFactory() {
 ModuleFactory::~ModuleFactory() { }
 
 ModuleFactory* ModuleFactory::Instance() {
-  if (privateInstance == NULL) {
+    if (privateInstance == NULL) {
 //     qDebug() << "created ModuleFactory::Instance()";
-    privateInstance = new ModuleFactory();
+        privateInstance = new ModuleFactory();
 //   } else  {
 //     qDebug() << "error: duplicated attempt detected in creating a ModuleFactory instance which already existed but still graphicsScene* as arguemnt was given";
 //     exit(0);
-  }
-  return privateInstance;
+    }
+    return privateInstance;
 }
 
 // ModuleFactory* ModuleFactory::Instance() {
@@ -46,14 +46,13 @@ ModuleFactory* ModuleFactory::Instance() {
 
 bool ModuleFactory::RegisterModule(QString ModuleId, CreateModuleCallback CreateFn) {
     // BUG add handles for duplicated Register attempts
-    callbacks_.insert( ModuleId, CreateFn );
+    loadableModules.insert( ModuleId, CreateFn );
     // insert them into the menu
-    emit appendToQMenuBox(ModuleId);
-    return true; //todo fix that
+    return true; //todo fix false case
 }
 
 bool ModuleFactory::UnregisterModule(QString ModuleId) {
-    return callbacks_.remove(ModuleId) == 1;
+    return loadableModules.remove(ModuleId) == 1;
 }
 
 void ModuleFactory::createModule(QString ModuleID, QPoint pos) {
@@ -61,8 +60,8 @@ void ModuleFactory::createModule(QString ModuleID, QPoint pos) {
 }
 
 AbstractModule* ModuleFactory::CreateModule(QString ModuleID, QPoint pos) {
-    CallbackMap::const_iterator i = callbacks_.find(ModuleID);
-    if (i != callbacks_.end()) {
+    CallbackMap::const_iterator i = loadableModules.find(ModuleID);
+    if (i != loadableModules.end()) {
         AbstractModule* z = (i.value())(); // constructor call
         z->setProperty("scenePos", pos);
         loadedModules.append(z);
@@ -74,9 +73,9 @@ AbstractModule* ModuleFactory::CreateModule(QString ModuleID, QPoint pos) {
 }
 
 void ModuleFactory::ListLoadableModules() {
-    qDebug("%i module(s)", callbacks_.size());
+    qDebug("%i module(s)", loadableModules.size());
 
-    QMapIterator<QString,CreateModuleCallback> i(callbacks_);
+    QMapIterator<QString,CreateModuleCallback> i(loadableModules);
     while (i.hasNext()) {
         i.next();
         qDebug() << "    " << i.key();
@@ -86,3 +85,17 @@ void ModuleFactory::ListLoadableModules() {
 void ModuleFactory::ListLoadedModules() {
     qDebug("%i module(s) loaded", loadedModules.size());
 }
+
+int ModuleFactory::LoadableModulesCount() {
+    return loadableModules.size();
+}
+
+int ModuleFactory::LoadedModulesCount() {
+    return loadedModules.size();
+}
+
+QVector<QString> ModuleFactory::LoadableModuleNames() {
+    return loadableModules.keys().toVector();
+}
+
+

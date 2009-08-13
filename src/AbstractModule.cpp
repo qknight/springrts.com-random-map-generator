@@ -12,7 +12,6 @@
 #include "AbstractModule.h"
 
 AbstractModule::AbstractModule() {
-  status=false;
 }
 
 AbstractModule::~AbstractModule() { }

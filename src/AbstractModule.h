@@ -25,8 +25,7 @@ class AbstractModule : public QObject {
     virtual QString identify()=0;
 
   private:
-//     bool virtual setProperty(const char * name, const QVariant & value )=0;
-    bool status; // this represents if the module is in ready state or not for further processing
+//  bool virtual setProperty(const char * name, const QVariant & value )=0;
   protected:
     ModuleWidget moduleWidget;
 };

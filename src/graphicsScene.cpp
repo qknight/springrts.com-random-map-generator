@@ -12,24 +12,26 @@
 #include "graphicsScene.h"
 
 graphicsScene::graphicsScene() : QGraphicsScene() {
+    moduleFactory = ModuleFactory::Instance();
     connect(&menu,SIGNAL(triggered(QAction*)),
             this, SLOT(menuSelectionMade(QAction*)));
 }
 
-graphicsScene::~graphicsScene() { }
+// graphicsScene::~graphicsScene() {}
 
 void graphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ) {
-  screenPos = contextMenuEvent->screenPos();
-  menu.exec(contextMenuEvent->screenPos());
-}
-
-void graphicsScene::appendToQMenuBox(QString ModuleID) {
-  menu.addAction(ModuleID);
+    screenPos = contextMenuEvent->screenPos();
+    // create menu
+    menu.clear();
+    QVector<QString> s = moduleFactory->LoadableModuleNames();
+    for (int i=0; i < s.size(); i++) {
+        menu.addAction(s[i]);
+    }
+    menu.exec(contextMenuEvent->screenPos());
 }
 
 void graphicsScene::menuSelectionMade(QAction* action) {
-//   qDebug() << "creating module: " << action->text();
-  emit createModule(action->text(), screenPos);
+//   qDebug() << "creating module: " << action->text() << " at pos: "
+//       << screenPos.x() << "x" << screenPos.y();;
+  moduleFactory->createModule(action->text(), screenPos);
 }
-
-

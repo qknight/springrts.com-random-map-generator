@@ -1,3 +1,7 @@
+current plan (near objectives):
+- implement data structure
+- implement model
+
 - ModuleFactory should be able to pass variable arguments to newely created modules.
   this should be done with a class specialized on that
 - libNoise (backend) and libNoiseAbstraction (frontend) need to be created
@@ -7,7 +11,6 @@
 ------- modules todo: --------
 
 generator modules
- Billow
  Checkerboard
  Const
  Cylinders
@@ -36,7 +39,7 @@ selector modules
 
 new moduels which might be nice:
  - rain simulation (also known as erosion)
- - blur filter (maybe imagemagic might be cool to add as filters)
+ - blur filter (imagemagick filters in general)
 
 ---- workflow analysis: how to generate a map ----
 this is a guideline which helps me to define the problem i try to solve:
@@ -54,7 +57,7 @@ mapgenerator:
  2. the output generated based on different noise modules is a 1-30+mb map image
 
 ---- libnoise use case example ----
-how to create the frontendlibrary for the libnoise library used by the mapper?
+how to create the frontend-library for the libnoise library used by the mapper?
 
  1. user starts by adding modules
  2. user connects modules and defines an output
@@ -116,6 +119,7 @@ Q) how to manage the libNoiseAbstraction layer?
 A) first we need to have a workflow. currently the plan is:
     - keep as close as possible to the libnoise library and later
     - introduce convenient modules which do things easier
+    - (even later) introduce pixel processing
 Q) how does a graphical module as a renderer (QGraphisItem) display an image?
 A) if the libNoiseAbstraction detects a change it will update it's image so that the
    attached view is updated automatically.
@@ -149,3 +153,14 @@ A) event based graph:
               - new connection is made
               - parameterChange (of any given module)
               - direct command (as buttonclick for generating some output as a *.sd7)
+
+Q) what kind of connections and modules do we have
+A) connections:
+    - we have libnoise connections (abstract module connections)
+    - we have pixel data processing (output of a renderer module)
+      and later throughput of filters of imagemagick
+    - we have spring data specific modules and connections
+   modules
+    * libnoise modules
+    * pixel filter modules
+    * spring modules (to create maps)

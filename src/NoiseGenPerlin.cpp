@@ -35,7 +35,8 @@ NoiseGenPerlin::NoiseGenPerlin() : AbstractModule() {
 //      Sets the frequency of the first octave.
 
 
-/*  double   GetLacunarity () const
+/*
+  double   GetLacunarity () const
      Returns the lacunarity of the Perlin noise.
   noise::NoiseQuality   GetNoiseQuality () const
      Returns the quality of the Perlin noise.
@@ -64,9 +65,9 @@ NoiseGenPerlin::NoiseGenPerlin() : AbstractModule() {
      Sets the persistence value of the Perlin noise.
 
   void   SetSeed (int seed)
-     Sets the seed value used by the Perlin-noise function.*/
+     Sets the seed value used by the Perlin-noise function.
+*/
 }
-
 
 NoiseGenPerlin::~NoiseGenPerlin() {
   // delete all Ports

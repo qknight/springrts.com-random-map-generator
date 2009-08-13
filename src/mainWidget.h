@@ -12,18 +12,18 @@
 #include "ModuleWidget.h"
 
 class mainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
-  Q_OBJECT
-  public:
+    Q_OBJECT
+public:
     mainWidget(QMainWindow *parent=0);
     ~mainWidget();
 
-  private:
+private:
     ModuleFactory* moduleFactory;
     graphicsScene* scene;
     ModuleWidget moduleWidget;
     void setupMenus();
 
-  private slots:
+private slots:
     void save();
     void load();
     void documentation();
@@ -31,7 +31,7 @@ class mainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
     void hidePropertyDialog();
     void unhidePropertyDialog();
 
-  public slots:
+public slots:
     void selectionChanged();
 };
 
