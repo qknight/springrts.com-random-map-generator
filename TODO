@@ -1,14 +1,22 @@
-current plan (near objectives):
+------- current plan (near objectives): -------
+- MVC pattern is badly needed for this project:
+   that means going through a custom model on top of a cusom data backend again *sigh*
+
 - implement data structure
 - implement model
+- the treeView in GraphicsView.ui should display loaded modules (not loadable modules)
+  with the modules' attributes.
 
+------ afterwards.... ------
+- libNoise (backend) and libNoiseAbstraction (frontend) need to be created
 - ModuleFactory should be able to pass variable arguments to newely created modules.
   this should be done with a class specialized on that
-- libNoise (backend) and libNoiseAbstraction (frontend) need to be created
-- MVC patter is badly needed for this project:
-   that means going trough a custom model on top of a cusom data backend again *sigh*
 
 ------- modules todo: --------
+utils modules
+  NoiseMapBuilderPlane
+  utils::RendererImage
+  utils::Image
 
 generator modules
  Checkerboard
@@ -34,8 +42,8 @@ modifier modules
  Terrace
 
 selector modules
-  Blend
-  Select
+ Blend
+ Select
 
 new moduels which might be nice:
  - rain simulation (also known as erosion)
@@ -78,7 +86,7 @@ how to create the frontend-library for the libnoise library used by the mapper?
   myModule.SetOctaveCount (job.octave);
   myModule.SetFrequency (job.frequency);
 
-  open questions: how to write the frontend for the backend?
+---- how to write the frontend for the backend? ----
     define: frontend: the library which builds the scene:
                       a set of genmodules with combiners and one output module
                       -> this must be done using the ModuleFactory of course since it has to
@@ -87,7 +95,7 @@ how to create the frontend-library for the libnoise library used by the mapper?
              backend: the libnoise library (unmodified)
 
 ---- how to obtain a map -> x*y dimension heightmap ----
-problem: how to select the boundingbox for the map in the libnoiseview?
+problem: how to select the bounding box for the map in the libnoiseview?
  1. user defines a map dimension
  2. user adds noisegen modules
  3. user adds and connects a renderer (output module)
@@ -164,3 +172,13 @@ A) connections:
     * libnoise modules
     * pixel filter modules
     * spring modules (to create maps)
+
+Q) model hierarchies
+A) root
+    |-module1
+    |  |-property1
+    |  |-property2
+    |  |-property3
+    |
+    |-module2
+    |  |-property1

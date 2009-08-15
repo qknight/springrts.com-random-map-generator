@@ -20,6 +20,7 @@ graphicsScene::graphicsScene() : QGraphicsScene() {
 // graphicsScene::~graphicsScene() {}
 
 void graphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ) {
+    // FIXME: add icons for each module
     screenPos = contextMenuEvent->screenPos();
     // create menu
     menu.clear();
@@ -33,5 +34,5 @@ void graphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
 void graphicsScene::menuSelectionMade(QAction* action) {
 //   qDebug() << "creating module: " << action->text() << " at pos: "
 //       << screenPos.x() << "x" << screenPos.y();;
-  moduleFactory->createModule(action->text(), screenPos);
+    moduleFactory->createModule(action->text(), screenPos);
 }

@@ -19,11 +19,13 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
+
+#include <QDebug>
 #include <QMap>
 #include <QMenu>
 #include <QPoint>
-#include <QDebug>
 #include <QVector>
+
 #include "AbstractModule.h"
 #include "graphicsScene.h"
 
@@ -37,7 +39,6 @@ class ModuleFactory : public QObject {
 
 public:
     // this two Instance functions are allowed to call the constructor
-    static ModuleFactory* Instance(graphicsScene* scene);
     static ModuleFactory* Instance();
     graphicsScene* scene();
 

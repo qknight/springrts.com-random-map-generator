@@ -24,31 +24,16 @@ ModuleFactory* ModuleFactory::Instance() {
     if (privateInstance == NULL) {
 //     qDebug() << "created ModuleFactory::Instance()";
         privateInstance = new ModuleFactory();
-//   } else  {
-//     qDebug() << "error: duplicated attempt detected in creating a ModuleFactory instance which already existed but still graphicsScene* as arguemnt was given";
-//     exit(0);
     }
     return privateInstance;
 }
 
-// ModuleFactory* ModuleFactory::Instance() {
-//   if (privateInstance == NULL) {
-//     qDebug() << "ModuleFactory::Instance() wasn't initialized yet, execution stopping!";
-//     exit(0);
-//   }
-//   return privateInstance;
-// }
-
-// will only work if the ModuleFactory singleton is initialized already
-// graphicsScene* ModuleFactory::scene() {
-//   return m_scene;
-// }
-
 bool ModuleFactory::RegisterModule(QString ModuleId, CreateModuleCallback CreateFn) {
-    // BUG add handles for duplicated Register attempts
+    //TODO fix false case
+    //TODO add handles for duplicated Register attempts
     loadableModules.insert( ModuleId, CreateFn );
     // insert them into the menu
-    return true; //todo fix false case
+    return true;
 }
 
 bool ModuleFactory::UnregisterModule(QString ModuleId) {

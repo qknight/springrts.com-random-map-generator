@@ -17,7 +17,8 @@ HEADERS += src/graphicsScene.h \
  src/NoiseGenRidgedMulti.h \
  src/Model.h \
  src/DataStorage.h \
- src/NoiseGenBillow.h
+ src/NoiseGenBillow.h \
+ src/UtilsNoiseMap.h
 SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/modulePort.cpp \
  src/modulePortConnection.cpp \
@@ -31,7 +32,8 @@ SOURCES += src/main.cpp src/graphicsScene.cpp \
  src/NoiseGenRidgedMulti.cpp \
  src/Model.cpp \
  src/DataStorage.cpp \
- src/NoiseGenBillow.cpp
+ src/NoiseGenBillow.cpp \
+ src/UtilsNoiseMap.cpp
 FORMS += ui/GraphicsView.ui \
  ui/moduleWidget.ui
 
