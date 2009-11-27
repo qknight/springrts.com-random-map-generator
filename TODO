@@ -1,6 +1,17 @@
 ------- current plan (near objectives): -------
-- MVC pattern is badly needed for this project:
+- MVC pattern is needed for this project:
    that means going through a custom model on top of a cusom data backend again *sigh*
+
+ model hierarchy
+  root
+    |-module1
+    |  |-property1
+    |  |-property2
+    |  |-property3
+    |  |-connection1 (reference to a different module)
+    |
+    |-module2
+    |  |-property1
 
 - implement data structure
 - implement model
@@ -9,7 +20,7 @@
 
 ------ afterwards.... ------
 - libNoise (backend) and libNoiseAbstraction (frontend) need to be created
-- ModuleFactory should be able to pass variable arguments to newely created modules.
+- ModuleFactory should be able to pass variable arguments to newely created modules
   this should be done with a class specialized on that
 
 ------- modules todo: --------
@@ -109,7 +120,6 @@ problem: how to select the bounding box for the map in the libnoiseview?
 
 ---- general class design and data storage ----
 current plan:
-
                                             QTableView or similar to modify module properties
                                                 \
                                                  \
@@ -172,13 +182,3 @@ A) connections:
     * libnoise modules
     * pixel filter modules
     * spring modules (to create maps)
-
-Q) model hierarchies
-A) root
-    |-module1
-    |  |-property1
-    |  |-property2
-    |  |-property3
-    |
-    |-module2
-    |  |-property1

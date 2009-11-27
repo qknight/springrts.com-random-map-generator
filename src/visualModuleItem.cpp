@@ -32,7 +32,7 @@ visualModuleItem::~visualModuleItem() {
     //          3. when all references (connections) are removed, remove the visual item (gui counterpart)
     //          4. next remove the actual item (maybe a noisegen for instance)
     //          5. now we are set and since we don't have loops this should be quite easy
-    qDebug() << "FIXME: this function should never be called!!! Read the comments in the code above this error string!";
+    qDebug() << "FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string!";
     exit(0);
   }
 }
@@ -68,5 +68,4 @@ void visualModuleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 //   ti->setParentItem(f);
 //   ti->moveBy(0,-20);
 //   f->moveBy(-200,0);
-
 }

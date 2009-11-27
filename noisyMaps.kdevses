@@ -1,46 +1,52 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="13" >
+ <DocsAndViews NumberOfDocuments="15" >
   <Doc0 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/mainWidget.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/mainWidget.h" >
+  <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/graphicsScene.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/AbstractModule.cpp" >
+  <Doc2 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/graphicsScene.h" >
    <View0 Encoding="" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/AbstractModule.h" >
+  <Doc3 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/ModuleFactory.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/NoiseGenPerlin.cpp" >
+  <Doc4 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/ModuleFactory.h" >
    <View0 Encoding="" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/NoiseGenPerlin.h" >
+  <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/Model.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/TODO" >
-   <View0 Encoding="" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/Model.h" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/ModuleFactory.cpp" >
+  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/DataStorage.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/Model.cpp" >
-   <View0 Encoding="" Type="Source" />
+  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/DataStorage.h" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/Model.h" >
-   <View0 Encoding="" Type="Source" />
+  <Doc9 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/TODO" >
+   <View0 Encoding="" line="1" Type="Source" />
   </Doc9>
-  <Doc10 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/DataStorage.cpp" >
-   <View0 Encoding="" Type="Source" />
+  <Doc10 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/AbstractModule.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc10>
-  <Doc11 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/DataStorage.h" >
-   <View0 Encoding="" Type="Source" />
+  <Doc11 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/visualModuleItem.cpp" >
+   <View0 Encoding="" line="41" Type="Source" />
   </Doc11>
-  <Doc12 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/README" >
-   <View0 Encoding="" line="4" Type="Source" />
+  <Doc12 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/mainWidget.h" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc12>
+  <Doc13 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/visualModuleItem.h" >
+   <View0 Encoding="" line="49" Type="Source" />
+  </Doc13>
+  <Doc14 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/main.cpp" >
+   <View0 Encoding="" line="9" Type="Source" />
+  </Doc14>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

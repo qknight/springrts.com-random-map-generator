@@ -1,11 +1,40 @@
+// //
+// // C++ Interface: DataStorage
+// //
+// // Description:
+// //
+// //
+// // Author: Joachim Schiele <js@lastlog.de>, (C) 2009
+// //
+// // Copyright: See COPYING file that comes with this distribution
+// //
+// //
 //
-// C++ Interface: DataStorage
+// #ifndef TREEITEM_H
+// #define TREEITEM_H
 //
-// Description: 
+// #include <QList>
+// #include <QVariant>
 //
+//  class TreeItem
+// {
+//   public:
+//     TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
+//     ~TreeItem();
 //
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2009
+//     void appendChild(TreeItem *child);
 //
-// Copyright: See COPYING file that comes with this distribution
+//     TreeItem *child(int row);
+//     int childCount() const;
+//     int columnCount() const;
+//     QVariant data(int column) const;
+//     int row() const;
+//     TreeItem *parent();
 //
+//   private:
+//     QList<TreeItem*> childItems;
+//     QList<QVariant> itemData;
+//     TreeItem *parentItem;
+// };
 //
+// #endif

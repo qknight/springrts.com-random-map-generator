@@ -11,7 +11,7 @@ mainWidget::mainWidget(QMainWindow *parent) : QMainWindow(parent) {
     setupMenus();
 
     scene = new graphicsScene();
-    // this is the initial initalisation which must contain a scene, later no
+    // this is the initial initalization which must contain a scene, later no
     // scene argument is needed anymore
     moduleFactory = ModuleFactory::Instance();
 
@@ -23,7 +23,7 @@ mainWidget::mainWidget(QMainWindow *parent) : QMainWindow(parent) {
             this,SLOT(selectionChanged()));
 
     dockWidget->setWidget(&moduleWidget);
-//     moduleFactory->ListLoadableModules();
+    moduleFactory->ListLoadableModules();
 }
 
 mainWidget::~mainWidget() {

@@ -64,7 +64,6 @@ private:
     QList<AbstractModule*> loadedModules;                 // modules which are already loaded
     graphicsScene* m_scene;
     static ModuleFactory* privateInstance;
-private:
     AbstractModule* CreateModule(QString ModuleID, QPoint pos);
 //     unsigned int DestroyModule(QUuid Id); // todo add that on demand
 signals:
