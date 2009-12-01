@@ -36,7 +36,6 @@ class ModuleFactory : public QObject {
     Q_OBJECT
     typedef AbstractModule* (*CreateModuleCallback)();
     typedef QMap<QString, CreateModuleCallback> CallbackMap;
-
 public:
     // this two Instance functions are allowed to call the constructor
     static ModuleFactory* Instance();

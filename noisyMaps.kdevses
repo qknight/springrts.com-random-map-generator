@@ -21,7 +21,7 @@
    <View0 Encoding="" Type="Source" />
   </Doc5>
   <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/Model.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc6>
   <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/DataStorage.cpp" >
    <View0 Encoding="" Type="Source" />
@@ -30,19 +30,19 @@
    <View0 Encoding="" line="0" Type="Source" />
   </Doc8>
   <Doc9 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/TODO" >
-   <View0 Encoding="" line="1" Type="Source" />
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc9>
   <Doc10 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/AbstractModule.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+   <View0 Encoding="" line="14" Type="Source" />
   </Doc10>
   <Doc11 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/visualModuleItem.cpp" >
-   <View0 Encoding="" line="41" Type="Source" />
+   <View0 Encoding="" line="40" Type="Source" />
   </Doc11>
   <Doc12 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/mainWidget.h" >
    <View0 Encoding="" line="0" Type="Source" />
   </Doc12>
   <Doc13 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/visualModuleItem.h" >
-   <View0 Encoding="" line="49" Type="Source" />
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc13>
   <Doc14 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/spring-map-creation/noisyMaps/src/main.cpp" >
    <View0 Encoding="" line="9" Type="Source" />
