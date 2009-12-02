@@ -10,7 +10,6 @@
 //
 //
 
-
 #include "ModuleWidget.h"
 
 ModuleWidget::ModuleWidget(QWidget* parent) : QWidget( parent ), Ui::moduleWidget() {

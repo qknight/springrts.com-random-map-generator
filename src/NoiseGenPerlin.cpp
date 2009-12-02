@@ -13,6 +13,7 @@
 
 #include "NoiseGenPerlin.h"
 #include "registermodule_macro.cpp"
+#include "ModuleFactory.h"
 
 M_REGISTER(NoiseGenPerlin);
 

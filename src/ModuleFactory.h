@@ -67,6 +67,5 @@ private:
 //     unsigned int DestroyModule(QUuid Id); // todo add that on demand
 signals:
     void appendToQMenuBox(QString ModuleID);
-
 };
 #endif

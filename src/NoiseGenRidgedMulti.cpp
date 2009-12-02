@@ -11,6 +11,7 @@
 
 #include "NoiseGenRidgedMulti.h"
 #include "registermodule_macro.cpp"
+#include "ModuleFactory.h"
 
 M_REGISTER(NoiseGenRidgedMulti);
 

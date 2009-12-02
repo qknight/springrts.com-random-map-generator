@@ -12,18 +12,18 @@
 #include "src/UtilsNoiseMap.h"
 
 #include "registermodule_macro.cpp"
+#include "ModuleFactory.h"
 
 M_REGISTER(UtilsNoiseMap);
 
 UtilsNoiseMap::UtilsNoiseMap() {
 }
 
-
 UtilsNoiseMap::~UtilsNoiseMap() {
 }
 
 QString UtilsNoiseMap::identify() {
-  return ID;
+    return ID;
 }
 
 

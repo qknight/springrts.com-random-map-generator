@@ -14,7 +14,9 @@
 
 #include <AbstractModule.h>
 #include <noise/noise.h>
+
 #include "visualModuleItem.h"
+#include "ModuleFactory.h"
 
 #define ID "NoiseGen::Billow"
 

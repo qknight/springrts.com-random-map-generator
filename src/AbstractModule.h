@@ -14,7 +14,6 @@
 
 // #include <QUuid>
 #include <QObject>
-#include "ModuleFactory.h"
 #include "ModuleWidget.h"
 
 class AbstractModule : public QObject {

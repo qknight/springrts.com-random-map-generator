@@ -31,10 +31,12 @@ public:
 private:
     ModuleFactory* moduleFactory;
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
+    ModuleFactory* Instance();
     QMenu menu;
     QPoint screenPos;
 public slots:
     void menuSelectionMade(QAction* action);
+    ModuleFactory* Instance();
 };
 
 #endif
