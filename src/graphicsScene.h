@@ -21,6 +21,7 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
+
 class ModuleFactory;
 
 class graphicsScene : public QGraphicsScene {
@@ -36,7 +37,6 @@ private:
     QPoint screenPos;
 public slots:
     void menuSelectionMade(QAction* action);
-    ModuleFactory* Instance();
 };
 
 #endif
