@@ -50,7 +50,7 @@ AbstractModule* ModuleFactory::CreateModule(QString ModuleID, QPoint pos) {
         AbstractModule* z = (i.value())(); // constructor call
         z->setProperty("scenePos", pos);
         loadedModules.append(z);
-//         qDebug() << "CreateModule created a new Module::" << ModuleID;
+        qDebug() << "CreateModule created a new Module::" << ModuleID;
         return z;
     }
     qDebug() << "weird error: can't find ModuleID to load a new module";

@@ -12,6 +12,7 @@
 #include "graphicsScene.h"
 
 graphicsScene::graphicsScene() : QGraphicsScene() {
+    //FIXME this should be done using the model
     moduleFactory = ModuleFactory::Instance();
     connect(&menu,SIGNAL(triggered(QAction*)),
             this, SLOT(menuSelectionMade(QAction*)));
@@ -24,6 +25,7 @@ void graphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
     screenPos = contextMenuEvent->screenPos();
     // create menu
     menu.clear();
+    //FIXME this should be done using the model
     QVector<QString> s = moduleFactory->LoadableModuleNames();
     for (int i=0; i < s.size(); i++) {
         menu.addAction(s[i]);

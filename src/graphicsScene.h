@@ -30,6 +30,7 @@ public:
     graphicsScene();
 //     ~graphicsScene();
 private:
+    //FIXME this should be done using the model
     ModuleFactory* moduleFactory;
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     ModuleFactory* Instance();

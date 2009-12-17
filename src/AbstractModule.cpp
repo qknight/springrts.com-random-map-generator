@@ -8,10 +8,9 @@
 //
 // Copyright: See COPYING file that comes with this distribution
 //
-//
+
 #include "AbstractModule.h"
 
-AbstractModule::AbstractModule() {
-}
+AbstractModule::AbstractModule() {}
 
-AbstractModule::~AbstractModule() { }
+AbstractModule::~AbstractModule() {}

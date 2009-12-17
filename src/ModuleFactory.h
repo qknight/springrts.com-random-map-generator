@@ -3,10 +3,6 @@
 //
 // Description:
 //   This class implements a object factory pattern. It's use is obvious: saving/loading states.
-//   This class connects the modules with the QGraphicsScene to represent:
-//     - the module itself
-//     - in/out/mod connections to the module
-//   Properties are exported to the QTreeView using delegates.
 //
 // Author: Joachim Schiele <js@lastlog.de>, (C) 2007
 //
@@ -27,9 +23,7 @@
 #include <QVector>
 
 #include "AbstractModule.h"
-#include "graphicsScene.h"
 
-class graphicsScene;
 class AbstractModule;
 
 class ModuleFactory : public QObject {
@@ -39,7 +33,6 @@ class ModuleFactory : public QObject {
 public:
     // this two Instance functions are allowed to call the constructor
     static ModuleFactory* Instance();
-    graphicsScene* scene();
 
     bool RegisterModule(QString ModuleId, CreateModuleCallback CreateFn);
     bool UnregisterModule(QString ModuleID);
@@ -61,7 +54,6 @@ protected:
 private:
     QMap<QString, CreateModuleCallback> loadableModules;  // modules which could be loaded
     QList<AbstractModule*> loadedModules;                 // modules which are already loaded
-    graphicsScene* m_scene;
     static ModuleFactory* privateInstance;
     AbstractModule* CreateModule(QString ModuleID, QPoint pos);
 //     unsigned int DestroyModule(QUuid Id); // todo add that on demand
