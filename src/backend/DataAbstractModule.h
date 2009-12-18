@@ -27,9 +27,10 @@
 
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
+  Q_OBJECT
   friend class DataConnection;
   public:
-    DataAbstractModule( DataAbstractItem* parent );
+    DataAbstractModule( /*DataAbstractItem* parent*/ );
     /*! WARNING: never delete objects as for instance childItems in the structure here
      ** since this will create inconsistencies between the model and this data structure.<br>
      ** A better way is to fail with exit(0) and a meaningful error message meant for

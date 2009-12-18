@@ -22,18 +22,23 @@
 
 #include <QList>
 #include <QDebug>
+#include <QObject>
 
-enum TreeItemType {
-  DATAROOT,
-  DATAABSTRACTMODULE,
-  DATACONNECTION,
-  UNKNOWN
-};
+namespace DataItemType {
+  enum DataItemType {
+    DATAROOT,
+    DATAABSTRACTMODULE,
+    DATACONNECTION,
+    UNKNOWN
+  };
+}
 
-class DataAbstractItem {
+class DataAbstractItem : QObject {
+  Q_OBJECT
     friend class DataRoot;
     friend class DataAbstractModule;
     friend class DataConnection;
+    friend class Model;
   public:
     /*! returns the number of childs:
       - 0 no childs
@@ -44,7 +49,7 @@ class DataAbstractItem {
     /*! returns the m_childItems position offset of this in/from the parent item */
     int row() const;
     /*! returns the id for this item */
-    unsigned int getId();
+//     unsigned int getId();
     /*! returns DataAbstractItem* from the m_childItems list with index=row*/
     DataAbstractItem *child( int row );
     /*! returns the parent item
@@ -72,10 +77,10 @@ class DataAbstractItem {
     /*! id of this object
       - 0 is default but it's overwritten in the constructor of the deriving class
       - only the AutomateRoot may leave the 0 unchanged! */
-    unsigned int ID;
+//     unsigned int ID;
     /*! see TreeItemType
       This variable is used to identify what kind of object we have.*/
-    unsigned int objectType;
+//     unsigned int objectType;
     /*! This container holds all child items */
     QList<DataAbstractItem*> m_childItems;
     /*! This function was introduced when I found out that we need to move the reverse connection

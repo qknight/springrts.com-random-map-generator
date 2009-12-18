@@ -20,8 +20,13 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-class Document
-{
+class Model;
+
+class Document {
+  public:
+    Document();
+  private:
+    Model* model;
 };
 
 #endif // DOCUMENT_H

@@ -11,7 +11,7 @@
 //
 #include "visualModuleItem.h"
 
-visualModuleItem::visualItem() : QGraphicsItem() {
+visualModuleItem::visualModuleItem() : QGraphicsItem() {
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   w=100;
   h=220;
@@ -41,11 +41,11 @@ void visualModuleItem::contextMenuEvent ( QGraphicsSceneContextMenuEvent * conte
 
 QVariant visualModuleItem::itemChange ( GraphicsItemChange change, const QVariant & value ){
     if (change == QGraphicsItem::ItemPositionChange) {
-      foreach (QGraphicsItem* child, children()) {
+//       foreach (QGraphicsItem* child, children()) {
 //         modulePort* child_ = static_cast<modulePort*>(child);
 //         child_->updatePosition();
 //         qDebug("move?");
-      }
+//       }
     }
   return value;
 }

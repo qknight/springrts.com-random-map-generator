@@ -43,7 +43,7 @@ void DataRoot::dump() {
 }
 
 unsigned int DataRoot::getObjectType() {
-  return DATAROOT;
+  return DataItemType::DATAROOT;
 }
 
 void DataRoot::removeChild( unsigned int index ) {

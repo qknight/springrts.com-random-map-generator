@@ -32,29 +32,29 @@ DataConnection::~DataConnection() {
 }
 
 void DataConnection::dump() {
-  QString m_next_node_Id;
-  if(m_next_node != NULL)
-    m_next_node_Id = QString("n%1").arg(m_next_node->getId());
-  else
-    m_next_node_Id = "next_node is not set";
-  //FIXME check m_next_node for NULL
-  qDebug() << "     |  \\---((DataConnection " << QString("c%1").arg(ID) << "))" <<
-//       parent()->getId() << "@" << (unsigned int)parent() <<
-  " >> DEST = " <<
-  m_next_node_Id <<
-  "; inverseConnection =" << QString("c%1").arg(inverseConnection->getId());
-
-  // call dump for all children
-  if ( childCount() > 0 )
-    qDebug() << "FATAL ERROR in" << __FILE__ << " " << __FUNCTION__ << "this should never happen";
-
-  for ( int i = 0; i < childCount(); ++i ) {
-    child( i )->dump();
-  }
+//   QString m_next_node_Id;
+//   if(m_next_node != NULL)
+//     m_next_node_Id = QString("n%1").arg(m_next_node->getId());
+//   else
+//     m_next_node_Id = "next_node is not set";
+//   //FIXME check m_next_node for NULL
+//   qDebug() << "     |  \\---((DataConnection " << QString("c%1").arg(ID) << "))" <<
+// //       parent()->getId() << "@" << (unsigned int)parent() <<
+//   " >> DEST = " <<
+//   m_next_node_Id <<
+//   "; inverseConnection =" << QString("c%1").arg(inverseConnection->getId());
+// 
+//   // call dump for all children
+//   if ( childCount() > 0 )
+//     qDebug() << "FATAL ERROR in" << __FILE__ << " " << __FUNCTION__ << "this should never happen";
+// 
+//   for ( int i = 0; i < childCount(); ++i ) {
+//     child( i )->dump();
+//   }
 }
 
 unsigned int DataConnection::getObjectType() {
-  return DATACONNECTION;
+  return DataItemType::DATACONNECTION;
 }
 
 void DataConnection::removeChild( unsigned int index ) {

@@ -53,6 +53,11 @@ SET( srmg_MOC_HEADERS
   GraphicsScene.h
   ModuleWidget.h
   ModuleFactory.h
+# main backend data structure
+  backend/DataAbstractItem.h
+  backend/DataRoot.h 
+  backend/DataAbstractModule.h
+  backend/DataConnection.h 
 )
 
 SET( srmg_UIs

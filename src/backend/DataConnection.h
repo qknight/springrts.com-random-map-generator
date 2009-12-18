@@ -35,6 +35,7 @@ class DataAbstractModule;
  ** inserting childs and removing childs is heavily modified in this class!
 */
 class DataConnection : public DataAbstractItem {
+  Q_OBJECT
   public:
     DataConnection( DataAbstractItem* parent );
     /*! WARNING: never delete objects as for instance childItems in the structure here

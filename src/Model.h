@@ -30,15 +30,14 @@ class DataRoot;
 class DataAbstractModule;
 class DataConnection;
 
-class QPoint;
+#include <QPoint>
 
 namespace customRole {
   enum CustomRole {
-    IdRole = Qt::UserRole, // UserRole is the first number one can use for selfassigned roles by the Qt-toolkit
-    CustomLabelRole,
+    // UserRole is the first number one can use for selfassigned roles by the Qt-toolkit
+    TypeRole = Qt::UserRole, // used by views to query a QModelIndex for its type [NODE or NODE_CONNECTION .. or whatever]
     SortRole, // used by the TreeView to sort items
     PosRole, // used by GraphicsView to place a new node on 'node-creation-time'
-    TypeRole // used by views to query a QModelIndex for its type [NODE or NODE_CONNECTION .. or whatever]
   };
 }
 
@@ -61,7 +60,7 @@ namespace ViewTreeItemType {
 class Model : public QAbstractItemModel {
     friend class Document;
 
-  public:
+  protected:
     /*! a root node is mendatory to query for child items */
     Model( /*DataAbstractItem* root, QObject* parent = 0*/ );
     /*! see the Qt docs about QAbstractItemModel */

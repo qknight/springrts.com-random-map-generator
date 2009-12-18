@@ -5,10 +5,13 @@
 #include <QMainWindow>
 #include <QPointF>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "ui_GraphicsView.h"
 #include "GraphicsScene.h"
 #include "ModuleWidget.h"
+
+#include "Document.h"
 
 class MainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
     Q_OBJECT
@@ -20,6 +23,7 @@ private:
     GraphicsScene* scene;
     ModuleWidget moduleWidget;
     void setupMenus();
+    Document doc;
 
 private slots:
     void save();

@@ -18,4 +18,9 @@
 */
 
 #include "Document.h"
+#include "Model.h"
 
+Document::Document() {
+  model = new Model;
+  model->insertRows(0, 1, QModelIndex(), QPoint(0,0), "NoiseGen::Billow");
+}

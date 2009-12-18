@@ -19,7 +19,7 @@
 
 #include "DataAbstractModule.h"
 
-DataAbstractModule::DataAbstractModule( DataAbstractItem* parent ) : DataAbstractItem( parent ) {}
+DataAbstractModule::DataAbstractModule( /*DataAbstractItem* parent*/ ) /*: DataAbstractItem( parent )*/ {}
 
 DataAbstractModule::~DataAbstractModule() {
 //   qDebug() << __FUNCTION__;
@@ -49,7 +49,7 @@ void DataAbstractModule::dump() {
 }
 
 unsigned int DataAbstractModule::getObjectType() {
-  return DATAABSTRACTMODULE;
+  return DataItemType::DATAABSTRACTMODULE;
 }
 
 //FIXME CRITICAL check this code below

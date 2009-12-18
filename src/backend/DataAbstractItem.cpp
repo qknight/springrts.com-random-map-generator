@@ -22,7 +22,7 @@
 DataAbstractItem::DataAbstractItem( DataAbstractItem *parent ) {
 //   qDebug() << "DataAbstractItem Constructor called";
   parentItem = parent;
-  ID = 0;
+//   ID = 0;
 }
 
 DataAbstractItem::~DataAbstractItem() {
@@ -58,10 +58,6 @@ int DataAbstractItem::row() const {
   return 0;
 }
 
-unsigned int DataAbstractItem::getId() {
-  return ID;
-}
-
 QList<DataAbstractItem*> DataAbstractItem::childItems() const {
   return m_childItems;
 }
@@ -69,3 +65,7 @@ QList<DataAbstractItem*> DataAbstractItem::childItems() const {
 void DataAbstractItem::setParent(DataAbstractItem *parent) {
   parentItem = parent;
 }
+
+// unsigned int DataAbstractItem::getId() {
+//   return ID;
+// }

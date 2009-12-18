@@ -30,7 +30,7 @@ ModuleFactory* ModuleFactory::Instance() {
 
 bool ModuleFactory::RegisterModule(QString ModuleId, CreateModuleCallback CreateFn) {
     //TODO fix false case
-    //TODO add handles for duplicated Register attempts
+    //TODO add handles for duplicated Register attempts meaning if one wants to register 'mymodule' a second time
     loadableModules.insert( ModuleId, CreateFn );
     // insert them into the menu
     return true;
@@ -46,7 +46,7 @@ void ModuleFactory::createModule(QString ModuleID/*, QPoint pos*/) {
 }
 
 // public
-DataAbstractModule* ModuleFactory::CreateModule(QString ModuleID/*, QPoint pos*/) {
+DataAbstractModule* ModuleFactory::CreateModule(QString ModuleID) {
     CallbackMap::const_iterator i = loadableModules.find(ModuleID);
     if (i != loadableModules.end()) {
         DataAbstractModule* z = (i.value())(); // constructor call

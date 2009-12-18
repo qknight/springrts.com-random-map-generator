@@ -24,7 +24,6 @@
 #include <QDebug>
 #include <QIcon>
 #include <QVariant>
-#include <QPoint>
 
 #include "Model.h"
 #include "Document.h"
@@ -115,22 +114,24 @@ QModelIndex Model::parent( const QModelIndex & child ) const {
 */
 QVariant Model::data( const QModelIndex &index, int role ) const {
 // //   qDebug() << __FUNCTION__;
-//   if ( !index.isValid() )
-//     return QVariant();
-// 
-//   DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
+  if ( !index.isValid() )
+    return QVariant();
+
+  DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
+  //   // to understand customRole::TypeRole see the comment (Model.h - DataItemType enum comment )
+  if ( role == customRole::TypeRole ) {
+    if ( n->getObjectType() == DataItemType::DATAROOT )
+      return DataItemType::DATAROOT;
+    if ( n->getObjectType() == DataItemType::DATACONNECTION )
+      return DataItemType::DATACONNECTION;
+    if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
+      return DataItemType::DATAABSTRACTMODULE;
+    return DataItemType::UNKNOWN;
+  }
+  
 //   if ( role == customRole::CustomLabelRole )
 //     return n->getProperty( "CustomLabelRole" );
-//   // to understand customRole::TypeRole see the comment (Model.h - TreeItemType enum comment )
-//   if ( role == customRole::TypeRole ) {
-//     if ( n->getObjectType() == AUTOMATE_ROOT )
-//       return ViewTreeItemType::AUTOMATE_ROOT;
-//     if ( n->getObjectType() == NODE_CONNECTION )
-//       return ViewTreeItemType::NODE_CONNECTION;
-//     if ( n->getObjectType() == NODE )
-//       return ViewTreeItemType::NODE;
-//     return ViewTreeItemType::UNKNOWN;
-//   }
+
 //   if ( role == customRole::FinalRole )
 //     if ( n->getObjectType() == NODE )
 //       return n->getProperty( "final" );
@@ -328,6 +329,7 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
   return false;
 }
 
+/*! used by the table view */
 QVariant Model::headerData( int section, Qt::Orientation orientation, int role ) const {
 //   if ( orientation == Qt::Horizontal && ( role == Qt::DisplayRole || role == Qt::ToolTipRole ) ) {
 //     switch ( section ) {
@@ -402,7 +404,7 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
   if (count > 1) {
-    qDebug() << __PRETTY_FUNCTION__ << "FATAL: this might need some testing, exiting";
+    qDebug() << __PRETTY_FUNCTION__ << "FATAL: currently not implemented and this also might need some testing, exiting";
     exit(1);
   }
 
@@ -410,11 +412,14 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
   if ( !parent.isValid() ) { 
     beginInsertRows( parent, row, row + count - 1 );
     {
-      DataAbstractModule* module = moduleFactory->CreateModule(type, rootItem);
+      DataAbstractModule* module = moduleFactory->CreateModule(type);
 //       node* n = new node(rootItem);
       module->setProperty( "pos", pos );
+      module->setProperty( "type", type );
       if (module != NULL) {
+	module->setParent( rootItem ); // FIXME CRITICAL: this should probably be done inside the rootItem itself! ;P
 	rootItem->appendChild( module );
+// 	qDebug() << __PRETTY_FUNCTION__ << ": created a new module";
       } else {
 	qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
 	exit(1);
@@ -423,7 +428,7 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
     endInsertRows();
     return true;
   }
-  if ( getTreeItemType( parent ) == NODE ) {
+  if ( data( parent, customRole::TypeRole ) == DataItemType::DATAABSTRACTMODULE ) {
     DataAbstractItem* abstractitem = static_cast<DataAbstractItem*>( parent.internalPointer() );
 //     int id = abstractitem->getId();
 //     qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
@@ -431,8 +436,8 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
     {
       int i = count ;
       while ( i-- ) {
-        DataConnection* nc = new DataConnection( abstractitem );
-        abstractitem->appendChild( nc );
+        DataConnection* dc = new DataConnection( abstractitem );
+        abstractitem->appendChild( dc );
       }
     }
     endInsertRows();

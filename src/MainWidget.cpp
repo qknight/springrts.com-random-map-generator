@@ -1,9 +1,8 @@
-#include "MainWidget.h"
-#include <QGraphicsPixmapItem>
-#include <QDebug>
-
 #include <QList>
 #include <QRectF>
+
+#include "MainWidget.h"
+
 // http://doc.trolltech.com/qq/qq13-attributes.html
 
 MainWidget::MainWidget(QMainWindow *parent) : QMainWindow(parent) {
@@ -67,15 +66,15 @@ void MainWidget::unhidePropertyDialog() {
 }
 
 void MainWidget::selectionChanged() {
-    QList<QGraphicsItem *> sitems = scene->selectedItems();
-    if (sitems.size() == 1) {
-        QGraphicsItem* item = sitems[0];
-        QString s = QString("module selected:\n %1").arg(item->data(0).toString());
-//     ModuleWidget* item_moduleWidget = item->data(1).value<ModuleWidget* > ();
-//     dockWidget->setWidget(item_moduleWidget);
-        statusbar->showMessage(s,2000);
-    } else {
-        statusbar->showMessage("nothing selected",2000);
-        dockWidget->setWidget(&moduleWidget);
-    }
+//     QList<QGraphicsItem *> sitems = scene->selectedItems();
+//     if (sitems.size() == 1) {
+//         QGraphicsItem* item = sitems[0];
+//         QString s = QString("module selected:\n %1").arg(item->data(0).toString());
+// //     ModuleWidget* item_moduleWidget = item->data(1).value<ModuleWidget* > ();
+// //     dockWidget->setWidget(item_moduleWidget);
+//         statusbar->showMessage(s,2000);
+//     } else {
+//         statusbar->showMessage("nothing selected",2000);
+//         dockWidget->setWidget(&moduleWidget);
+//     }
 }

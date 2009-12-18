@@ -16,7 +16,7 @@
 #include <QMenu>
 #include <QDebug>
 #include <QGraphicsSceneContextMenuEvent>
-#include "ModuleFactory.h"
+#include "Model.h"
 
 /**
   @author Joachim Schiele <js@lastlog.de>
