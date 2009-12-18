@@ -1,31 +1,11 @@
 ------- current plan (near objectives): -------
-- MVC pattern is needed for this project:
-   that means going through a custom model on top of a cusom data backend again *sigh*
+- 'class Document' needs better integration yet
+- model.cpp must list available modules (that means modules which are registered @ModuleFactory and not
+  module which are already loaded (added to the data structure)
+- libNoise (backend) and 
+- libNoiseAbstraction (frontend) need to be created
 
- model hierarchy
-  root
-    |-module1
-    |  |-property1
-    |  |-property2
-    |  |-property3
-    |  |-connection1 (reference to a different module)
-    |    |-property1
-    |    |-property2
-    |    |-property3
-    |
-    |-module2
-    |  |-property1
-
-- implement data structure
-- implement model
-- the treeView in GraphicsView.ui should display loaded modules (not loadable modules)
-  with the modules' attributes.
-
------- afterwards.... ------
-- libNoise (backend) and libNoiseAbstraction (frontend) need to be created
-- ModuleFactory should be able to pass variable arguments to newely created modules
-  this should be done with a class specialized on that
-
+for the later two tasks i probably need bison.
 ------- modules todo: --------
 utils modules
   NoiseMapBuilderPlane
