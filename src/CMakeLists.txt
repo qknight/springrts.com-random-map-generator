@@ -14,37 +14,45 @@ ADD_DEFINITIONS( "-Wall -ansi" )
 find_package(Qt4)
 
 # see http://cmake.org/cmake/help/cmake2.6docs.html#module:FindQt4
-SET (QT_USE_QTOPENGL 1)
-SET (QT_USE_QTXML 1) 
+# SET (QT_USE_QTOPENGL 1)
+# SET (QT_USE_QTXML 1) 
 
 project(srmg CXX)
 
-SET( srmg_SOURCES
-  AbstractModule.cpp
-  Model.cpp
-  ModuleFactory.cpp
-  ModuleWidget.cpp
-  graphicsScene.cpp
-  mainWidget.cpp
+SET( srmg_SOURCES 
+  # core gui/code
   main.cpp
-  DataStorage.cpp
-  NoiseGenBillow.cpp
-  NoiseGenPerlin.cpp
-  NoiseGenPerlinInterface.cpp
-  NoiseGenRidgedMulti.cpp
-  UtilsNoiseMap.cpp
-  modulePort.cpp
-  modulePortConnection.cpp
+  MainWidget.cpp
+  ModuleFactory.cpp
+  GraphicsScene.cpp
+  ModuleWidget.cpp
+  Model.cpp
+  Document.cpp
   registermodule_macro.cpp
-  visualModuleItem.cpp
+
+  # main backend data structure
+  backend/DataAbstractItem.cpp 
+  backend/DataRoot.cpp 
+  backend/DataAbstractModule.cpp
+  backend/DataConnection.cpp 
+
+  # libnoise module frontends -> QGraphicsScene items
+  frontend/modulePort.cpp
+  frontend/modulePortConnection.cpp
+  frontend/visualModuleItem.cpp
+
+  # libnoise module backends
+  modules/NoiseGenBillow.cpp
+  modules/NoiseGenPerlin.cpp
+  modules/NoiseGenRidgedMulti.cpp
+  modules/UtilsNoiseMap.cpp
 )
 
 SET( srmg_MOC_HEADERS
-  mainWidget.h
-  graphicsScene.h
+  MainWidget.h
+  GraphicsScene.h
   ModuleWidget.h
   ModuleFactory.h
-  AbstractModule.h
 )
 
 SET( srmg_UIs
@@ -57,6 +65,12 @@ INCLUDE(${QT_USE_FILE})
 INCLUDE_DIRECTORIES(
   # src/NoiseGenBillow.h lives here (that is './')
   ${CMAKE_SOURCE_DIR}
+  # modules
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules"
+  # backend 
+  "${CMAKE_CURRENT_SOURCE_DIR}/backend"
+  # frontend
+  "${CMAKE_CURRENT_SOURCE_DIR}/frontend"
   # AbstractModule.h lives here (that is 'src/')
   ${CMAKE_CURRENT_SOURCE_DIR}
   # QT4_WRAP_UI writes ui_whatever.h here (that is './' and uic is used)

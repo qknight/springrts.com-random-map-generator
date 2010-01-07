@@ -40,15 +40,17 @@ bool ModuleFactory::UnregisterModule(QString ModuleId) {
     return loadableModules.remove(ModuleId) == 1;
 }
 
-void ModuleFactory::createModule(QString ModuleID, QPoint pos) {
-    CreateModule(ModuleID, pos);
+// private
+void ModuleFactory::createModule(QString ModuleID/*, QPoint pos*/) {
+    CreateModule(ModuleID/*, pos*/);
 }
 
-AbstractModule* ModuleFactory::CreateModule(QString ModuleID, QPoint pos) {
+// public
+DataAbstractModule* ModuleFactory::CreateModule(QString ModuleID/*, QPoint pos*/) {
     CallbackMap::const_iterator i = loadableModules.find(ModuleID);
     if (i != loadableModules.end()) {
-        AbstractModule* z = (i.value())(); // constructor call
-        z->setProperty("scenePos", pos);
+        DataAbstractModule* z = (i.value())(); // constructor call
+//         z->setProperty("scenePos", pos);
         loadedModules.append(z);
         qDebug() << "CreateModule created a new Module::" << ModuleID;
         return z;

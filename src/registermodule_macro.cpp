@@ -16,7 +16,7 @@
 //  in a module one has to call this macro which then registers the
 //  module in the ModuleFactory singleton
 //  -> therefore create a class c you want to register
-//  -> class c must inherit from AbstractModule()
+//  -> class c must inherit from DataAbstractModule()
 //  -> class c is named 'myClassFoo' then use the M_REGISTER(myClassFoo); macro
 //
 // Author: Joachim Schiele <js@lastlog.de>, (C) 2009
@@ -33,7 +33,7 @@
 class RMI_##_##CLASSNAME {                                                           \
   public:                                                                            \
     RMI_##_##CLASSNAME();                                                            \
-    static AbstractModule* CreateModule();                                           \
+    static DataAbstractModule* CreateModule();                                       \
     const QString Id;                                                                \
 };                                                                                   \
                                                                                      \
@@ -42,7 +42,7 @@ RMI_##_##CLASSNAME::RMI_##_##CLASSNAME() {                                      
   ModuleFactory::Instance()->RegisterModule(Id, RMI_##_##CLASSNAME::CreateModule);   \
 }                                                                                    \
                                                                                      \
-AbstractModule* RMI_##_##CLASSNAME::CreateModule() {                                 \
+DataAbstractModule* RMI_##_##CLASSNAME::CreateModule() {                             \
   return new CLASSNAME();                                                            \
 }                                                                                    \
                                                                                      \

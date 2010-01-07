@@ -9,6 +9,9 @@
     |  |-property2
     |  |-property3
     |  |-connection1 (reference to a different module)
+    |    |-property1
+    |    |-property2
+    |    |-property3
     |
     |-module2
     |  |-property1
@@ -131,7 +134,7 @@ QGraphicsView <---> QGraphicsScene <---> QAbstractItemModel <---> (XML?) data st
                           |                                      /
                      custom editor                              /
                                                             libNoise (the backend)
-
+                                                              (bison for syntax checking)
 ---- unsolved issues ----
 Q) how to manage the libNoiseAbstraction layer?
 A) first we need to have a workflow. currently the plan is:

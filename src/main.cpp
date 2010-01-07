@@ -1,9 +1,9 @@
 #include <QApplication>
-#include "mainWidget.h"
+#include "MainWidget.h"
 
 int main(int argc, char* argv[]) {
   QApplication app(argc,argv);
-  mainWidget z;
+  MainWidget z;
   z.show();
   return app.exec();
 }

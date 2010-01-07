@@ -1,4 +1,4 @@
-project(qtproject) # the name of your project
+project(qtproject CXX C) # the name of your project
 
 cmake_minimum_required(VERSION 2.6)
 
