@@ -8,10 +8,8 @@
 #include <QDebug>
 
 #include "ui_GraphicsView.h"
-#include "GraphicsScene.h"
-#include "ModuleWidget.h"
-
 #include "Document.h"
+
 
 class MainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
     Q_OBJECT
@@ -20,10 +18,10 @@ public:
     ~MainWidget();
 
 private:
-    GraphicsScene* scene;
-    ModuleWidget moduleWidget;
     void setupMenus();
-    Document doc;
+    Document* doc;
+    /*! this project has multi document support and this function call will change the document in use*/
+    void changeActiveDocument(Document* doc);
 
 private slots:
     void save();

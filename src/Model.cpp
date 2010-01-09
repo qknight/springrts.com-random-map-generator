@@ -113,7 +113,7 @@ QModelIndex Model::parent( const QModelIndex & child ) const {
 ** row/column matters, see the very long switch statement.
 */
 QVariant Model::data( const QModelIndex &index, int role ) const {
-// //   qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   if ( !index.isValid() )
     return QVariant();
 
@@ -128,7 +128,23 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
       return DataItemType::DATAABSTRACTMODULE;
     return DataItemType::UNKNOWN;
   }
-  
+
+  switch ( index.column() ) {
+  case 0:
+    switch ( role ) {
+    case Qt::DecorationRole:
+    case customRole::SortRole:
+    case Qt::DisplayRole:
+      if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE ) {
+	DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
+        return am->identify();
+      }
+      if ( n->getObjectType() == DataItemType::DATACONNECTION )
+        return "connection";
+    }
+    break;
+  }
+
 //   if ( role == customRole::CustomLabelRole )
 //     return n->getProperty( "CustomLabelRole" );
 
@@ -277,7 +293,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 }
 
 bool Model::setData( const QModelIndex & index, const QVariant & value, int role ) {
-// //   qDebug() << "setData " << index.column();
+  qDebug() << "setData " << index.column();
 //   if (( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && index.column() == 4 && role == Qt::EditRole ) ||
 //       ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && role == customRole::SymbolIndexRole ) ) {
 //     DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
@@ -331,52 +347,22 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
 
 /*! used by the table view */
 QVariant Model::headerData( int section, Qt::Orientation orientation, int role ) const {
-//   if ( orientation == Qt::Horizontal && ( role == Qt::DisplayRole || role == Qt::ToolTipRole ) ) {
-//     switch ( section ) {
-//     case 0:
-//       if ( role == Qt::DisplayRole )
-//         return "?";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "node or DataConnection";
-//     case 1:
-//       if ( role == Qt::DisplayRole )
-//         return "s";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "Is this node a startnode?";
-//     case 2:
-//       if ( role == Qt::DisplayRole )
-//         return "f";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "Is this node a final?";
-//     case 3:
-//       if ( role == Qt::DisplayRole )
-//         return "Node";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "DataAbstractItem -> can be a NODE or a NODE_CONNECTION";
-//     case 4:
-//       if ( role == Qt::DisplayRole )
-//         return "Symbol";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "Symbol for outgoing connection";
-//     case 5:
-//       if ( role == Qt::DisplayRole )
-//         return "DestNode";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "The node this connection points to";
-//     case 6:
-//       if ( role == Qt::DisplayRole )
-//         return "label";
-//       else
-//         if ( role == Qt::ToolTipRole )
-//           return "A custom label for nodes/connection";
-//     }
-//   }
+  if ( orientation == Qt::Horizontal && ( role == Qt::DisplayRole || role == Qt::ToolTipRole ) ) {
+    switch ( section ) {
+    case 0:
+      if ( role == Qt::DisplayRole )
+        return "key";
+      else
+        if ( role == Qt::ToolTipRole )
+          return "FIXME";
+    case 1:
+      if ( role == Qt::DisplayRole )
+        return "value";
+      else
+        if ( role == Qt::ToolTipRole )
+          return "FIXME";
+    }
+  }
   return QVariant();
 }
 
@@ -399,7 +385,7 @@ int Model::rowCount( const QModelIndex & sibling ) const {
 }
 
 int Model::columnCount( const QModelIndex & /*parent*/ ) const {
-  return 7;
+  return 2;
 }
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
@@ -482,7 +468,6 @@ bool Model::hasChildren ( const QModelIndex & parent ) const {
   return false;
 }
 
-
 Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
   //FIXME only make setData able fields editable
   if ( !index.isValid() )
@@ -490,11 +475,13 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
   return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable;
 }
 
+bool Model::insertModule(QString type, QPoint pos) {
+  return insertRows( rowCount( QModelIndex() ), 1, QModelIndex(), pos, type);
+}
 
-
-
-
-
+QVector<QString> Model::LoadableModuleNames() {
+    return moduleFactory->LoadableModuleNames();
+}
 
 
 
@@ -728,10 +715,6 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
 // 
 // int Model::size() {
 //   return (( AutomateRoot* )rootItem )->size();
-// }
-
-// bool Model::insertNode(QPoint pos) {
-//   return insertRows( rowCount( QModelIndex() ), 1, QModelIndex() , pos);
 // }
 
 // void Model::clear() {

@@ -24,6 +24,7 @@
 
 class GraphicsScene : public QGraphicsScene {
     Q_OBJECT
+    friend class Document;
 public:
     GraphicsScene();
 //     ~graphicsScene();
@@ -32,8 +33,13 @@ private:
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QMenu menu;
     QPoint screenPos;
+    QVector<QString> loadableModuleNames;
+  protected:
+    void setLoadableModuleNames(QVector<QString> loadableModuleNames);
 public slots:
     void menuSelectionMade(QAction* action);
+  Q_SIGNALS:
+    void CreateModuleSignal(QString, QPoint);
 };
 
 #endif

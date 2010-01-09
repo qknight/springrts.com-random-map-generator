@@ -25,7 +25,6 @@ SET( srmg_SOURCES
   MainWidget.cpp
   ModuleFactory.cpp
   GraphicsScene.cpp
-  ModuleWidget.cpp
   Model.cpp
   Document.cpp
   registermodule_macro.cpp
@@ -51,8 +50,9 @@ SET( srmg_SOURCES
 SET( srmg_MOC_HEADERS
   MainWidget.h
   GraphicsScene.h
-  ModuleWidget.h
   ModuleFactory.h
+  Document.h
+
 # main backend data structure
   backend/DataAbstractItem.h
   backend/DataRoot.h 
@@ -61,7 +61,6 @@ SET( srmg_MOC_HEADERS
 )
 
 SET( srmg_UIs
-  ui/moduleWidget.ui
   ui/GraphicsView.ui
 )
 

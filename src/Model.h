@@ -87,8 +87,8 @@ class Model : public QAbstractItemModel {
     */
 //     bool removeItems( QList<QPersistentModelIndex> itemList );
     /*! this is the public interface, there is an private one for internal use as well!
-    ** this inserts a node*/
-//     bool insertNode(QPoint pos=QPoint());
+    ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
+    bool insertModule(QString type, QPoint pos=QPoint());
     /*! this inserts a connection at startItem */
 //     bool insertConnection( QModelIndex startItem, QModelIndex endItem = QModelIndex() );
 
@@ -137,6 +137,8 @@ class Model : public QAbstractItemModel {
     ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>
     ** It can be called while views are attached to the model, it is not efficient performancewise */
 //     void clear();
+    QVector<QString> LoadableModuleNames();
+
 };
 
 #endif

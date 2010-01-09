@@ -20,13 +20,24 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
+#include <QString>
+#include <QPoint>
+#include <QObject>
+
+class GraphicsScene;
 class Model;
 
-class Document {
+class Document : QObject {
+  Q_OBJECT
+  friend class MainWidget;
   public:
     Document();
-  private:
+    ~Document();
+  protected:
     Model* model;
+    GraphicsScene* scene;
+  protected Q_SLOTS:
+    void CreateModuleSlot(QString, QPoint);
 };
 
 #endif // DOCUMENT_H

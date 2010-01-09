@@ -1,11 +1,17 @@
 ------- current plan (near objectives): -------
+- the QGraphicsScene must be modded to implement a QAbstractItemView
+ - basic module frontends must be created (adapted since most basics are engineered already)
 - 'class Document' needs better integration yet
 - model.cpp must list available modules (that means modules which are registered @ModuleFactory and not
   module which are already loaded (added to the data structure)
+
+
 - libNoise (backend) and 
 - libNoiseAbstraction (frontend) need to be created
+  for the former two tasks i probably need bison
 
-for the later two tasks i probably need bison.
+- integrate libNoise-view
+
 ------- modules todo: --------
 utils modules
   NoiseMapBuilderPlane

@@ -19,8 +19,26 @@
 
 #include "Document.h"
 #include "Model.h"
+#include "GraphicsScene.h"
 
 Document::Document() {
-  model = new Model;
-  model->insertRows(0, 1, QModelIndex(), QPoint(0,0), "NoiseGen::Billow");
+    model = new Model;
+    scene = new GraphicsScene;
+    scene->setLoadableModuleNames(model->LoadableModuleNames());
+    model->insertModule("NoiseGen::Perlin", QPoint(0,0));
+    model->insertModule("NoiseGen::Billow", QPoint(100,0));
+    model->insertModule("NoiseGen::RidgedMulti", QPoint(200,0));
+    model->insertModule("Utils::NoiseMap", QPoint(300,0));
+    model->insertModule("NoiseGen::RidgedMulti", QPoint(400,0));
+    connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
+	    this, SLOT(CreateModuleSlot(QString,QPoint)));
+}
+
+Document::~Document() {
+    delete scene;
+    delete model;
+}
+
+void Document::CreateModuleSlot(QString s, QPoint p) {
+  model->insertModule(s,p);
 }

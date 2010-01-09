@@ -32,7 +32,6 @@ bool ModuleFactory::RegisterModule(QString ModuleId, CreateModuleCallback Create
     //TODO fix false case
     //TODO add handles for duplicated Register attempts meaning if one wants to register 'mymodule' a second time
     loadableModules.insert( ModuleId, CreateFn );
-    // insert them into the menu
     return true;
 }
 

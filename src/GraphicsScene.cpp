@@ -25,16 +25,17 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
     // create menu
     menu.clear();
     //FIXME this should be done using the model
-/*    QVector<QString> s = model->LoadableModuleNames();
-    for (int i=0; i < s.size(); i++) {
-        menu.addAction(s[i]);
+    for (int i=0; i < loadableModuleNames.size(); i++) {
+        menu.addAction(loadableModuleNames[i]);
     }
-    menu.exec(contextMenuEvent->screenPos());*/
+    menu.exec(contextMenuEvent->screenPos());
 }
 
 void GraphicsScene::menuSelectionMade(QAction* action) {
-//   qDebug() << "creating module: " << action->text() << " at pos: "
-//       << screenPos.x() << "x" << screenPos.y();;
-//     model->createModule(action->text(), screenPos);
-
+//     qDebug() << "creating module: " << action->text() << " at pos: "
+//     << screenPos.x() << "x" << screenPos.y();;
+  emit CreateModuleSignal(action->text(), screenPos);
+}
+void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames) {
+  this->loadableModuleNames=loadableModuleNames;
 }
