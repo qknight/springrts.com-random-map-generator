@@ -619,7 +619,7 @@ QVector<QString> Model::LoadableModuleNames() {
 //   foreach( QModelIndex m, itemList ) {
 //     if ( !m.isValid() ) {
 //       qDebug() << __FUNCTION__ << "FATAL ERROR: QModelIndex is not valid anymore, may|must NOT happen here!, exiting";
-//       exit(0);
+//       exit(1);
 //     }
 //     if ( getTreeItemType( m ) == NODE )
 //       nodeItems.append( QPersistentModelIndex( m ) );
@@ -637,7 +637,7 @@ QVector<QString> Model::LoadableModuleNames() {
 //     if ( !item.isValid() ) {
 //       // this should never happen
 //       qDebug() << __FUNCTION__ << "FATAL ERROR: QModelIndex for a node is not valid anymore";
-//       exit(0);
+//       exit(1);
 //     } else {
 //       if ( !removeNode( item ) && s )
 //         s = false;
@@ -658,7 +658,7 @@ QVector<QString> Model::LoadableModuleNames() {
 //   // FIXME code below should be removable
 //   if ( !abstractQModelIndex.isValid() ) {
 //     qDebug() << "FATAL ERROR: abstractQModelIndex is not a valid QModelIndex (anymore?), exiting";
-//     exit(0);
+//     exit(1);
 //   }
 // 
 //   if ( getTreeItemType( abstractQModelIndex ) == NODE ) {

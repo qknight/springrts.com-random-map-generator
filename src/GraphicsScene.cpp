@@ -36,6 +36,7 @@ void GraphicsScene::menuSelectionMade(QAction* action) {
 //     << screenPos.x() << "x" << screenPos.y();;
   emit CreateModuleSignal(action->text(), screenPos);
 }
+
 void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames) {
   this->loadableModuleNames=loadableModuleNames;
 }
