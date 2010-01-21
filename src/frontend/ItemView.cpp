@@ -23,48 +23,19 @@
 
 #include "ItemView.h"
 
-ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWidget * parent ) : QAbstractItemView( parent ) {
+ItemView::ItemView( GraphicsScene* scene, Model *model, QWidget * parent ) : QAbstractItemView( parent ) {
   connect(scene, SIGNAL(reset()), this, SLOT(reset()));
   connect(this, SIGNAL(clearScene()), scene, SLOT(clearScene()));
-  this->view = view;
+
   this->model = model;
   this->scene = scene;
   setModel( model );
-  want_antialiasing = true;
-//   view->setDragMode(QGraphicsView::RubberBandDrag);
-//   view->setDragMode(QGraphicsView::ScrollHandDrag);
-  view->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
-  view->setScene( scene );
-
-/*#ifndef QT_NO_OPENGL
-  openGlButton->setEnabled(QGLFormat::hasOpenGL());
-#else
-  openGlButton->setEnabled(false);
-#endif
-
-#ifndef QT_NO_OPENGL
-  graphicsView->setViewport(openGlButton->isChecked() ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
-#endif
-  view->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)))*/;
-
-  //   SceneItem_FlexibleConnection* flex = new SceneItem_FlexibleConnection(scene);
-//   scene->addItem(flex);
-
-  // Special layout functionality should go here!
 }
 
 ItemView::~ItemView() { }
 
-void ItemView::toggleRenderHints() {
-  want_antialiasing = !want_antialiasing;
-  if ( want_antialiasing )
-    view->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
-  else
-    view->setRenderHints( QPainter::SmoothPixmapTransform );
-}
-
 QRect ItemView::visualRect( const QModelIndex &/*index*/ ) const {
-  return QRect()/*view->rect()*/;
+  return QRect();
 }
 
 void ItemView::scrollTo( const QModelIndex &/*index*/, ScrollHint /*hint*/ ) {
@@ -102,37 +73,37 @@ QRegion ItemView::visualRegionForSelection( const QItemSelection &/*selection*/ 
 void ItemView::reset() {
 //   qDebug() << __PRETTY_FUNCTION__;
   emit clearScene();
-  init();
+//   init();
 }
 
-void ItemView::init() {
-  qDebug() << __PRETTY_FUNCTION__;
-  for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
-//     qDebug() << "adding node i =" << i;
-    QModelIndex item = model->index( i, 0, QModelIndex() );
-    //FIXME not implemented yet//     
-//     scene->moduleInserted( QPersistentModelIndex( item ) );
-  }
-  for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
-//     qDebug() << "adding connection to node i =" << i;
-    QModelIndex item = model->index( i, 0, QModelIndex() );
-    for ( int x = 0; x < model->rowCount( item ); ++x ) {
-//       qDebug() << "adding connection x =" << x;
-      QModelIndex citem = model->index( x, 0, item );
-    //FIXME not implemented yet
-      //       scene->connectionInserted( QPersistentModelIndex( citem ) );
-    }
-  }
-//   qDebug() << __FUNCTION__ << "END";
-}
+// void ItemView::init() {
+//   qDebug() << __PRETTY_FUNCTION__;
+//   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
+// //     qDebug() << "adding node i =" << i;
+//     QModelIndex item = model->index( i, 0, QModelIndex() );
+//     //FIXME not implemented yet//     
+// //     scene->moduleInserted( QPersistentModelIndex( item ) );
+//   }
+//   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
+// //     qDebug() << "adding connection to node i =" << i;
+//     QModelIndex item = model->index( i, 0, QModelIndex() );
+//     for ( int x = 0; x < model->rowCount( item ); ++x ) {
+// //       qDebug() << "adding connection x =" << x;
+//       QModelIndex citem = model->index( x, 0, item );
+//     //FIXME not implemented yet
+//       //       scene->connectionInserted( QPersistentModelIndex( citem ) );
+//     }
+//   }
+// //   qDebug() << __FUNCTION__ << "END";
+// }
 
 void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
 //   qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
   for ( int i = start; i <= end; ++i ) {
     QModelIndex item = model->index( i, 0, parent );
-    if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE )
+    if ( model->data( item, customRole::TypeRole ).toInt() == DataType::MODULE )
       scene->moduleInserted( QPersistentModelIndex( item ) );
-    else if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE_CONNECTION )
+    else if ( model->data( item, customRole::TypeRole ).toInt() == DataType::CONNECTION )
          ; //FIXME not implemented yet
 //       scene->connectionInserted( QPersistentModelIndex( item ) );
   }
@@ -142,9 +113,9 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
 //   qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
   for ( int i = start; i <= end; ++i ) {
     QModelIndex item = model->index( i, 0, parent );
-    if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE )
+    if ( model->data( item, customRole::TypeRole ).toInt() == DataType::MODULE )
       scene->moduleRemoved( QPersistentModelIndex( item ) );
-    else if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE_CONNECTION )
+    else if ( model->data( item, customRole::TypeRole ).toInt() == DataType::CONNECTION )
       ;    //FIXME not implemented yet//scene->connectionRemoved( QPersistentModelIndex( item ) );
   }
 }
@@ -185,12 +156,12 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
   do {
 //     qDebug() << "dataChanged is now called()";
     switch (model->data( tmpIndex, customRole::TypeRole ).toInt()) {
-      case ViewTreeItemType::NODE:
+      case DataType::MODULE:
 //        qDebug() << __FUNCTION__ << "Node modification";
     //FIXME not implemented yet
 // scene->updateNode( QPersistentModelIndex( tmpIndex ) );
         break;
-      case ViewTreeItemType::NODE_CONNECTION:
+      case DataType::CONNECTION:
 //        qDebug() << __FUNCTION__ << "Connection modification";
     //FIXME not implemented yet
 //         scene->updateConnection( QPersistentModelIndex( tmpIndex ) );
@@ -202,7 +173,7 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
     if (tmpIndex == bottomRight)
       break;
     tmpIndex = traverseTroughIndexes( tmpIndex );
-  } while ( tmpIndex.isValid());
+  } while ( tmpIndex.isValid() );
 }
 
 void ItemView::layoutChanged(){

@@ -1,3 +1,8 @@
+2010-01-21
+ - modules are now inserted into the QGraphicsScene/QGraphicsView and can be moved
+ - class Model is nearly done, only minor additions (NO CHANGES ;-) need to be done
+ - QGraphicsItem(s) don't update them selfes and they don't query the model yet
+
 2010-01-10
  - GraphicsScene can now insert modules via rightclick
 

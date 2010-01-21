@@ -25,6 +25,7 @@
 #include <QObject>
 
 class GraphicsScene;
+class ItemView;
 class Model;
 
 class Document : QObject {
@@ -36,6 +37,7 @@ class Document : QObject {
   protected:
     Model* model;
     GraphicsScene* scene;
+    ItemView* itemView;
   protected Q_SLOTS:
     void CreateModuleSlot(QString, QPoint);
 };

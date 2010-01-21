@@ -11,10 +11,11 @@
 //
 #include "Module.h"
 
-Module::Module() : QGraphicsItem() {
+Module::Module(QPersistentModelIndex item) : QGraphicsItem() {
+  m_item = item;
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   w=100;
-  h=220;
+  h=120;
   x=100;
   y=0;
 }
@@ -58,14 +59,4 @@ QRectF Module::boundingRect() const {
 
 void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->drawRect(x, y, w, h);
-//   QGraphicsRectItem *f = scene.addRect(QRectF(0,0,100,20), QPen(), QBrush(Qt::black,Qt::FDiagPattern));
-//   f->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
-//
-//   QGraphicsRectItem *z = scene.addRect(QRectF(0,20,100,100), QPen(), QBrush());
-//   z->setParentItem(f);
-//
-//   QGraphicsTextItem* ti = new QGraphicsTextItem("noiseGen::perlin");
-//   ti->setParentItem(f);
-//   ti->moveBy(0,-20);
-//   f->moveBy(-200,0);
 }

@@ -9,15 +9,17 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+
+#include <QGraphicsView>
 #include "GraphicsScene.h"
 
-GraphicsScene::GraphicsScene() : QGraphicsScene() {
-    //FIXME this should be done using the model
-//     connect(&menu,SIGNAL(triggered(QAction*)),
-//             this, SLOT(menuSelectionMade(QAction*)));
+GraphicsScene::GraphicsScene( Model *model, QWidget * parent ) : QGraphicsScene() {
+  this->model = model;
+    connect(&menu,SIGNAL(triggered(QAction*)),
+            this, SLOT(menuSelectionMade(QAction*)));
 }
 
-// GraphicsScene::~GraphicsScene() {}
+GraphicsScene::~GraphicsScene() {}
 
 void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ) {
     // FIXME: add icons for each module
@@ -34,6 +36,8 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
 void GraphicsScene::menuSelectionMade(QAction* action) {
 //     qDebug() << "creating module: " << action->text() << " at pos: "
 //     << screenPos.x() << "x" << screenPos.y();;
+  QPointF pos = views().first()->mapToScene ( views().first()->mapFromGlobal ( QCursor::pos() ) );
+
   emit CreateModuleSignal(action->text(), screenPos);
 }
 
@@ -42,11 +46,13 @@ void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames)
 }
 
 QGraphicsItem* GraphicsScene::moduleInserted( QPersistentModelIndex item ) {
-//   qDebug() << __FUNCTION__;
+  qDebug() << __PRETTY_FUNCTION__;
   Module* module = new Module( item );
+  // FIXME if an item is added to a scene() maybe the item can use that event to do updateModule ( module)
+  //       instead of calling it here again
   addItem( module );
-//   module->setPos( model->data(item, customRole::PosRole).toPoint() );
-//   updateNode( node );
+  module->setPos( model->data(item, customRole::PosRole).toPoint() );
+//   updateModule( module );
   return module;
 }
 
@@ -65,7 +71,7 @@ bool GraphicsScene::moduleRemoved( QPersistentModelIndex item ) {
 }
 
 QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
-  QList<QGraphicsItem *> m_list = items();
+/*  QList<QGraphicsItem *> m_list = items();
 //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
 //   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
   for ( int i = 0; i < m_list.size(); ++i ) {
@@ -85,7 +91,7 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
     }
   }
   qDebug() << "FATAL: failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found, exiting";
-  exit(1);
+  exit(1);*/
   return NULL;
 }
 

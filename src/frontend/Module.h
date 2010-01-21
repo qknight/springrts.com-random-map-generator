@@ -13,6 +13,7 @@
 #define MODULE_H
 
 #include <QGraphicsItem>
+#include <QPersistentModelIndex>
 #include <QPainter>
 #include <QDebug>
 
@@ -21,9 +22,10 @@
 */
 class Module : public QGraphicsItem {
   public:
-    Module();
+    Module(QPersistentModelIndex item);
     ~Module();
   private:
+    QPersistentModelIndex m_item;
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

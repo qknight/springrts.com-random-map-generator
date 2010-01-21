@@ -41,14 +41,14 @@ class ItemView : public QAbstractItemView {
   Q_OBJECT
   public:
     /*! constructor */
-    ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWidget * parent );
+    ItemView( GraphicsScene* scene, Model *model, QWidget * parent = NULL);
     /*! destructor */
     ~ItemView();
   private:
     /*! enabled/disables antialiasing rendering */
     bool want_antialiasing;
     /*! a QGraphicsScene can have several views in theory, we only have one but that can be extended later */
-    QGraphicsView* view;
+//     QGraphicsView* view;
     /*! we only have one scene which this graphicsView should visualize */
     GraphicsScene* scene;
     /*! we only have one model which this graphicsView should visualize */
@@ -84,14 +84,14 @@ class ItemView : public QAbstractItemView {
     QModelIndex traverseTroughIndexes( QModelIndex index );
   public slots:
     /*! helper slot for renderHints */
-    void toggleRenderHints();
+//     void toggleRenderHints();
   protected slots:
     /*! helper function to implement a reset call for a custom view, see implementation */
     void reset();
     /*! helper function to implement a layoutChanged call for a custom view, not implemented yet */
     void layoutChanged();
     /*! in a new view this will query all data to create a layout and to have all items in the scene */
-    void init();
+//     void init();
   signals:
     /*! helper signal for reset() call */
     void clearScene();

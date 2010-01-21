@@ -1,4 +1,8 @@
 ------- current plan (near objectives): -------
+- the QGraphicsScene must be modded to implement a QAbstractItemView
+ - basic module frontends must be created (adapted since most basics are engineered already)
+- 'class Document' needs better integration yet
+
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
   -rootNode                -rootNode
@@ -27,12 +31,9 @@
       color       |  #afafaf
       pos         |  234,234
       ...
-
-- the QGraphicsScene must be modded to implement a QAbstractItemView
- - basic module frontends must be created (adapted since most basics are engineered already)
-- 'class Document' needs better integration yet
-- model.cpp must list available modules (that means modules which are registered @ModuleFactory and not
-  module which are already loaded (added to the data structure)
+  possible solution:
+   i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
+   can use data(...) and setData(...) which will update it's data and as well as the other views data.
 
 
 - libNoise (backend) and 

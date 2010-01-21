@@ -41,13 +41,13 @@ namespace customRole {
   };
 }
 
-namespace ViewTreeItemType {
+namespace DataType {
   // the idea behind yet another type identifier is that we map the types below via the model to the
   // types defined in DataAbstractItem.h (see TreeItemType in DataAbstractItem.h)
   enum TreeItemType {
-    AUTOMATE_ROOT,
-    NODE,
-    NODE_CONNECTION,
+    DATA_ROOT,
+    MODULE,
+    CONNECTION,
     UNKNOWN
   };
 }
@@ -59,6 +59,7 @@ namespace ViewTreeItemType {
 */
 class Model : public QAbstractItemModel {
     friend class Document;
+    friend class GraphicsScene;
     friend class ItemView;
 
   protected:

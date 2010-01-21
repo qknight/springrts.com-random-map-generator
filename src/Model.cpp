@@ -148,15 +148,9 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 //   if ( role == customRole::CustomLabelRole )
 //     return n->getProperty( "CustomLabelRole" );
 
-//   if ( role == customRole::FinalRole )
-//     if ( n->getObjectType() == NODE )
-//       return n->getProperty( "final" );
-//   if ( role == customRole::PosRole )
-//     if ( n->getObjectType() == NODE )
-//       return n->getProperty( "pos" );
-//   if ( role == customRole::StartRole )
-//     if ( n->getObjectType() == NODE )
-//       return n->getProperty( "start" );
+  if ( role == customRole::PosRole )
+    if ( n->getObjectType() == DataType::MODULE )
+      return n->property( "pos" );
 //   if ( role == customRole::SymbolIndexRole )
 //     if ( n->getObjectType() == NODE_CONNECTION ) {
 //       DataConnection* nc = static_cast<DataConnection*>( index.internalPointer() );

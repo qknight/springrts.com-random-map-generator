@@ -20,10 +20,13 @@
 #include "Document.h"
 #include "Model.h"
 #include "GraphicsScene.h"
+#include "ItemView.h"
 
 Document::Document() {
     model = new Model;
-    scene = new GraphicsScene;
+    scene = new GraphicsScene(model);
+    itemView = new ItemView(scene, model);
+    
     scene->setLoadableModuleNames(model->LoadableModuleNames());
     connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
 	    this, SLOT(CreateModuleSlot(QString,QPoint)));
