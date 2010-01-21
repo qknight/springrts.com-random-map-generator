@@ -1,5 +1,5 @@
 //
-// C++ Interface: modulePort
+// C++ Interface: Port
 //
 // Description:
 //
@@ -15,19 +15,18 @@
 #include <QGraphicsItem>
 #include <QPainter>
 
-#include "modulePortConnection.h"
+class Connection;
 
-class modulePortConnection;
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class modulePort : public QGraphicsItem
+class Port : public QGraphicsItem
 {
   public:
-    QVector<modulePortConnection*> arrows;
+    QVector<Connection*> arrows;
   public:
-    modulePort(QGraphicsItem * parent = 0);
-    ~modulePort();
+    Port(QGraphicsItem * parent = 0);
+    ~Port();
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);
     QRectF boundingRect() const;

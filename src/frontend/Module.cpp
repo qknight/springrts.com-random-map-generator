@@ -1,5 +1,5 @@
 //
-// C++ Implementation: visualModuleItem
+// C++ Implementation: Module
 //
 // Description:
 //
@@ -9,9 +9,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "visualModuleItem.h"
+#include "Module.h"
 
-visualModuleItem::visualModuleItem() : QGraphicsItem() {
+Module::Module() : QGraphicsItem() {
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   w=100;
   h=220;
@@ -19,7 +19,7 @@ visualModuleItem::visualModuleItem() : QGraphicsItem() {
   y=0;
 }
 
-visualModuleItem::~visualModuleItem() {
+Module::~Module() {
   if (children().size() > 0) {
     // when removing a graphical item, this must always be done from the lower layer (by the Model)
     // WARNING this comment might be wrong, didn't check it yet 2010-01-06 (js)
@@ -37,9 +37,9 @@ visualModuleItem::~visualModuleItem() {
   }
 }
 
-void visualModuleItem::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){ }
+void Module::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){ }
 
-QVariant visualModuleItem::itemChange ( GraphicsItemChange change, const QVariant & value ){
+QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ){
     if (change == QGraphicsItem::ItemPositionChange) {
 //       foreach (QGraphicsItem* child, children()) {
 //         modulePort* child_ = static_cast<modulePort*>(child);
@@ -50,13 +50,13 @@ QVariant visualModuleItem::itemChange ( GraphicsItemChange change, const QVarian
   return value;
 }
 
-QRectF visualModuleItem::boundingRect() const {
+QRectF Module::boundingRect() const {
     qreal penWidth = 1;
     return QRectF(x - penWidth / 2, y - penWidth / 2,
                   w + penWidth / 2, h + penWidth / 2);
 }
 
-void visualModuleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     painter->drawRect(x, y, w, h);
 //   QGraphicsRectItem *f = scene.addRect(QRectF(0,0,100,20), QPen(), QBrush(Qt::black,Qt::FDiagPattern));
 //   f->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);

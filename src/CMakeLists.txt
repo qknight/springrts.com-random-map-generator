@@ -24,7 +24,6 @@ SET( srmg_SOURCES
   main.cpp
   MainWidget.cpp
   ModuleFactory.cpp
-  GraphicsScene.cpp
   Model.cpp
   Document.cpp
   registermodule_macro.cpp
@@ -36,9 +35,11 @@ SET( srmg_SOURCES
   backend/DataConnection.cpp 
 
   # libnoise module frontends -> QGraphicsScene items
-  frontend/modulePort.cpp
-  frontend/modulePortConnection.cpp
-  frontend/visualModuleItem.cpp
+  frontend/GraphicsScene.cpp
+  frontend/ItemView.cpp
+  frontend/Module.cpp
+  frontend/Port.cpp
+  frontend/Connection.cpp
 
   # libnoise module backends
   modules/NoiseGenBillow.cpp
@@ -49,7 +50,6 @@ SET( srmg_SOURCES
 
 SET( srmg_MOC_HEADERS
   MainWidget.h
-  GraphicsScene.h
   ModuleFactory.h
   Document.h
 
@@ -58,6 +58,10 @@ SET( srmg_MOC_HEADERS
   backend/DataRoot.h 
   backend/DataAbstractModule.h
   backend/DataConnection.h 
+
+# frontend 
+  frontend/GraphicsScene.h
+  frontend/ItemView.h
 )
 
 SET( srmg_UIs

@@ -1,5 +1,5 @@
 //
-// C++ Interface: visualModuleItem
+// C++ Interface: Module
 //
 // Description:
 //
@@ -9,22 +9,20 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef VISUALMODULEITEM_H
-#define VISUALMODULEITEM_H
+#ifndef MODULE_H
+#define MODULE_H
 
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QDebug>
 
-#include "modulePort.h"
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class visualModuleItem : public QGraphicsItem
-{
+class Module : public QGraphicsItem {
   public:
-    visualModuleItem();
-    ~visualModuleItem();
+    Module();
+    ~Module();
   private:
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;

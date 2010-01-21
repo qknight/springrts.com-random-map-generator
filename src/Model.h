@@ -59,6 +59,7 @@ namespace ViewTreeItemType {
 */
 class Model : public QAbstractItemModel {
     friend class Document;
+    friend class ItemView;
 
   protected:
     /*! a root node is mendatory to query for child items */

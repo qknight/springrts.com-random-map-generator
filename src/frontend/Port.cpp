@@ -1,5 +1,5 @@
 //
-// C++ Implementation: modulePort
+// C++ Implementation: Port
 //
 // Description:
 //
@@ -9,27 +9,28 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "modulePort.h"
+#include "Port.h"
+#include "Connection.h"
 
-modulePort::modulePort(QGraphicsItem * parent) : QGraphicsItem(parent){
+Port::Port(QGraphicsItem * parent) : QGraphicsItem(parent) {
 }
 
-QVariant modulePort::itemChange ( GraphicsItemChange change, const QVariant & value ){
+QVariant Port::itemChange ( GraphicsItemChange change, const QVariant & value ){
     if (change == QGraphicsItem::ItemPositionChange) {
-      foreach (modulePortConnection *arrow, arrows) {
+      foreach (Connection *arrow, arrows) {
         arrow->updatePosition();
       }
     }
   return value;
 }
 
-QRectF modulePort::boundingRect() const {
+QRectF Port::boundingRect() const {
          qreal penWidth = 1;
          return QRectF(-10 - penWidth / 2, -10 - penWidth / 2,
                        20 + penWidth / 2, 20 + penWidth / 2);
 }
 
-void modulePort::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)     {
+void Port::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)     {
   QPen oldpen = painter->pen();
   QPen p(Qt::black, 1);
   QBrush oldbrush = painter->brush();
@@ -49,7 +50,7 @@ void modulePort::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
   painter->setBrush(oldbrush);
 }
 
-modulePort::~modulePort(){
+Port::~Port(){
 
 }
 
