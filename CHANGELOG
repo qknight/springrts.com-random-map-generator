@@ -1,7 +1,9 @@
 2010-01-21
+ - adding modules using the QMenu context menu on the scene now is partially fixed,
+   still the QCursor position is used instead of the QMenu position
  - modules are now inserted into the QGraphicsScene/QGraphicsView and can be moved
  - class Model is nearly done, only minor additions (NO CHANGES ;-) need to be done
- - QGraphicsItem(s) don't update them selfes and they don't query the model yet
+ - QGraphicsItem(s) don't update them selfs and they don't query the model yet
 
 2010-01-10
  - GraphicsScene can now insert modules via rightclick

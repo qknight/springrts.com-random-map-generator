@@ -23,6 +23,10 @@ MainWidget::~MainWidget() {
 void MainWidget::changeActiveDocument ( Document* doc ) {
   listView->setModel(doc->model);
   graphicsView->setScene ( doc->scene );
+//   int width=800;
+//   int height=600;
+//   graphicsView->setSceneRect(QRect(-width/2,-height/2,width,height));
+//   doc->scene->setSceneRect(QRect(-width/2,-height/2,width,height));
   connect ( doc->scene, SIGNAL ( selectionChanged() ),
               this, SLOT ( selectionChanged() ) );
 }

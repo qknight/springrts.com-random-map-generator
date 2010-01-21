@@ -65,8 +65,8 @@ class GraphicsScene : public QGraphicsScene {
 //     void insertNode();
 //     void insertNode(QPoint pos);
     
-//   protected slots:
-//     void clearScene();
+  protected slots:
+    void clearScene();
 
   private Q_SLOTS:
     /*! the current selection of items changes, for example when some nodes or

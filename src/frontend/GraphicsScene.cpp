@@ -26,7 +26,6 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
     screenPos = contextMenuEvent->screenPos();
     // create menu
     menu.clear();
-    //FIXME this should be done using the model
     for (int i=0; i < loadableModuleNames.size(); i++) {
         menu.addAction(loadableModuleNames[i]);
     }
@@ -34,11 +33,18 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
 }
 
 void GraphicsScene::menuSelectionMade(QAction* action) {
-//     qDebug() << "creating module: " << action->text() << " at pos: "
-//     << screenPos.x() << "x" << screenPos.y();;
-  QPointF pos = views().first()->mapToScene ( views().first()->mapFromGlobal ( QCursor::pos() ) );
-
-  emit CreateModuleSignal(action->text(), screenPos);
+//   qDebug() << "creating module: " << action->text() << " at pos: " << screenPos.x() << "x" << screenPos.y();;
+  if (!(views().size())) {
+    qDebug() << "Error: no view is attached to this scene, this should not happen!, exiting";
+    exit(1);
+  }
+  QGraphicsView* view = views().first(); 
+//   QMenu* menu = action->menu()->pos();
+//   if (menu == NULL)
+//     return;
+//   QPoint menupos = menu->pos();
+  QPoint pos = view->mapToScene ( view->mapFromGlobal ( QCursor::pos() ) ).toPoint();
+  emit CreateModuleSignal(action->text(), pos);
 }
 
 void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames) {
@@ -46,7 +52,7 @@ void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames)
 }
 
 QGraphicsItem* GraphicsScene::moduleInserted( QPersistentModelIndex item ) {
-  qDebug() << __PRETTY_FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
   Module* module = new Module( item );
   // FIXME if an item is added to a scene() maybe the item can use that event to do updateModule ( module)
   //       instead of calling it here again
@@ -102,3 +108,5 @@ bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPers
     return false;
   return true;
 }
+
+void GraphicsScene::clearScene() {}

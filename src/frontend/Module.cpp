@@ -16,7 +16,7 @@ Module::Module(QPersistentModelIndex item) : QGraphicsItem() {
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   w=100;
   h=120;
-  x=100;
+  x=0;
   y=0;
 }
 
@@ -53,10 +53,12 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
 
 QRectF Module::boundingRect() const {
     qreal penWidth = 1;
-    return QRectF(x - penWidth / 2, y - penWidth / 2,
-                  w + penWidth / 2, h + penWidth / 2);
+    return QRectF(x - penWidth / 2, -15 + y - penWidth / 2,
+                  w + penWidth / 2, 15 + h + penWidth / 2);
 }
 
 void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    painter->drawRect(x, y, w, h);
+  painter->drawRect(x, y, w, h);
+  painter->drawText(QPoint(0,0),"hello world");
+
 }

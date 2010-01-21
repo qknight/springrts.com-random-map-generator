@@ -30,6 +30,9 @@ Document::Document() {
     scene->setLoadableModuleNames(model->LoadableModuleNames());
     connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
 	    this, SLOT(CreateModuleSlot(QString,QPoint)));
+    
+//     model->insertModule("NoiseGen::Billow", QPoint(0,0));
+//     model->insertModule("NoiseGen::Billow", QPoint(400,0));
 }
 
 Document::~Document() {

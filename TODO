@@ -1,7 +1,9 @@
 ------- current plan (near objectives): -------
-- the QGraphicsScene must be modded to implement a QAbstractItemView
- - basic module frontends must be created (adapted since most basics are engineered already)
-- 'class Document' needs better integration yet
+- graphicsview must position right over 0/0 above the scene
+ - adding an item will not move the scene
+ - moving an item might scroll the scene if the item is towards a border
+- create PORTs/CONNECTIONs
+- let QGraphicsItem(s) query the model with modelData(..)/setModelData(..)
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
