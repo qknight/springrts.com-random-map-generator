@@ -38,7 +38,8 @@ void GraphicsScene::menuSelectionMade(QAction* action) {
     qDebug() << "Error: no view is attached to this scene, this should not happen!, exiting";
     exit(1);
   }
-  QGraphicsView* view = views().first(); 
+  QGraphicsView* view = views().first();
+  //FIXME we need to use the QMenu::pos() instead of QCursor::pos();
 //   QMenu* menu = action->menu()->pos();
 //   if (menu == NULL)
 //     return;
@@ -110,3 +111,5 @@ bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPers
 }
 
 void GraphicsScene::clearScene() {}
+
+

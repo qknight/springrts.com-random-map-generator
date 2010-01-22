@@ -1,9 +1,20 @@
 ------- current plan (near objectives): -------
 - graphicsview must position right over 0/0 above the scene
  - adding an item will not move the scene
- - moving an item might scroll the scene if the item is towards a border
-- create PORTs/CONNECTIONs
+   POSSIBLE FIX: doc->scene->setSceneRect(QRect(-width/2,-height/2,width,height));
+    but using this results in no scrollbars and the scene does not exapand at all....
+
+- moving an item might scroll the scene if the item is towards a border
+ FIX: reimplement mouseMoveEvent as the documentation about ScrollHandDrag or 
+      similar referes to, see libnoise-viewer where i have done that already
+ 
+- doubleclicking in the property dialog on a module should not trigger an editor but instead
+  focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
+ 
+- item must be inserted where the contextmenu popped up first 
+  GraphicsScene.cpp ~ line 40
 - let QGraphicsItem(s) query the model with modelData(..)/setModelData(..)
+- create PORTs/CONNECTIONs
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
@@ -41,6 +52,7 @@
 - libNoise (backend) and 
 - libNoiseAbstraction (frontend) need to be created
   for the former two tasks i probably need bison
+    http://www.developer.com/net/cplus/article.php/3642516/Classic-Parsing-with-Flex-and-Bison
 
 - integrate libNoise-view
 
@@ -76,6 +88,9 @@ modifier modules
 selector modules
  Blend
  Select
+ 
+spring specific
+ mapgenerator
 
 new moduels which might be nice:
  - rain simulation (also known as erosion)

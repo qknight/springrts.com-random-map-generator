@@ -36,6 +36,7 @@ SET( srmg_SOURCES
 
   # libnoise module frontends -> QGraphicsScene items
   frontend/GraphicsScene.cpp
+  frontend/GraphicsView.cpp
   frontend/ItemView.cpp
   frontend/Module.cpp
   frontend/Port.cpp
@@ -61,6 +62,7 @@ SET( srmg_MOC_HEADERS
 
 # frontend 
   frontend/GraphicsScene.h
+  frontend/GraphicsView.h
   frontend/ItemView.h
 )
 

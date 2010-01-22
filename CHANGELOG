@@ -1,3 +1,5 @@
+2010-01-22
+ - view can now be moved but items can't be selected anymore ;P
 2010-01-21
  - adding modules using the QMenu context menu on the scene now is partially fixed,
    still the QCursor position is used instead of the QMenu position

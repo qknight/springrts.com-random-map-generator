@@ -53,13 +53,15 @@ class GraphicsScene : public QGraphicsScene {
     /*! we handle all keyboard events here, this is only interrupted when an item got focus */
 //     void keyPressEvent( QKeyEvent * keyEvent );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
-//     void mousePressEvent( QGraphicsSceneMouseEvent * event );
+//     void mousePressEvent ( QMouseEvent * event );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
-//     void mouseMoveEvent( QGraphicsSceneMouseEvent * event );
+//     void mouseMoveEvent( QMouseEvent * event );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
-//     void mouseReleaseEvent( QGraphicsSceneMouseEvent * event );
+//     void mouseReleaseEvent( QMouseEvent * event );
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
 
+
+    
 //   public slots:
     /*! when a user want's to add a node we need to call this function which will request a node on the model side*/
 //     void insertNode();
