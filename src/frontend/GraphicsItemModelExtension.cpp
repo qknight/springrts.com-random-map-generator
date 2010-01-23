@@ -17,33 +17,18 @@
 
 */
 
-#include "Document.h"
-#include "Model.h"
+#include "GraphicsItemModelExtension.h"
 #include "GraphicsScene.h"
-#include "ItemView.h"
 
-Document::Document() {
-    model = new Model;
-    scene = new GraphicsScene(model);
-    itemView = new ItemView(scene, model);
-    
-    scene->setLoadableModuleNames(model->LoadableModuleNames());
-    connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
-	    this, SLOT(CreateModuleSlot(QString,QPoint)));
-    
-//   model->insertModule("NoiseGen::Billow", QPoint(0,0));
-//   model->insertModule("NoiseGen::Billow", QPoint(400,0));
-//   scene->addLine(-500,-500,-500,-501);
-//   scene->addLine(500,500,500,501);
-  scene->addLine(-100,0,100,0);
-  scene->addLine(0,-100,0,100);
+GraphicsItemModelExtension::GraphicsItemModelExtension(Model* model) {
+  this->model=model;
 }
 
-Document::~Document() {
-    delete scene;
-    delete model;
+QVariant GraphicsItemModelExtension::modelData( const QModelIndex &index, int role ) const {
+  return model->data( index, role );
 }
 
-void Document::CreateModuleSlot(QString type, QPoint position) {
-  model->insertModule(type, position);
+bool GraphicsItemModelExtension::setModelData( const QModelIndex & index, const QVariant & value, int role ) {
+  return model->setData( index, value, role );
 }
+

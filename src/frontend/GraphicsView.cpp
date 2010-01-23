@@ -55,9 +55,7 @@ void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
         QRectF v = sceneRect();
         v.moveTo(v.x()+xdiff, v.y()+ydiff);
         setSceneRect(v);
-
-	qDebug() << "you are looking at x/y = " << v.x() << " " << v.y();
-//         emit absoluteViewMoveSignal(sceneRect());
+// 	qDebug() << "you are looking at x/y = " << v.x() << " " << v.y();
     }
     QGraphicsView::mouseMoveEvent(event);
 

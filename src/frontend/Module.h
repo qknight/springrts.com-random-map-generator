@@ -17,15 +17,21 @@
 #include <QPainter>
 #include <QDebug>
 
+#include "Model.h"
+#include "GraphicsItemModelExtension.h"
+
+class Port;
+
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Module : public QGraphicsItem {
+class Module : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
-    Module(QPersistentModelIndex item);
+    Module(QPersistentModelIndex item, Model* model);
     ~Module();
   private:
     QPersistentModelIndex m_item;
+    QString m_label;
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

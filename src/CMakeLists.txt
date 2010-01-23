@@ -41,6 +41,7 @@ SET( srmg_SOURCES
   frontend/Module.cpp
   frontend/Port.cpp
   frontend/Connection.cpp
+  frontend/GraphicsItemModelExtension.cpp
 
   # libnoise module backends
   modules/NoiseGenBillow.cpp

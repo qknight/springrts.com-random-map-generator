@@ -54,7 +54,7 @@ void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames)
 
 QGraphicsItem* GraphicsScene::moduleInserted( QPersistentModelIndex item ) {
 //   qDebug() << __PRETTY_FUNCTION__;
-  Module* module = new Module( item );
+  Module* module = new Module( item, model );
   // FIXME if an item is added to a scene() maybe the item can use that event to do updateModule ( module)
   //       instead of calling it here again
   addItem( module );

@@ -58,6 +58,7 @@ namespace DataType {
 **  and a view MUST NOT know anything about that -> all data must be queried/written using the model
 */
 class Model : public QAbstractItemModel {
+    friend class GraphicsItemModelExtension;
     friend class Document;
     friend class GraphicsScene;
     friend class ItemView;

@@ -1,4 +1,7 @@
 2010-01-23
+ - QGraphicsItem(s) in automate have the 'model extension' given by a multiple inheritence 'inheriting class'
+   using GraphicsItemModelExtension now makes data(..)/setData(..) very easy! ;)
+
  - graphicsview must position right over 0/0 above the scene
  - adding an item SHOULD NOT move the VIEW (GraphicsView)
    POSSIBLE FIX: doc->scene->setSceneRect(QRect(-width/2,-height/2,width,height));

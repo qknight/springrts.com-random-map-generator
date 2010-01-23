@@ -32,10 +32,6 @@ class GraphicsScene : public QGraphicsScene {
     GraphicsScene( Model *model, QWidget * parent = NULL );
     /*! destructor */
     ~GraphicsScene();
-    /*! a wrapper function for all items in the scene, so that they can call data() directly */
-    QVariant data( const QModelIndex &index, int role ) const;
-    /*! a wrapper function for all items in the scene, so that they can call setData() directly */
-    bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
   protected:
     QGraphicsItem* moduleInserted( QPersistentModelIndex item );
 //     void moduleUpdated( QPersistentModelIndex item );
