@@ -1,3 +1,28 @@
+2010-01-23
+ - graphicsview must position right over 0/0 above the scene
+ - adding an item SHOULD NOT move the VIEW (GraphicsView)
+   POSSIBLE FIX: doc->scene->setSceneRect(QRect(-width/2,-height/2,width,height));
+    but using this results in no scrollbars and the scene does not exapand at all....
+   FINAL FIX
+      void GraphicsView::resizeEvent(QResizeEvent* event) {
+        QRectF v = sceneRect();
+        setSceneRect(v.x(),v.y(),v.width(),v.height());
+      } 
+ - moving an item SHOULD NOT expand the VIEW
+   POSSIBLE FIX: rewrite the resize() and keep it at width()/height() instead of the
+                 real scene's sceneRect() which can be greater
+   FINAL FIX
+      see void GraphicsView::resizeEvent(QResizeEvent* event) {
+
+ - the scrollbars should indicated NOT how big the document is BUT instead
+   they should scroll the view in the range most left item <-> most right item
+   and top vs bottom items equivalent
+   FIX no scrollbars for the moment
+
+ - moving an item MUST NOT scroll the scene if the item is towards a border
+  FIX: reimplement mouseMoveEvent as the documentation about ScrollHandDrag or 
+       similar referes to, see libnoise-viewer where i have done that already
+  FIX: the QGraphisView (or GraphicsView) must have a fixed width/height and MUST NOT resize!
 2010-01-22
  - view can now be moved but items can't be selected anymore ;P
 2010-01-21

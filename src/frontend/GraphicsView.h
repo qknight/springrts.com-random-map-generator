@@ -34,6 +34,8 @@ class GraphicsView : public QGraphicsView {
     void mousePressEvent ( QMouseEvent * event );
     void mouseMoveEvent( QMouseEvent * event );
     void mouseReleaseEvent( QMouseEvent * event );
+    
+    void resizeEvent(QResizeEvent* event);
 };
 
 #endif // GRAPHICSVIEW_H

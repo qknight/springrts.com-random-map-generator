@@ -35,26 +35,39 @@ void GraphicsView::mousePressEvent ( QMouseEvent * event ) {
         y=event->y();
         onmove=true;
     }
+    QGraphicsView::mousePressEvent(event);
 }
 
 void GraphicsView::mouseReleaseEvent ( QMouseEvent * event ) {
     onmove=false;
+    QGraphicsView::mouseReleaseEvent(event);
 }
 
 void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
     if (onmove == true) {
         int xdiff = x - event->x();
         int ydiff = y - event->y();
-	
-	// x and y store the old values so we can compute the difference
+
+        // x and y store the old values so we can compute the difference
         x = event->x();
         y = event->y();
-	
+
         QRectF v = sceneRect();
         v.moveTo(v.x()+xdiff, v.y()+ydiff);
         setSceneRect(v);
 
-// 	qDebug() << "you are looking at x/y = " << v.x()+ width()/2 << " " << v.y()+ height()/2;
+	qDebug() << "you are looking at x/y = " << v.x() << " " << v.y();
 //         emit absoluteViewMoveSignal(sceneRect());
     }
+    QGraphicsView::mouseMoveEvent(event);
+
 }
+
+void GraphicsView::resizeEvent(QResizeEvent* event) {
+  QRectF v = sceneRect();
+//   qDebug() << v;
+  setSceneRect(v.x(),v.y(),v.width(),v.height());
+}
+
+
+

@@ -1,12 +1,4 @@
 ------- current plan (near objectives): -------
-- graphicsview must position right over 0/0 above the scene
- - adding an item will not move the scene
-   POSSIBLE FIX: doc->scene->setSceneRect(QRect(-width/2,-height/2,width,height));
-    but using this results in no scrollbars and the scene does not exapand at all....
-
-- moving an item might scroll the scene if the item is towards a border
- FIX: reimplement mouseMoveEvent as the documentation about ScrollHandDrag or 
-      similar referes to, see libnoise-viewer where i have done that already
  
 - doubleclicking in the property dialog on a module should not trigger an editor but instead
   focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
@@ -55,6 +47,12 @@
     http://www.developer.com/net/cplus/article.php/3642516/Classic-Parsing-with-Flex-and-Bison
 
 - integrate libNoise-view
+- integrate spring map exporter
+- integrate height-colorizer and height-texturizer
+  the height-c0olorizer is easy to implement and gives a basic look&feel for the heightmap
+  the height-texturizer is basically the same but instead of applying a color it inserts
+  textures, the textures do have a fixed orientation. later this might be adapted to reflect
+  the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 
 ------- modules todo: --------
 utils modules
@@ -94,7 +92,8 @@ spring specific
 
 new moduels which might be nice:
  - rain simulation (also known as erosion)
- - blur filter (imagemagick filters in general)
+ - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
+                the same image, the same goes for intel vs spark)
 
 ---- workflow analysis: how to generate a map ----
 this is a guideline which helps me to define the problem i try to solve:

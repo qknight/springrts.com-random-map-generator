@@ -464,9 +464,10 @@ bool Model::hasChildren ( const QModelIndex & parent ) const {
 
 Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
   //FIXME only make setData able fields editable
-  if ( !index.isValid() )
+//   if ( !index.isValid() )
     return 0;
   return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable;
+  
 }
 
 bool Model::insertModule(QString type, QPoint pos) {

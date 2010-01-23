@@ -35,8 +35,8 @@ Document::Document() {
 //     model->insertModule("NoiseGen::Billow", QPoint(400,0));
 //   scene->addLine(-500,-500,-500,-501);
 //   scene->addLine(500,500,500,501);
-//   scene->addLine(-100,0,100,0);
-//   scene->addLine(0,-100,0,100);
+  scene->addLine(-100,0,100,0);
+  scene->addLine(0,-100,0,100);
   scene->addText("this is 0/0");
 }
 
