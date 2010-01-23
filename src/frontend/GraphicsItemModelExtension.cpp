@@ -32,3 +32,4 @@ bool GraphicsItemModelExtension::setModelData( const QModelIndex & index, const 
   return model->setData( index, value, role );
 }
 
+

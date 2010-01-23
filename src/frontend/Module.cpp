@@ -13,13 +13,13 @@
 #include "Port.h"
 
 Module::Module(QPersistentModelIndex item, Model* model) : QGraphicsItem(), GraphicsItemModelExtension(model) {
-  m_item = item;
+  this->item = item;
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   w=100;
   h=120;
   x=0;
   y=0;
-  m_label = modelData(item, Qt::DisplayRole).toString();
+  updateData();
 }
 
 Module::~Module() {
@@ -60,6 +60,18 @@ QRectF Module::boundingRect() const {
 }
 
 void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+  if (isSelected()) {
+    painter->save();
+    QBrush b(QColor(Qt::red));
+    painter->setBrush(b);
+    painter->drawRect(x, y, w, h);
+    painter->restore();
+  }
   painter->drawRect(x, y, w, h);
   painter->drawText(QPoint(0,0),m_label);
 }
+
+void Module::updateData() {
+  m_label = modelData(item, Qt::DisplayRole).toString();
+}
+

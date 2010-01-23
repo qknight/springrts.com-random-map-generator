@@ -23,10 +23,9 @@ MainWidget::~MainWidget() {
 void MainWidget::changeActiveDocument ( Document* doc ) {
   listView->setModel(doc->model);
   graphicsView->setScene ( doc->scene );
-//   int width=800;
-//   int height=600;
-//   graphicsView->setSceneRect(QRect(-width/2,-height/2,width,height));
-//   doc->scene->setSceneRect(QRect(-width/2,-height/2,width,height));
+  //FIXME this breaks multi document support since we must disconnect this signal on doc change
+  connect (listView, SIGNAL(doubleClicked ( const QModelIndex & ) ),
+	   doc->scene, SLOT(listViewWantsItemFocus ( const QModelIndex & ) ));
   connect ( doc->scene, SIGNAL ( selectionChanged() ),
               this, SLOT ( selectionChanged() ) );
 }

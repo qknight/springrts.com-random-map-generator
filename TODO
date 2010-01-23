@@ -1,14 +1,10 @@
 ------- current plan (near objectives): ------- 
-
 - doubleclicking in the property dialog on a module should not trigger an editor but instead
   focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
- 
-- QGraphicsItem(s) model extension should be integrated the way i did it in the 'automate' project
-
-- QGraphicsItem(s) should be 'centered' on insertion meaning that the mouse should be the center
+  -> nearly done with that, still the slot is not called, ... why?
+- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
   when inserting, either center the item itself or on insertion see width/height of the item
   and insert it at -width()/2,-height()/2
-
 - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
   GraphicsScene.cpp ~ line 40
 

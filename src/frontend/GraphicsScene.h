@@ -90,6 +90,7 @@ class GraphicsScene : public QGraphicsScene {
     void setLoadableModuleNames(QVector<QString> loadableModuleNames);
 public Q_SLOTS:
     void menuSelectionMade(QAction* action);
+    void listViewWantsItemFocus ( const QModelIndex & ) ;
 
 };
 

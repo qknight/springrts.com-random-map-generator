@@ -25,7 +25,10 @@
 #include "Model.h"
 
 /*!
- * and this is a central place for all items to query the model for data/setData
+ * this class is used to extend normal QGraphicsItem deriving classes since
+ * it enables items to query the model for data/setData
+ *
+ * due to the fact that QGraphicsItem(s) also have setData/data the functions were renamed
  */
 class GraphicsItemModelExtension {
   public:
@@ -37,6 +40,7 @@ class GraphicsItemModelExtension {
     bool setModelData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
   private:
     Model* model;
+    void virtual updateData()=0;
 };
 
 #endif // GRAPHICSITEMMODELEXTENSION_H
