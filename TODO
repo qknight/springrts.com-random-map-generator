@@ -60,6 +60,7 @@
   the height-texturizer is basically the same but instead of applying a color it inserts
   textures, the textures do have a fixed orientation. later this might be adapted to reflect
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
+- integrate xml save/load functionality
 
 ------- modules todo: --------
 utils modules

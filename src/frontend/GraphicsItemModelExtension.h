@@ -40,6 +40,7 @@ class GraphicsItemModelExtension {
     bool setModelData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
   private:
     Model* model;
+    // this function is called by the model to update the item
     void virtual updateData()=0;
 };
 
