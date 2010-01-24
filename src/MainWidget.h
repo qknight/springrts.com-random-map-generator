@@ -14,7 +14,7 @@
 class MainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
     Q_OBJECT
 public:
-    MainWidget(QMainWindow *parent=0);
+    MainWidget(QMainWindow* parent=0);
     ~MainWidget();
 
 private:
@@ -23,7 +23,7 @@ private:
     /*! this project has multi document support and this function call will change the document in use*/
     void changeActiveDocument(Document* doc);
 
-private slots:
+private Q_SLOTS:
     void save();
     void load();
     void documentation();
@@ -31,7 +31,7 @@ private slots:
     void hidePropertyDialog();
     void unhidePropertyDialog();
 
-public slots:
+public Q_SLOTS:
     void selectionChanged();
 };
 

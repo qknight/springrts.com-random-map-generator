@@ -12,8 +12,7 @@
 #include "Module.h"
 #include "Port.h"
 
-Module::Module(QPersistentModelIndex item, Model* model) : QGraphicsItem(), GraphicsItemModelExtension(model) {
-  this->item = item;
+Module::Module(Model* model, QPersistentModelIndex item) : QGraphicsItem(), GraphicsItemModelExtension(model, item) {
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   w=100;
   h=120;
@@ -72,6 +71,5 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 }
 
 void Module::updateData() {
-  m_label = modelData(item, Qt::DisplayRole).toString();
+  m_label = modelData(Qt::DisplayRole).toString();
 }
-

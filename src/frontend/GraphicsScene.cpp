@@ -54,12 +54,9 @@ void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames)
 
 QGraphicsItem* GraphicsScene::moduleInserted( QPersistentModelIndex item ) {
 //   qDebug() << __PRETTY_FUNCTION__;
-  Module* module = new Module( item, model );
-  // FIXME if an item is added to a scene() maybe the item can use that event to do updateModule ( module)
-  //       instead of calling it here again
+  Module* module = new Module( model,item );
   addItem( module );
   module->setPos( model->data(item, customRole::PosRole).toPoint() );
-//   updateModule( module );
   return module;
 }
 
@@ -79,28 +76,30 @@ bool GraphicsScene::moduleRemoved( QPersistentModelIndex item ) {
 
 QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
   //FIXME this code does not work yet
-//   QList<QGraphicsItem *> m_list = items();
-// //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
-// //   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
-//   for ( int i = 0; i < m_list.size(); ++i ) {
-//     if ( m_list[i]->type() == ItemType::MODULE ) {
-//       if ( compareIndexes((( Module * )m_list[i] )->index, index ) ) {
-// //         qDebug() << "node found";
-//         return m_list[i];
-//       }
-//     }
-//     if ( m_list[i]->type() == ItemType::CONNECTION ) {
-// //       qDebug() << "  -->> trying:  " << (( SceneItem_Connection * )m_list[i] )->index.row() <<  " " <<
-//       (( Connection * )m_list[i] )->index.column();
-//       if ( compareIndexes((( Connection * )m_list[i] )->index, index ) ) {
-// //         qDebug() << "connection found";
-//         return m_list[i];
-//       }
-//     }
-//   }
-//   qDebug() << "FATAL: failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found, exiting";
-//   exit(1);
-return NULL;
+  QList<QGraphicsItem *> m_list = items();
+//   qDebug() << "=== searching in: " << m_list.size() << " items ====";
+//   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
+  for ( int i = 0; i < m_list.size(); ++i ) {
+//     qDebug() << m_list[i]->type(); // 65536 fail
+//     qDebug() << DataType::MODULE; // 1 ok
+    if ( m_list[i]->type() == DataType::MODULE ) {
+//       qDebug() << "match";
+      if ( compareIndexes((( Module * )m_list[i] )->index(), index ) ) {
+//         qDebug() << "node found";
+        return m_list[i];
+      }
+    }
+    if ( m_list[i]->type() == DataType::CONNECTION ) {
+//       qDebug() << "  -->> trying:  " << (( SceneItem_Connection * )m_list[i] )->index.row() <<  " " <<
+      (( Connection * )m_list[i] )->index().column();
+      if ( compareIndexes((( Connection * )m_list[i] )->index(), index ) ) {
+//         qDebug() << "connection found";
+        return m_list[i];
+      }
+    }
+  }
+  qDebug() << "FATAL: failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found, exiting";
+  exit(1);
 }
 
 bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
@@ -113,9 +112,9 @@ bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPers
 
 void GraphicsScene::clearScene() {}
 
-void GraphicsScene::listViewWantsItemFocus ( const QModelIndex & ) {
-  qDebug() << "here";
-  // 1. QModelIndex to QGraphicsItem traversion
-  // QGraphicsItem* item = modelToSceenIndex(QPersistentModelIndex(QModelIndex));
-  // 2. scene->centerOn(item);
+void GraphicsScene::listViewWantsItemFocus ( const QModelIndex & index) {
+  QGraphicsItem* item = modelToSceenIndex(QPersistentModelIndex(index));
+  if (views().size()){
+    views().first()->centerOn(item);
+  }
 }

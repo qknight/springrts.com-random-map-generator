@@ -4,6 +4,7 @@
 
 #include <QGraphicsLineItem>
 #include "Port.h"
+#include "GraphicsItemModelExtension.h"
 
 class QGraphicsPolygonItem;
 class QGraphicsLineItem;
@@ -14,15 +15,13 @@ class QPainterPath;
 
 class Port;
 
-class Connection : public QGraphicsLineItem
-{
+class Connection : public QGraphicsLineItem, public GraphicsItemModelExtension {
 public:
-    enum { Type = UserType + 4 };
-
-    Connection(Port *startItem, Port *endItem,
-      QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+    Connection(QPersistentModelIndex index, Model* model, Port *startItem, Port *endItem,
+      QGraphicsItem *parent = 0);
+      void updateData();
     int type() const
-        { return Type; }
+        { return DataType::CONNECTION; }
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setColor(const QColor &color)
@@ -35,7 +34,6 @@ public:
 
 public slots:
     void updatePosition();
-//     void updatePosition(int x, int y);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,

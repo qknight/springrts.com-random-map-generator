@@ -1,3 +1,9 @@
+2010-01-24
+ - QGraphicsItem(s) query the model with modelData(..)/setModelData(..) and they use
+   GraphicsItemModelExtension for that which is also an abstract base class to force
+   the final item to implement type() and some other functions which are very important
+   for the QGraphicsScene <-> QAbstractItemModel overlay to be there.
+
 2010-01-23
  - QGraphicsItem(s) in automate have the 'model extension' given by a multiple inheritence 'inheriting class'
    using GraphicsItemModelExtension now makes data(..)/setData(..) very easy! ;)

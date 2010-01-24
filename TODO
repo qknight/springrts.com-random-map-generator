@@ -7,12 +7,10 @@
   and insert it at -width()/2,-height()/2
 - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
   GraphicsScene.cpp ~ line 40
-
 - scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
   they should indicated the document width()/height() and making it work might be by using
   POSSIBLE FIX: centerOn(..) or scroll(..)
 
-- let QGraphicsItem(s) query the model with modelData(..)/setModelData(..)
 - create PORTs/CONNECTIONs
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:

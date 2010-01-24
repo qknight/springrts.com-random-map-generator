@@ -22,6 +22,8 @@
 #define MODEL_H
 
 #include <QAbstractItemModel>
+#include <QPoint>
+#include "DataType.h"
 
 class Document;
 class ModuleFactory;
@@ -30,7 +32,6 @@ class DataRoot;
 class DataAbstractModule;
 class DataConnection;
 
-#include <QPoint>
 
 namespace customRole {
   enum CustomRole {
@@ -41,16 +42,16 @@ namespace customRole {
   };
 }
 
-namespace DataType {
-  // the idea behind yet another type identifier is that we map the types below via the model to the
-  // types defined in DataAbstractItem.h (see TreeItemType in DataAbstractItem.h)
-  enum TreeItemType {
-    DATA_ROOT,
-    MODULE,
-    CONNECTION,
-    UNKNOWN
-  };
-}
+// namespace DataType {
+//   // the idea behind yet another type identifier is that we map the types below via the model to the
+//   // types defined in DataAbstractItem.h (see TreeItemType in DataAbstractItem.h)
+//   enum TreeItemType {
+//     DATA_ROOT,
+//     MODULE,
+//     CONNECTION,
+//     UNKNOWN
+//   };
+// }
 
 /*! this is one of the core parts of this work and this code is very important in regards of syncing
 **  the different views (as TreeView/GraphicsView)

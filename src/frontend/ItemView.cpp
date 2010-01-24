@@ -35,11 +35,12 @@ ItemView::ItemView( GraphicsScene* scene, Model *model, QWidget * parent ) : QAb
 ItemView::~ItemView() { }
 
 QRect ItemView::visualRect( const QModelIndex &/*index*/ ) const {
+    qDebug() << __PRETTY_FUNCTION__;
   return QRect();
 }
 
 void ItemView::scrollTo( const QModelIndex &/*index*/, ScrollHint /*hint*/ ) {
-
+  qDebug() << __PRETTY_FUNCTION__;
 }
 
 QModelIndex ItemView::indexAt( const QPoint &/*point*/ ) const {
@@ -63,10 +64,11 @@ bool ItemView::isIndexHidden( const QModelIndex &/*index*/ ) const {
 }
 
 void ItemView::setSelection( const QRect &/*rect*/, QItemSelectionModel::SelectionFlags /*command*/ ) {
-
+  qDebug() << __PRETTY_FUNCTION__;
 }
 
 QRegion ItemView::visualRegionForSelection( const QItemSelection &/*selection*/ ) const {
+    qDebug() << __PRETTY_FUNCTION__;
   return QRegion();
 }
 

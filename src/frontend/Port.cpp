@@ -12,7 +12,7 @@
 #include "Port.h"
 #include "Connection.h"
 
-Port::Port(QGraphicsItem * parent) : QGraphicsItem(parent) {
+Port::Port(Model* model, QPersistentModelIndex item, QGraphicsItem * parent) : QGraphicsItem(parent), GraphicsItemModelExtension(model, item) {
 }
 
 QVariant Port::itemChange ( GraphicsItemChange change, const QVariant & value ){

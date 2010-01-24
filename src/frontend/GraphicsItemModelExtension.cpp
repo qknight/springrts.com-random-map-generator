@@ -19,17 +19,21 @@
 
 #include "GraphicsItemModelExtension.h"
 #include "GraphicsScene.h"
+#include "Model.h"
 
-GraphicsItemModelExtension::GraphicsItemModelExtension(Model* model) {
+GraphicsItemModelExtension::GraphicsItemModelExtension(Model* model, QPersistentModelIndex index) {
   this->model=model;
+  m_index = index;
 }
 
-QVariant GraphicsItemModelExtension::modelData( const QModelIndex &index, int role ) const {
-  return model->data( index, role );
+QVariant GraphicsItemModelExtension::modelData(int role ) const {
+  return model->data( m_index, role );
 }
 
-bool GraphicsItemModelExtension::setModelData( const QModelIndex & index, const QVariant & value, int role ) {
-  return model->setData( index, value, role );
+bool GraphicsItemModelExtension::setModelData( const QVariant & value, int role ) {
+  return model->setData( m_index, value, role );
 }
 
-
+QPersistentModelIndex GraphicsItemModelExtension::index() {
+  return m_index;
+}

@@ -14,18 +14,19 @@
 
 #include <QGraphicsItem>
 #include <QPainter>
+#include "GraphicsItemModelExtension.h"
 
 class Connection;
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Port : public QGraphicsItem
+class Port : public QGraphicsItem, public GraphicsItemModelExtension
 {
   public:
     QVector<Connection*> arrows;
   public:
-    Port(QGraphicsItem * parent = 0);
+    Port( Model* model, QPersistentModelIndex item, QGraphicsItem * parent = 0);
     ~Port();
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);

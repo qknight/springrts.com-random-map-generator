@@ -22,7 +22,9 @@
 
 #include <QPersistentModelIndex>
 #include <QGraphicsScene>
-#include "Model.h"
+#include "DataType.h"
+
+class Model;
 
 /*!
  * this class is used to extend normal QGraphicsItem deriving classes since
@@ -31,17 +33,24 @@
  * due to the fact that QGraphicsItem(s) also have setData/data the functions were renamed
  */
 class GraphicsItemModelExtension {
+  friend class GraphicsScene;
   public:
-    GraphicsItemModelExtension(Model* model);
+    GraphicsItemModelExtension(Model* model, QPersistentModelIndex index);
   protected:
+    QPersistentModelIndex index();
     /*! a wrapper function for all items in the scene, so that they can call data() directly */
-    QVariant modelData( const QModelIndex &index, int role ) const;
+    QVariant modelData(  int role ) const;
     /*! a wrapper function for all items in the scene, so that they can call setData() directly */
-    bool setModelData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
+    bool setModelData( const QVariant & value, int role = Qt::EditRole );
   private:
     Model* model;
-    // this function is called by the model to update the item
-    void virtual updateData()=0;
+    /*! this function is called by the model to update the item and therefore must be implemented,
+     *  it is also called from the constructor of an QGraphicsItem inheriting class to initialize
+     *  the item right before the first paint() call */
+    void virtual updateData() = 0;
+    int virtual type() const = 0;
+    QPersistentModelIndex m_index;
+
 };
 
 #endif // GRAPHICSITEMMODELEXTENSION_H

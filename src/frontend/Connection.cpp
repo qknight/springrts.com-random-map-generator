@@ -5,8 +5,8 @@
 
 const qreal Pi = 3.14;
 
-Connection::Connection(Port *startItem, Port *endItem, QGraphicsItem *parent, QGraphicsScene *scene)
-    : QGraphicsLineItem(parent, scene)
+Connection::Connection(QPersistentModelIndex index, Model* model, Port *startItem, Port *endItem, QGraphicsItem *parent)
+    : QGraphicsLineItem(parent), GraphicsItemModelExtension(model, index)
 {
     myStartItem = startItem;
     myEndItem = endItem;
@@ -15,8 +15,7 @@ Connection::Connection(Port *startItem, Port *endItem, QGraphicsItem *parent, QG
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
 
-QRectF Connection::boundingRect() const
-{
+QRectF Connection::boundingRect() const {
 //     qreal extra = (pen().width() + 20) / 2.0;
 
 /*    return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
@@ -29,8 +28,7 @@ QRectF Connection::boundingRect() const
   return QRectF(-2000,-2000,4000,4000);
 }
 
-QPainterPath Connection::shape() const
-{
+QPainterPath Connection::shape() const {
     QPainterPath path = QGraphicsLineItem::shape();
     path.addPolygon(arrowHead);
     return path;
@@ -67,4 +65,8 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     QPainterPath myPath(QPoint(beginPoint.x(),beginPoint.y()));
     myPath.cubicTo(beginPoint+QPoint(stretch,0),endPoint-QPoint(stretch,0),QPoint(endPoint.x(),endPoint.y()));
     painter->drawPath(myPath);
+}
+
+void Connection::updateData() {
+  //nothing to do here
 }

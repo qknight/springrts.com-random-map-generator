@@ -17,7 +17,6 @@
 #include <QPainter>
 #include <QDebug>
 
-#include "Model.h"
 #include "GraphicsItemModelExtension.h"
 
 class Port;
@@ -27,10 +26,12 @@ class Port;
  */
 class Module : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
-    Module(QPersistentModelIndex item, Model* model);
+    Module(Model* model, QPersistentModelIndex item);
     ~Module();
   private:
-    QPersistentModelIndex item;
+   int type() const
+    { return DataType::MODULE; }
+
     QString m_label;
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;
