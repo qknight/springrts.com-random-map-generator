@@ -1,5 +1,8 @@
 ------- current plan (near objectives): ------- 
-- modify Model.h/cpp to reflect multiple port types in/mod/out and undirected connections
+- modify Model.h/cpp insertConnection()
+ - Model.cpp insertConnection needs rewriting
+ - DataAbstractModule (insertConnection function equivalent needs rewriting)
+
 - create PORTs
   - input
   - midput

@@ -135,7 +135,8 @@ class Model : public QAbstractItemModel {
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint(), QString type=QString());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
-    
+    bool insertConnection(QPersistentModelIndex* src, int srcPort, 
+			     QPersistentModelIndex* dst, int dstPort);
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)
     ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>

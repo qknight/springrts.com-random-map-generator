@@ -383,49 +383,7 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 }
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
-  if (count > 1) {
-    qDebug() << __PRETTY_FUNCTION__ << "FATAL: currently not implemented and this also might need some testing, exiting";
-    exit(1);
-  }
-
-  // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
-  if ( !parent.isValid() ) { 
-    beginInsertRows( parent, row, row + count - 1 );
-    {
-      DataAbstractModule* module = moduleFactory->CreateModule(type);
-//       node* n = new node(rootItem);
-      module->setProperty( "pos", pos );
-      module->setProperty( "type", type );
-      if (module != NULL) {
-	module->setParent( rootItem ); // FIXME CRITICAL: this should probably be done inside the rootItem itself! ;P
-	rootItem->appendChild( module );
-// 	qDebug() << __PRETTY_FUNCTION__ << ": created a new module";
-      } else {
-	qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
-	exit(1);
-      }
-    }
-    endInsertRows();
-    return true;
-  }
-  if ( data( parent, customRole::TypeRole ) == DataItemType::DATAABSTRACTMODULE ) {
-    DataAbstractItem* abstractitem = static_cast<DataAbstractItem*>( parent.internalPointer() );
-//     int id = abstractitem->getId();
-//     qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
-    beginInsertRows( parent, row, row + count - 1 );
-    {
-      int i = count ;
-      while ( i-- ) {
-        DataConnection* dc = new DataConnection( abstractitem );
-        abstractitem->appendChild( dc );
-      }
-    }
-    endInsertRows();
-    return true;
-  }
-  qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
-  exit(1);
-  return false;
+  // this function is not used, use insertModule and insertConnection instead
 }
 
 bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
@@ -467,254 +425,52 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
 //   if ( !index.isValid() )
     return 0;
   return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable;
-  
 }
 
 bool Model::insertModule(QString type, QPoint pos) {
-  return insertRows( rowCount( QModelIndex() ), 1, QModelIndex(), pos, type);
+  int row = rowCount( QModelIndex() );
+
+  // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
+    beginInsertRows( QModelIndex(), row, row + 0 );
+    {
+      DataAbstractModule* module = moduleFactory->CreateModule(type);
+//       node* n = new node(rootItem);
+      module->setProperty( "pos", pos );
+      module->setProperty( "type", type );
+      if (module != NULL) {
+	module->setParent( rootItem ); // FIXME CRITICAL: this should probably be done inside the rootItem itself! ;P
+	rootItem->appendChild( module );
+// 	qDebug() << __PRETTY_FUNCTION__ << ": created a new module";
+      } else {
+	qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
+	exit(1);
+      }
+    }
+    endInsertRows();
+    return true;
 }
+
+bool Model::insertConnection(QPersistentModelIndex* src, int srcPort, 
+			     QPersistentModelIndex* dst, int dstPort) {
+  int row = rowCount( QModelIndex() );
+//   if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
+//     DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
+//     int id = srcItem->getId();
+// //     qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
+//     beginInsertRows( parent, row, row + 0 );
+//     {
+//         DataConnection* dc = new DataConnection( srcItem );
+//         srcItem->appendChild( dc );
+//     }
+//     endInsertRows();
+//     return true;
+//   }
+  qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
+  exit(1);
+//   return false;
+}
+
 
 QVector<QString> Model::LoadableModuleNames() {
     return moduleFactory->LoadableModuleNames();
 }
-
-
-
-
-
-
-
-// DataAbstractItem* Model::DataAbstractItemFromId( unsigned int id ) {
-//   foreach( DataAbstractItem* item, rootItem->childItems() )
-//   if ( item->getId() == id )
-//     return item;
-//   return NULL;
-// }
-
-// unsigned int Model::getTreeItemType( const QModelIndex& item ) {
-//   if ( !item.isValid() )
-//     return UNKNOWN;
-// 
-//   DataAbstractItem* t = static_cast<DataAbstractItem*>( item.internalPointer() );
-// 
-//   return ( t->getObjectType() );
-// }
-// 
-// 
-// QModelIndex Model::getQModelIndexFromAbstractNodeItem( DataAbstractItem* item ) {
-//   DataAbstractItem* t;
-//   QModelIndex ret;
-//   QModelIndex z;
-//   switch ( item->getObjectType() ) {
-//   case AUTOMATE_ROOT:
-//     break;
-//   case NODE:
-//     ret = index( item->row(), 0, QModelIndex() );
-// //     qDebug() << NODE << " NODE with row()=" << item->row() << " with id n" << item->getId();
-//     t = static_cast<DataAbstractItem*>( ret.internalPointer() );
-// //     qDebug() << ( unsigned int ) t << "id = " << t->getId();
-// //     qDebug() << objectTypeQString(t->getObjectType());
-// //     qDebug() << "this NODE has " << t->childCount() << " childs" ;
-//     return ret;
-//   case NODE_CONNECTION:
-//     z = getQModelIndexFromAbstractNodeItem( item->parent() );
-//     ret = index( item->row(), 0, z );
-// //     qDebug() << NODE_CONNECTION  << " NODE_CONNECTION with row()=" << item->row() << " with id c" << item->getId();
-//     t = static_cast<DataAbstractItem*>( ret.internalPointer() );
-// //     qDebug() << ( unsigned int ) t;
-//     return ret;
-//   default:
-//     qDebug() << "In " << __FILE__ << ", " << __FUNCTION__ << " something went very wrong!";
-//     exit( 0 );
-//   }
-//   return QModelIndex();
-// }
-
-// QString Model::objectTypeQString( unsigned int input ) {
-//   switch ( input ) {
-//   case AUTOMATE_ROOT:
-//     return "AUTOMATE_ROOT";
-//   case NODE:
-//     return "NODE";
-//   case NODE_CONNECTION:
-//     return "NODE_CONNECTION";
-//   case UNKNOWN:
-//     return "UNKNOWN";
-//   }
-//   return "?";
-// }
-
-// QModelIndex Model::next_nodeModelIndex( QModelIndex cItem ) {
-//   if ( getTreeItemType( cItem ) == NODE_CONNECTION ) {
-//     DataConnection* t = static_cast<DataConnection*>( cItem.internalPointer() );
-//     if ( t->next_node() != NULL )
-//       return getQModelIndexFromAbstractNodeItem( t->next_node() );
-//   }
-//   return QModelIndex();
-// }
-
-/*
-** inserts a connection to the given node
-**  if a vaild endItem is given modifications are made in place to point to the endItem
-**  if not then a local loop is created
-*/
-// bool Model::insertConnection( QModelIndex startItem, QModelIndex endItem ) {
-// //   qDebug() << "startitem: n" << data( startItem, customRole::IdRole ).toInt();
-//   if ( getTreeItemType( startItem ) != NODE )  
-//     return false;
-//   
-//   int row = rowCount( startItem );
-//   bool success = insertRows( row, 1, startItem );
-//   if ( success && endItem.isValid() ) {
-// //     qDebug() << "enditem: n" << data( endItem, customRole::IdRole ).toInt();
-// 
-//     QModelIndex cItem = index( row, 0, startItem );
-// //     qDebug() << "cItem: c" << data( cItem, customRole::IdRole ).toInt();
-//     DataAbstractItem* dest_ptr = static_cast<DataAbstractItem*>( endItem.internalPointer() );
-// 
-//     DataAbstractItem* n = static_cast<DataAbstractItem*>( cItem.internalPointer() );
-//     DataConnection* nc = static_cast<DataConnection*>( n );
-// 
-//     nc->setNext_node( dest_ptr );
-//     emit dataChanged( cItem, cItem );
-//   }
-//   return success;
-// }
-
-// bool Model::removeConnection( QPersistentModelIndex connection ) {
-//   if ( !connection.isValid() ) {
-//     qDebug() << "connection is not a valid QModelIndex (anymore?), not deleting anything";
-//     return true;
-//   }
-// 
-// //   qDebug() << "removing a connection";
-//   return removeRow( connection.row(), connection.parent() );
-// }
-
-// bool Model::removeConnections( QList<QPersistentModelIndex> nodeList ) {
-// //   qDebug() << __FUNCTION__;
-//   bool s = true;
-//   foreach( QModelIndex item, nodeList ) {
-//     if ( !item.isValid() ) {
-//       // this can happen when you delete a node since all connections to and from it are deleted implicitly
-//       // but the selection still has some connections in the list of items to be deleted
-// //       qDebug() << __FUNCTION__ << "WARNING: QModelIndex is not valid anymore, skipping a deletion";
-//       continue;
-//     } else {
-//       if ( !removeConnection( item ) && s )
-//         s = false;
-//     }
-//   }
-//   return s;
-// }
-
-// bool Model::removeItems( QList<QPersistentModelIndex> itemList ) {
-//   QList<QPersistentModelIndex> nodeItems;
-//   QList<QPersistentModelIndex> connectionItems;
-//   foreach( QModelIndex m, itemList ) {
-//     if ( !m.isValid() ) {
-//       qDebug() << __FUNCTION__ << "FATAL ERROR: QModelIndex is not valid anymore, may|must NOT happen here!, exiting";
-//       exit(1);
-//     }
-//     if ( getTreeItemType( m ) == NODE )
-//       nodeItems.append( QPersistentModelIndex( m ) );
-// 
-//     if ( getTreeItemType( m ) == NODE_CONNECTION )
-//       connectionItems.append( QPersistentModelIndex( m ) );
-//   }
-//   return removeNodes( nodeItems ) && removeConnections( connectionItems );
-// }
-
-/// this function is provided for convenience
-// bool Model::removeNodes( QList<QPersistentModelIndex> nodeList ) {
-//   bool s = true;
-//   foreach( QModelIndex item, nodeList ) {
-//     if ( !item.isValid() ) {
-//       // this should never happen
-//       qDebug() << __FUNCTION__ << "FATAL ERROR: QModelIndex for a node is not valid anymore";
-//       exit(1);
-//     } else {
-//       if ( !removeNode( item ) && s )
-//         s = false;
-//     }
-//   }
-//   return s;
-// }
-
-/*
-** removeNodes removes NODEs only
-** removing a node implies:
-**  - delete all outgoing connections
-**  - delete all incomming connections (references)
-**  - delete the node itself
-*/
-// bool Model::removeNode( QPersistentModelIndex abstractQModelIndex ) {
-// //   qDebug() << __FUNCTION__;
-//   // FIXME code below should be removable
-//   if ( !abstractQModelIndex.isValid() ) {
-//     qDebug() << "FATAL ERROR: abstractQModelIndex is not a valid QModelIndex (anymore?), exiting";
-//     exit(1);
-//   }
-// 
-//   if ( getTreeItemType( abstractQModelIndex ) == NODE ) {
-// //     qDebug() << "   ###### object to delete is a node ######";
-//     // for all childs which are connections
-//     //     delete connection
-// //     qDebug() << "     ###### step one: delete all childs ######";
-//     node* n = static_cast<node*>( abstractQModelIndex.internalPointer() );
-//     if ( n->childCount() ) {
-// //       qDebug() << "removing " << n->childCount() << " child items";
-//       removeRows( 0, n->childCount(), abstractQModelIndex );
-//     }
-// 
-//     //   for all reverse connections to this connection
-// //     qDebug() << "     ###### step two: delete all references (connections) to this node ######";
-// 
-// //     qDebug() << "n" << n->getId() << " has " << n->reverseChildItems().size() << " reverse connections";
-//     while ( n->reverseChildItems().size() ) {
-// //       qDebug() << "deleting the first connection from " << n->reverseChildItems().size()  << " which are to be deleted";
-//       DataConnection* r_item = static_cast<DataConnection*>( n->reverseChildItems().first() );
-// 
-//       // find the f_item for this r_item
-//       DataConnection* f_item = r_item->inverseConnection;
-//       QModelIndex f_itemIndex = getQModelIndexFromAbstractNodeItem( f_item );
-//       if ( f_itemIndex == QModelIndex() ) {
-//         qDebug() << __FUNCTION__ << "FATAL ERROR: object f_item was expected to be a valid node* item but something is wrong.";
-//         exit( 0 );
-//       }
-//       removeConnection( f_itemIndex );
-//     }
-// 
-// //     qDebug() << "     ###### step three: delete this node ######";
-// //       qDebug() << "found " << objectTypeQString( getSelectedItemType( abstractQModelIndex.parent() ) );
-//     removeRow( abstractQModelIndex.row(), abstractQModelIndex.parent() );
-//   } else {
-//     qDebug() << "WARNING: removeNodes should remove an object which is no NODE?! maybe use removeItems(...)";
-//     exit( 0 );
-//   }
-// //   qDebug() << __FUNCTION__ << "END: return success";
-//   return true;
-// }
-
-// QString Model::symbol( int symbol_index ) const {
-//   return (( AutomateRoot* )rootItem )->symbol( symbol_index );
-// }
-
-// int Model::symbol( QString symbol ) {
-//   return (( AutomateRoot* )rootItem )->symbol( symbol );
-// }
-// 
-// int Model::modifySymbol( int position, QString newsymbol ) {
-//   return (( AutomateRoot* )rootItem )->modifySymbol( position, newsymbol );
-// }
-// 
-// int Model::size() {
-//   return (( AutomateRoot* )rootItem )->size();
-// }
-
-// void Model::clear() {
-// //   qDebug() << __PRETTY_FUNCTION__ << " -> there are " << rowCount(QModelIndex()) << " items to be removed first";
-//   while(rowCount(QModelIndex())) {
-//     removeNode(index(0,0,QModelIndex()));
-//   }
-// }
