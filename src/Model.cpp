@@ -450,21 +450,20 @@ bool Model::insertModule(QString type, QPoint pos) {
     return true;
 }
 
-bool Model::insertConnection(QPersistentModelIndex* src, int srcPort, 
-			     QPersistentModelIndex* dst, int dstPort) {
-  int row = rowCount( QModelIndex() );
-//   if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
-//     DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
-//     int id = srcItem->getId();
-// //     qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
-//     beginInsertRows( parent, row, row + 0 );
-//     {
-//         DataConnection* dc = new DataConnection( srcItem );
-//         srcItem->appendChild( dc );
-//     }
-//     endInsertRows();
-//     return true;
-//   }
+bool Model::insertConnection(QPersistentModelIndex* src, int srcPort, int srcType, 
+			     QPersistentModelIndex* dst, int dstPort, int dstType) {
+  int row = rowCount( src );
+  if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
+    DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
+    DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
+    beginInsertRows( src, row, row + 0 );
+    {
+        DataConnection* dc = new DataConnection( srcItem , dstItem);
+        srcItem->appendChild( dc );
+    }
+    endInsertRows();
+    return true;
+  }
   qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
   exit(1);
 //   return false;

@@ -2,13 +2,15 @@
 - modify Model.h/cpp insertConnection()
  - Model.cpp insertConnection needs rewriting
  - DataAbstractModule (insertConnection function equivalent needs rewriting)
+ - DataConnection.cpp/.h needs rewriting
 
 - create PORTs
   - input
   - midput
   - output
 - create CONNECTIONs
-- make items removable & create shortcuts for that, say 'enf'
+- make items removable & create shortcuts for that as 'del'
+- set bounding box selection using a modifier key, say ctrl
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
