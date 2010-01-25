@@ -9,13 +9,14 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "Model.h"
 #include "Module.h"
 #include "Port.h"
 
 Module::Module(Model* model, QPersistentModelIndex item) : QGraphicsItem(), GraphicsItemModelExtension(model, item) {
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
-  QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
-//   (labelItem);
+  /*QGraphicsTextItem* labelItem =*/ new QGraphicsTextItem(m_label, this);
+  createPorts(model,item);
   w=100;
   h=120;
   x=0;
@@ -73,4 +74,31 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 void Module::updateData() {
   m_label = modelData(Qt::DisplayRole).toString();
+}
+
+/*!
+ * when a new Module is created on the GraphicsScene we need to add ports to the 
+ * module. Connections are added later, from Port to Port
+ */
+void Module::createPorts(Model* model, QPersistentModelIndex item) {
+  // inputs
+  for (int i=0; i < modelData(customRole::InputsRole).toInt(); ++i) {
+    Port* p = new Port(model, item, this);  
+    ports.push_back(p);
+    p->moveBy(0,20+i*40);
+  }
+  
+  // modputs
+  for (int i=0; i < modelData(customRole::ModputsRole).toInt(); ++i) {
+    Port* p = new Port(model, item, this);  
+    ports.push_back(p);
+    p->moveBy(50+i*20,120);
+  }
+  
+  // outputs
+  for (int i=0; i < modelData(customRole::OutputsRole).toInt(); ++i) {
+    Port* p = new Port(model, item, this);  
+    ports.push_back(p);
+    p->moveBy(100,20+i*40);
+  }
 }

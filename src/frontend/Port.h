@@ -21,8 +21,7 @@ class Connection;
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Port : public QGraphicsItem, public GraphicsItemModelExtension
-{
+class Port : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
     QVector<Connection*> connections;
   public:
@@ -33,6 +32,9 @@ class Port : public QGraphicsItem, public GraphicsItemModelExtension
     QRectF boundingRect() const;
     // input=0, modput=1, output=2
     int orientation;
+    void updateData() {};
+   int type() const
+    { return DataType::PORT; }
   protected:
     QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
 };

@@ -29,8 +29,10 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
     Module(Model* model, QPersistentModelIndex item);
     ~Module();
   private:
+    QVector<Port*> ports;
    int type() const
     { return DataType::MODULE; }
+    void createPorts(Model* model, QPersistentModelIndex item);
 
     QString m_label;
 //     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );

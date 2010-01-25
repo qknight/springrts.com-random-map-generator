@@ -22,7 +22,7 @@
 #include <QDebug>
 
 GraphicsView::GraphicsView(QWidget * parent) : QGraphicsView(parent) {
-    setDragMode(QGraphicsView::ScrollHandDrag);
+//     setDragMode(QGraphicsView::ScrollHandDrag);
     onmove=false;
 }
 
@@ -55,6 +55,7 @@ void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
         QRectF v = sceneRect();
         v.moveTo(v.x()+xdiff, v.y()+ydiff);
         setSceneRect(v);
+// 	centerOn(v.x()+xdiff,v.y()+ydiff);
 // 	qDebug() << "you are looking at x/y = " << v.x() << " " << v.y();
     }
     QGraphicsView::mouseMoveEvent(event);
@@ -63,7 +64,7 @@ void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
 
 void GraphicsView::resizeEvent(QResizeEvent* event) {
   QRectF v = sceneRect();
-//   qDebug() << v;
+  qDebug() << v;
   setSceneRect(v.x(),v.y(),v.width(),v.height());
 }
 

@@ -8,6 +8,7 @@ namespace DataType {
     DATA_ROOT,
     MODULE,
     CONNECTION,
+    PORT,
     UNKNOWN
   };
 }

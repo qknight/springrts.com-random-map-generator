@@ -151,6 +151,23 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
   if ( role == customRole::PosRole )
     if ( n->getObjectType() == DataType::MODULE )
       return n->property( "pos" );
+  if ( role == customRole::InputsRole )
+    if ( n->getObjectType() == DataType::MODULE ) {
+
+      DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
+      return am->ports(PortType::INPUT);
+    }
+  if ( role == customRole::ModputsRole )
+    if ( n->getObjectType() == DataType::MODULE ) {
+      DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
+      return am->ports(PortType::MODPUT);
+    }
+  if ( role == customRole::OutputsRole )
+    if ( n->getObjectType() == DataType::MODULE ) {
+      DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
+      return am->ports(PortType::OUTPUT);
+    }
+
 //   if ( role == customRole::SymbolIndexRole )
 //     if ( n->getObjectType() == NODE_CONNECTION ) {
 //       DataConnection* nc = static_cast<DataConnection*>( index.internalPointer() );
@@ -452,7 +469,7 @@ bool Model::insertModule(QString type, QPoint pos) {
 
 bool Model::insertConnection(QPersistentModelIndex* src, int srcPort, int srcType, 
 			     QPersistentModelIndex* dst, int dstPort, int dstType) {
-  int row = rowCount( src );
+/*  int row = rowCount( src );
   if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
     DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
     DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
@@ -465,8 +482,8 @@ bool Model::insertConnection(QPersistentModelIndex* src, int srcPort, int srcTyp
     return true;
   }
   qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
-  exit(1);
-//   return false;
+  exit(1);*/
+  return false;
 }
 
 

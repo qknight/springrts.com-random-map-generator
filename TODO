@@ -229,9 +229,13 @@ A) input, modput, output are the 3 possible port types all represented by a Port
    is a usually a child of a Module
  
    2 possible ways to add a connection:
-   model->insertConnection(Port* srcPort, Port* dstPort); // convenient function where Port is a QGraphicsItem
-   model->insertConnection(QGraphicsItem* srcModule, int srcPortNumber,
-			   QGraphicsItem* dstModule, int dstPortNumber);
+   graphicsscene->insertConnection(Port* srcPort, Port* dstPort); // convenient function where Port is a QGraphicsItem
+     will translate into:
+   model->insertConnection(QGraphicsItem* srcModule, int srcPortNumber, int srcType,
+			   QGraphicsItem* dstModule, int dstPortNumber, int dstType);
+
+Q) how do we track backward connections? how was it done in the 'automate' project?
+A) 
 
 ----- later fixing ------
 - clicking in the property dialog on a module should not trigger an editor but instead

@@ -21,10 +21,6 @@
 #include "DataAbstractModule.h"
 
 DataConnection::DataConnection( DataAbstractItem* parent ) : DataAbstractItem( parent ) {
-//   ID = generateUniqueID( getObjectType() );
-  m_next_node = NULL;
-  inverseConnection = NULL;
-  //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
 DataConnection::~DataConnection() {
@@ -58,12 +54,9 @@ unsigned int DataConnection::getObjectType() {
 }
 
 void DataConnection::removeChild( unsigned int index ) {
-  if (( unsigned int )m_childItems.size() < index ) {
-    qDebug() << "Fatal error, childItems.size() < index!";
-    qDebug() << "having " << m_childItems.size() << " childs";
-    exit( 0 );
-  }
-  m_childItems.removeAt( index );
+    qDebug() << "Fatal error, this should not be called, exiting...";
+//     qDebug() << "having " << m_childItems.size() << " childs";
+    exit( 1 );
 }
 
 DataAbstractItem* DataConnection::next_node() {

@@ -38,6 +38,9 @@ namespace customRole {
     TypeRole = Qt::UserRole, // used by views to query a QModelIndex for its type [NODE or NODE_CONNECTION .. or whatever]
     SortRole, // used by the TreeView to sort items
     PosRole, // used by GraphicsView to place a new node on 'node-creation-time'
+    InputsRole, // returns the amount of inputs of a module
+    ModputsRole,// returns the amount of modputs of a module
+    OutputsRole,// returns the amount of outputs of a module
   };
 }
 
