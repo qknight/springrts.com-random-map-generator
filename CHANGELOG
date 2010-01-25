@@ -1,3 +1,8 @@
+2010-01-25
+ - added int ports(int type) to DataAbstractModule, with this function the view 
+   (read class Module : public QGraphicsItem) can query via the model how many Port(s)
+   are needed per type.
+
 2010-01-24
  - QGraphicsItem(s) query the model with modelData(..)/setModelData(..) and they use
    GraphicsItemModelExtension for that which is also an abstract base class to force

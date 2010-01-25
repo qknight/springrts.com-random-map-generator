@@ -19,7 +19,11 @@
 
 #include "DataAbstractModule.h"
 
-DataAbstractModule::DataAbstractModule( /*DataAbstractItem* parent*/ ) /*: DataAbstractItem( parent )*/ {}
+DataAbstractModule::DataAbstractModule(int inputs, int modputs, int outputs ) {
+  this->inputs = inputs;
+  this->modputs = modputs;
+  this->outputs = outputs;
+}
 
 DataAbstractModule::~DataAbstractModule() {
 //   qDebug() << __FUNCTION__;
@@ -143,4 +147,19 @@ const QList<DataAbstractItem*> DataAbstractModule::reverseChildItems() {
   return m_reverseChildItems;
 }
 
-
+// will return how many ports are used per type
+int DataAbstractModule::ports(int type) {
+  switch(type) {
+    case PortType::INPUT:
+      return inputs;
+      break;
+    case PortType::MODPUT:
+      return modputs;
+      break;
+    case PortType::OUTPUT:
+      return outputs;
+      break;
+    default:
+      return 0;
+  }
+}

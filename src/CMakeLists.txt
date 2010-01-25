@@ -48,6 +48,7 @@ SET( srmg_SOURCES
   modules/NoiseGenPerlin.cpp
   modules/NoiseGenRidgedMulti.cpp
   modules/UtilsNoiseMap.cpp
+  modules/Selector.cpp
 )
 
 SET( srmg_MOC_HEADERS

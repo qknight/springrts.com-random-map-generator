@@ -14,6 +14,8 @@
 
 Module::Module(Model* model, QPersistentModelIndex item) : QGraphicsItem(), GraphicsItemModelExtension(model, item) {
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
+  QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
+//   (labelItem);
   w=100;
   h=120;
   x=0;
@@ -39,7 +41,7 @@ Module::~Module() {
   }
 }
 
-void Module::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){ }
+// void Module::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){ }
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ){
     if (change == QGraphicsItem::ItemPositionChange) {
@@ -67,7 +69,6 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->restore();
   }
   painter->drawRect(x, y, w, h);
-  painter->drawText(QPoint(0,0),m_label);
 }
 
 void Module::updateData() {

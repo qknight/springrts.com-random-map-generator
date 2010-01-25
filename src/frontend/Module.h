@@ -33,7 +33,7 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
     { return DataType::MODULE; }
 
     QString m_label;
-    void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
+//     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void updateData();

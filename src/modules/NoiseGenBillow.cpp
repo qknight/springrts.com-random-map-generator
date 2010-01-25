@@ -16,7 +16,7 @@
 
 M_REGISTER(NoiseGenBillow);
 
-NoiseGenBillow::NoiseGenBillow() {
+NoiseGenBillow::NoiseGenBillow() : DataAbstractModule(0,0,1) {
   noise::module::Billow myModule;
 }
 

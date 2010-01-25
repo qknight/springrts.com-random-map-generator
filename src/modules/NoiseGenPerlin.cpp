@@ -18,7 +18,7 @@
 
 M_REGISTER(NoiseGenPerlin);
 
-NoiseGenPerlin::NoiseGenPerlin() : DataAbstractModule() {
+NoiseGenPerlin::NoiseGenPerlin() : DataAbstractModule(0,0,1) {
   noise::module::Perlin myModule;
 //   addVisualRepresentation();
 // 1. [done] create primary graphical module

@@ -24,13 +24,15 @@ class Connection;
 class Port : public QGraphicsItem, public GraphicsItemModelExtension
 {
   public:
-    QVector<Connection*> arrows;
+    QVector<Connection*> connections;
   public:
     Port( Model* model, QPersistentModelIndex item, QGraphicsItem * parent = 0);
     ~Port();
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);
     QRectF boundingRect() const;
+    // input=0, modput=1, output=2
+    int orientation;
   protected:
     QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
 };

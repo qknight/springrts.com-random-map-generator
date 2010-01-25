@@ -54,7 +54,7 @@ void GraphicsScene::setLoadableModuleNames(QVector<QString> loadableModuleNames)
 
 QGraphicsItem* GraphicsScene::moduleInserted( QPersistentModelIndex item ) {
 //   qDebug() << __PRETTY_FUNCTION__;
-  Module* module = new Module( model,item );
+  Module* module = new Module( model, item );
   addItem( module );
   module->setPos( model->data(item, customRole::PosRole).toPoint() );
   return module;
@@ -66,8 +66,7 @@ bool GraphicsScene::moduleRemoved( QPersistentModelIndex item ) {
   if ( nItem == NULL ) {
     qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
     // FIXME after testing this can be changed to return instaead of exit
-    exit( 0 );
-//     return false;
+    exit( 1 );
   }
 //   qDebug() << "nItem is: " << QString("%1").arg((unsigned int) nItem,0,16);
   delete nItem;

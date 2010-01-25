@@ -1,17 +1,11 @@
 ------- current plan (near objectives): ------- 
-- doubleclicking in the property dialog on a module should not trigger an editor but instead
-  focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
-  -> nearly done with that, still the slot is not called, ... why?
-- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
-  when inserting, either center the item itself or on insertion see width/height of the item
-  and insert it at -width()/2,-height()/2
-- item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
-  GraphicsScene.cpp ~ line 40
-- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
-  they should indicated the document width()/height() and making it work might be by using
-  POSSIBLE FIX: centerOn(..) or scroll(..)
-
-- create PORTs/CONNECTIONs
+- modify Model.h/cpp to reflect multiple port types in/mod/out and undirected connections
+- create PORTs
+  - input
+  - midput
+  - output
+- create CONNECTIONs
+- make items removable & create shortcuts for that, say 'enf'
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
@@ -45,13 +39,14 @@
    i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
    can use data(...) and setData(...) which will update it's data and as well as the other views data.
 
-
 - libNoise (backend) and 
 - libNoiseAbstraction (frontend) need to be created
   for the former two tasks i probably need bison
     http://www.developer.com/net/cplus/article.php/3642516/Classic-Parsing-with-Flex-and-Bison
 
+- add all modules which are in libnoise
 - integrate libNoise-view
+
 - integrate spring map exporter
 - integrate height-colorizer and height-texturizer
   the height-c0olorizer is easy to implement and gives a basic look&feel for the heightmap
@@ -223,3 +218,25 @@ A) connections:
     * libnoise modules
     * pixel filter modules
     * spring modules (to create maps)
+
+Q) modules do have ports, how to know which port is where in regars to model <-> view?
+A) input, modput, output are the 3 possible port types all represented by a Port object which
+   is a usually a child of a Module
+ 
+   2 possible ways to add a connection:
+   model->insertConnection(Port* srcPort, Port* dstPort); // convenient function where Port is a QGraphicsItem
+   model->insertConnection(QGraphicsItem* srcModule, int srcPortNumber,
+			   QGraphicsItem* dstModule, int dstPortNumber);
+
+----- later fixing ------
+- clicking in the property dialog on a module should not trigger an editor but instead
+  focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
+  -> nearly done with that, still the slot is not called, ... why?
+- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
+  they should indicated the document width()/height() and making it work might be by using
+  POSSIBLE FIX: centerOn(..) or scroll(..)
+- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
+  when inserting, either center the item itself or on insertion see width/height of the item
+  and insert it at -width()/2,-height()/2
+- item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
+  GraphicsScene.cpp ~ line 40

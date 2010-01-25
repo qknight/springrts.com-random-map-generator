@@ -31,8 +31,10 @@ Document::Document() {
     connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
 	    this, SLOT(CreateModuleSlot(QString,QPoint)));
     
-//   model->insertModule("NoiseGen::Billow", QPoint(0,0));
-//   model->insertModule("NoiseGen::Billow", QPoint(400,0));
+  model->insertModule("NoiseGen::Billow", QPoint(0,0));
+  model->insertModule("NoiseGen::Perlin", QPoint(0,200));
+  model->insertModule("Selector::Selector", QPoint(250,100));
+  
 //   scene->addLine(-500,-500,-500,-501);
 //   scene->addLine(500,500,500,501);
 //   scene->addLine(-100,0,100,0);

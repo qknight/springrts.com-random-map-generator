@@ -16,7 +16,7 @@
 
 M_REGISTER(UtilsNoiseMap);
 
-UtilsNoiseMap::UtilsNoiseMap() {
+UtilsNoiseMap::UtilsNoiseMap()  : DataAbstractModule(1,0,0) {
 }
 
 UtilsNoiseMap::~UtilsNoiseMap() {

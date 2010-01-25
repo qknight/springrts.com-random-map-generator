@@ -25,12 +25,22 @@
 #include "DataAbstractItem.h"
 #include "DataConnection.h"
 
+namespace PortType {
+  // the idea behind yet another type identifier is that we map the types below via the model to the
+  // types defined in DataAbstractItem.h (see DataItemType in DataAbstractItem.h)
+  enum PortType {
+    INPUT,
+    MODPUT,
+    OUTPUT
+  };
+}
+
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
   Q_OBJECT
   friend class DataConnection;
   public:
-    DataAbstractModule( /*DataAbstractItem* parent*/ );
+    DataAbstractModule( int inputs, int modputs, int outputs );
     /*! WARNING: never delete objects as for instance childItems in the structure here
      ** since this will create inconsistencies between the model and this data structure.<br>
      ** A better way is to fail with exit(0) and a meaningful error message meant for
@@ -48,9 +58,11 @@ class DataAbstractModule : public DataAbstractItem {
     const QList<DataAbstractItem*> reverseChildItems();
     /*! used to identify modules, used by the ModuleFactaory */
     virtual QString identify()=0;
+    int ports(int type);
   private:
     /*! this container is added for 'node's only and stores all references to this node */
     QList<DataAbstractItem*> m_reverseChildItems;
+    int inputs, outputs, modputs;
   protected:
     /*! internal use only: inserts a reversepath */
     void appendChildReversePath( DataAbstractItem *item );

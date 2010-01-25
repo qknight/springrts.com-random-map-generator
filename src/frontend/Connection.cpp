@@ -56,7 +56,7 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     QPointF beginPoint = myEndItem->pos()+m;
     QPointF endPoint = myStartItem->pos()+n;
 
-    QLineF z = QLineF(beginPoint,endPoint);
+    QLineF z = QLineF(beginPoint, endPoint);
     setLine(z);
 
 //     painter->drawLine(z);
@@ -68,5 +68,5 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 }
 
 void Connection::updateData() {
-  //nothing to do here
+  //nothing to do here, since port(s) do not have a specific role except being connectable
 }
