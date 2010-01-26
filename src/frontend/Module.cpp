@@ -14,17 +14,22 @@
 #include "Port.h"
 
 Module::Module(Model* model, QPersistentModelIndex item) : QGraphicsItem(), GraphicsItemModelExtension(model, item) {
+  updateData();
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
-  /*QGraphicsTextItem* labelItem =*/ new QGraphicsTextItem(m_label, this);
+  QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
+//   labelItem->setVisible(true);
+  labelItem->moveBy(-15,-25);
+  
   createPorts(model,item);
   w=100;
   h=120;
   x=0;
   y=0;
-  updateData();
+
 }
 
 Module::~Module() {
+  // FIXME we should remove all ports, this check should be relocated to the ports instead
   if (children().size() > 0) {
     // when removing a graphical item, this must always be done from the lower layer (by the Model)
     // WARNING this comment might be wrong, didn't check it yet 2010-01-06 (js)
@@ -37,7 +42,7 @@ Module::~Module() {
     //          3. when all references (connections) are removed, remove the visual item (gui counterpart)
     //          4. next remove the actual item (maybe a noisegen for instance)
     //          5. now we are set and since we don't have loops this should be quite easy
-    qDebug() << "FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string!";
+    qDebug() << __PRETTY_FUNCTION__ << " FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string!";
     exit(1);
   }
 }
@@ -57,8 +62,8 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
 
 QRectF Module::boundingRect() const {
     qreal penWidth = 1;
-    return QRectF(x - penWidth / 2, -15 + y - penWidth / 2,
-                  30+w + penWidth / 2, 15 + h + penWidth / 2);
+    return QRectF(x - penWidth / 2, y - penWidth / 2,
+                  w + penWidth / 2, h + penWidth / 2);
 }
 
 void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -85,20 +90,25 @@ void Module::createPorts(Model* model, QPersistentModelIndex item) {
   for (int i=0; i < modelData(customRole::InputsRole).toInt(); ++i) {
     Port* p = new Port(model, item, this);  
     ports.push_back(p);
-    p->moveBy(0,20+i*40);
+    p->moveBy(-10,20+i*40);
   }
   
   // modputs
   for (int i=0; i < modelData(customRole::ModputsRole).toInt(); ++i) {
     Port* p = new Port(model, item, this);  
     ports.push_back(p);
-    p->moveBy(50+i*20,120);
+    p->moveBy(50+i*20,130);
   }
   
   // outputs
   for (int i=0; i < modelData(customRole::OutputsRole).toInt(); ++i) {
     Port* p = new Port(model, item, this);  
     ports.push_back(p);
-    p->moveBy(100,20+i*40);
+    p->moveBy(110,20+i*40);
   }
+  
+//   foreach(Port* p, ports) {
+//     p->setFlag(ItemIsSelectable, false);  
+//     p->setFlag(ItemIsMovable, false); 
+//   }
 }

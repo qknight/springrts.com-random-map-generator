@@ -23,41 +23,46 @@
 #include "DataAbstractItem.h"
 class DataAbstractModule;
 
-/*! A new connection is created with a invalid destination (NULL) and:
-** - the destination can be changed as often as needed but
-** - it can't be resetted to NULL
-** - if a node is deleted all the connection references (in/out/loop) are removed
-**   (see node.cpp for more detail)
-** You can use the internal int representation of the literals Sigma used to express
-** transitions (values on the edges) from one node to another (or loop). This is handy
-** in case you want to compare values fast (instead of QString compare)
-**
- ** inserting childs and removing childs is heavily modified in this class!
-*/
+/*! 
+ * this class is representing an connection (if this object is a child of a module)
+ * 'in the frontend' as well as in the backend.
+ * it is designed that dependant who asks (either src module or dst module) will get 
+ * the wanted answer seen from these objects, meaning:
+ *   'src module' named a asks for dst() using dst(a), this will return 'dst'
+ * 
+ * this class can be used to validate a connection, see the code to learn which criteria 
+ * is tested for...
+ */
 class DataConnection : public DataAbstractItem {
   Q_OBJECT
   public:
-    DataConnection( DataAbstractItem* parent );
+    DataConnection( DataAbstractItem* src, int srcType, int srcPortNumber, 
+		    DataAbstractItem* dst, int dstType, int dstPortNumber );
     /*! WARNING: never delete objects as for instance childItems in the structure here
      ** since this will create inconsistencies between the model and this data structure.<br>
      ** A better way is to fail with exit(0) and a meaningful error message meant for
      ** developrs: since this problem must be handled with great care! */
     ~DataConnection();
-    /*! NULL or a valid DataAbstractItem: can be set quit flexible */
-    DataAbstractItem* next_node();
     /*! dumps the internal data structure for debugging use */
     void dump();
-    /*! sets the 'next node' to node*/
-    void setNext_node( DataAbstractItem* node );
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
     /*! can't think of why this is used in a DataConnection */
     void removeChild( unsigned int index );
-    /*! this was added very late but showed to be helpful in many regards */
-    DataConnection* inverseConnection;
-  private:
-    /*! internal storage of the next_node pointer */
-    DataAbstractItem* m_next_node;
+    DataAbstractItem* dst(DataAbstractItem* querier);
+    int srcType(DataAbstractItem* querier);
+    int srcPortNumber(DataAbstractItem* querier);
+    DataAbstractItem* src(DataAbstractItem* querier);
+    int dstType(DataAbstractItem* querier);
+    int dstPortNumber(DataAbstractItem* querier);
+    bool validate();
+  protected:
+    DataAbstractItem* m_src; 
+    int m_srcType; 
+    int m_srcPortNumber; 
+    DataAbstractItem* m_dst; 
+    int m_dstType; 
+    int m_dstPortNumber;
 };
 
 #endif // DATACONNECTION_H

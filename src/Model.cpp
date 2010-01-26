@@ -401,6 +401,7 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
   // this function is not used, use insertModule and insertConnection instead
+  return false;
 }
 
 bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
@@ -467,22 +468,24 @@ bool Model::insertModule(QString type, QPoint pos) {
     return true;
 }
 
-bool Model::insertConnection(QPersistentModelIndex* src, int srcPort, int srcType, 
-			     QPersistentModelIndex* dst, int dstPort, int dstType) {
-/*  int row = rowCount( src );
+bool Model::insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
+                             QPersistentModelIndex dst, int dstPort, int dstType) {
+  int row = rowCount( src );
   if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
     DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
     DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
     beginInsertRows( src, row, row + 0 );
     {
-        DataConnection* dc = new DataConnection( srcItem , dstItem);
+        DataConnection* dc = new DataConnection( srcItem, srcType, srcPort,
+                                                 dstItem, dstType, dstPort);
+        //FIXME remove connection if not appended...
         srcItem->appendChild( dc );
     }
     endInsertRows();
     return true;
   }
   qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
-  exit(1);*/
+  exit(1);
   return false;
 }
 

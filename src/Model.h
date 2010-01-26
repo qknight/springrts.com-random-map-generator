@@ -95,9 +95,8 @@ class Model : public QAbstractItemModel {
     /*! this is the public interface, there is an private one for internal use as well!
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     bool insertModule(QString type, QPoint pos=QPoint());
-
-    bool insertConnection(QPersistentModelIndex* src, int srcPort, int srcType, 
-			  QPersistentModelIndex* dst, int dstPort, int dstType);
+    bool insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
+                          QPersistentModelIndex dst, int dstPort, int dstType);
   private:
     /*! reveals the type of object in the data structure represented by item in the model structure */
 //     unsigned int getTreeItemType( const QModelIndex& item );

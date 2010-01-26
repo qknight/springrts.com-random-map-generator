@@ -20,77 +20,97 @@
 #include "DataConnection.h"
 #include "DataAbstractModule.h"
 
-DataConnection::DataConnection( DataAbstractItem* parent ) : DataAbstractItem( parent ) {
+DataConnection::DataConnection ( DataAbstractItem* src, int srcType, int srcPortNumber,
+                                 DataAbstractItem* dst, int dstType, int dstPortNumber ) : DataAbstractItem ( src ) {
+    m_src = src;
+    m_srcType = srcType;
+    m_srcPortNumber = srcPortNumber;
+    m_dst = dst;
+    m_dstType = dstType;
+    m_dstPortNumber = dstPortNumber;
 }
 
 DataConnection::~DataConnection() {
-//   qDebug() << __FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
 }
 
-void DataConnection::dump() {
-//   QString m_next_node_Id;
-//   if(m_next_node != NULL)
-//     m_next_node_Id = QString("n%1").arg(m_next_node->getId());
-//   else
-//     m_next_node_Id = "next_node is not set";
-//   //FIXME check m_next_node for NULL
-//   qDebug() << "     |  \\---((DataConnection " << QString("c%1").arg(ID) << "))" <<
-// //       parent()->getId() << "@" << (unsigned int)parent() <<
-//   " >> DEST = " <<
-//   m_next_node_Id <<
-//   "; inverseConnection =" << QString("c%1").arg(inverseConnection->getId());
-// 
-//   // call dump for all children
-//   if ( childCount() > 0 )
-//     qDebug() << "FATAL ERROR in" << __FILE__ << " " << __FUNCTION__ << "this should never happen";
-// 
-//   for ( int i = 0; i < childCount(); ++i ) {
-//     child( i )->dump();
-//   }
+DataAbstractItem* DataConnection::src ( DataAbstractItem* querier ) {
+    if ( m_src == querier )
+        return m_src;
+    else
+        return m_dst;
 }
+
+int DataConnection::srcType ( DataAbstractItem* querier ) {
+    if ( m_src == querier )
+        return m_srcType;
+    else
+        return m_dstType;
+}
+
+int DataConnection::srcPortNumber ( DataAbstractItem* querier ) {
+    if ( m_src == querier )
+        return m_srcPortNumber;
+    else
+        return m_dstPortNumber;
+}
+
+DataAbstractItem* DataConnection::dst ( DataAbstractItem* querier ) {
+    return src ( querier );
+}
+
+int DataConnection::dstType ( DataAbstractItem* querier ) {
+    return srcType ( querier );
+}
+
+int DataConnection::dstPortNumber ( DataAbstractItem* querier ) {
+    return srcPortNumber ( querier );
+}
+
+void DataConnection::dump() {}
 
 unsigned int DataConnection::getObjectType() {
-  return DataItemType::DATACONNECTION;
+    return DataItemType::DATACONNECTION;
 }
 
-void DataConnection::removeChild( unsigned int index ) {
+void DataConnection::removeChild ( unsigned int index ) {
     qDebug() << "Fatal error, this should not be called, exiting...";
 //     qDebug() << "having " << m_childItems.size() << " childs";
-    exit( 1 );
+    exit ( 1 );
 }
 
-DataAbstractItem* DataConnection::next_node() {
-  return m_next_node;
+bool DataConnection::validate() {
+    if ( m_src == m_dst ) {
+        qDebug() << __PRETTY_FUNCTION__ << "error, can't add connection since src=dst meaning it's a loop item";
+        return false;
+    }
+    if ( m_src == NULL || m_dst == NULL ) {
+        qDebug() << __PRETTY_FUNCTION__ << "error, can't add connection since src or dst is NULL";
+        return false;
+    }
+    // -1. check if the parents are modules
+    if (m_src->getObjectType() != DataItemType::DATAABSTRACTMODULE)
+      return false;
+    if (m_dst->getObjectType() != DataItemType::DATAABSTRACTMODULE)
+      return false;
+    
+    // 0. i - i, o - o, m - m forbidden combinations
+    if (m_srcType == m_dstType)
+      return false;
+    // 1. verify input/modput/output combinations, one output is guaranteed if 
+    //    we pass this test
+    int c = m_srcType + m_dstType;
+    if (!(c > 0 && c < 3))
+      return false;
+    
+    // 2. check if there is a 'potential' free port for the type at src and at dst
+    //    if someone uses model->addConnection(..) instead of the gui this might
+    //    help to avoid errors
+    DataAbstractModule* srcAM = static_cast<DataAbstractModule*>(m_src);
+    if (srcAM->ports(m_srcType) == 0)
+      return false;
+    DataAbstractModule* dstAM = static_cast<DataAbstractModule*>(m_dst);
+    if (dstAM->ports(m_dstType) == 0)
+      return false;
+    return true;
 }
-
-void DataConnection::setNext_node( DataAbstractItem* newNextNode ) {
-  if ( m_next_node == newNextNode )
-    return;
-//   qDebug() << "warning: we have to relocate the reverseconnection as well";
-
-  if ( inverseConnection == NULL ) {
-    m_next_node = newNextNode;
-    return;
-  }
-  // 1. remove the m_next_node's reverse connection reference (remove the reverse connection)
-  DataAbstractItem* rItem = inverseConnection;
-  DataAbstractItem* rItemParent = rItem->parent();
-  (( DataAbstractModule* )rItemParent )->removeChildReversePath( rItem );
-
-  // 2. next add the reverse connection
-  (( DataAbstractModule* )newNextNode )->appendChildReversePath( rItem );
-
-  // 3. reset the parent entry
-  rItem->setParent( newNextNode );
-
-  // 4. overwrite current m_next_node with node
-  m_next_node = newNextNode;
-  return;
-}
-
-
-
-
-
-
-

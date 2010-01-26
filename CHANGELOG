@@ -1,4 +1,8 @@
 2010-01-25
+ - summary: inserting connections works no backend wise
+   - Model.h/cpp insertConnection(..) rewritten
+   - DataAbstractModule ...
+   - DataConnection.cpp/.h needs rewriting
  - Port(s) are now created according to the module settings
  - added int ports(int type) to DataAbstractModule, with this function the view 
    (read class Module : public QGraphicsItem) can query via the model how many Port(s)

@@ -1,14 +1,12 @@
 ------- current plan (near objectives): ------- 
-- modify Model.h/cpp insertConnection()
- - Model.cpp insertConnection needs rewriting
- - DataAbstractModule (insertConnection function equivalent needs rewriting)
- - DataConnection.cpp/.h needs rewriting
+- create functionality to 'add connections' by click'n'drag'n'drop
+- create CONNECTIONs (QGraphicsItem wise)
+- when exiting the program this line popps up, what is that?
+  FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
+  -> Module::~Module() {
+    move this check to class Port and remove all Ports instead...
+- modules don't have any QGraphicsTextItem label? why?!
 
-- create PORTs
-  - input
-  - midput
-  - output
-- create CONNECTIONs
 - make items removable & create shortcuts for that as 'del'
 - set bounding box selection using a modifier key, say ctrl
 
@@ -235,7 +233,7 @@ A) input, modput, output are the 3 possible port types all represented by a Port
 			   QGraphicsItem* dstModule, int dstPortNumber, int dstType);
 
 Q) how do we track backward connections? how was it done in the 'automate' project?
-A) 
+A) ... let's see!
 
 ----- later fixing ------
 - clicking in the property dialog on a module should not trigger an editor but instead

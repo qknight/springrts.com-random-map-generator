@@ -19,147 +19,114 @@
 
 #include "DataAbstractModule.h"
 
-DataAbstractModule::DataAbstractModule(int inputs, int modputs, int outputs ) {
-  this->inputs = inputs;
-  this->modputs = modputs;
-  this->outputs = outputs;
+DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) {
+    this->inputs = inputs;
+    this->modputs = modputs;
+    this->outputs = outputs;
 }
 
 DataAbstractModule::~DataAbstractModule() {
-//   qDebug() << __FUNCTION__;
-  if ( m_childItems.size() > 0 ) {
-    qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
-    exit( 1 );
-  }
-  if ( m_reverseChildItems.size() > 0 ) {
-    qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_reverseChildItems.size() << " reverseChildItems";
-    exit( 1 );
-  }
+    qDebug() << __FUNCTION__;
+    if ( m_childItems.size() > 0 ) {
+        qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
+        exit ( 1 );
+    }
+    if ( m_childItemsReferences.size() > 0 ) {
+        qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItemsReferences.size() << " reverseChildItems";
+        exit ( 1 );
+    }
 }
 
-void DataAbstractModule::dump() {
-//   qDebug() << "  \\---DataModule::ID=" << ID << " childs:" << childCount() << ": " << ( unsigned int ) this << " parent=(" << ( unsigned int ) this->parent() << ")";
-  // call dump for all children
-
-  qDebug() << "     |-forward childs";
-  for ( int i = 0; i < childCount(); ++i ) {
-    child( i )->dump();
-  }
-
-  qDebug() << "     |-backward childs";
-  for ( int i = 0; i < reverseChildItems().size(); ++i ) {
-    reverseChildItems()[i]->dump();
-  }
-}
+void DataAbstractModule::dump() { }
 
 unsigned int DataAbstractModule::getObjectType() {
-  return DataItemType::DATAABSTRACTMODULE;
+    return DataItemType::DATAABSTRACTMODULE;
 }
 
-//FIXME CRITICAL check this code below
-void DataAbstractModule::appendChild( DataAbstractItem *item ) {
-
-  if ( item->parent() != this ) {
-    qDebug( "ERROR: you can't add a child to a parent item where \
+void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
+    if ( item->parent() != this ) {
+        qDebug ( "ERROR: you can't add a child to a parent item where \
             the parent of the child doesn't match the parent you want to add it to!" );
-    return;
-  }
-
-  // this is the inverted connection item: r_item
-  DataConnection* f_item = static_cast<DataConnection*>( item );
-  DataConnection* r_item;
-
-  // in any case we want to add a r_item and link it to f_item with the
-  // inverseConnection pointer! we can overwrite the next_DataModule later anyway...
-  if ( f_item->next_node() == NULL )
-    r_item = new DataConnection( this );
-  else
-    r_item = new DataConnection( f_item->next_node() );
-  r_item->setNext_node( this );
-
-  DataAbstractModule* dst = static_cast<DataAbstractModule*>( f_item->next_node() );
-
-  f_item->inverseConnection = r_item;
-  r_item->inverseConnection = f_item;
-
-  if ( f_item->next_node() != NULL )
-    // when creating a connection manually we ignore to execute the next statement
-    // when using the randomAutomate script in automatehandler.cpp the setNext_DataModule
-    // call is already used and we can add the reversePath to dst!
-    dst->appendChildReversePath( r_item );
-
-  appendChildForwardPath( f_item );
-}
-
-void DataAbstractModule::removeChild( unsigned int index ) {
-  // 1. first delete the reverse connection
-  DataConnection* f_item = (( DataConnection* )m_childItems[index] );
-  DataConnection* r_item = f_item->inverseConnection;
-//   qDebug() << (unsigned int)f_item->inverseConnection;
-//   qDebug() << (unsigned int)r_item->inverseConnection;
-//   ((DataModule*)r_item->parent())->removeChildReversePath(r_item);
-
-//   DataAbstractItem* rItem = r_item;//inverseConnection;
-  DataAbstractItem* rItemParent = r_item->parent();
-  (( DataAbstractModule* )rItemParent )->removeChildReversePath( r_item );
-
-//   DataConnection* f_item = ((DataConnection*)m_childItems[index]);
-//   DataConnection* r_item = f_item->inverseConnection;
-//   ((DataModule*)r_item->parent())->removeChildReversePath(r_item);
-
-  // 2. now finally delete the forward connection
-  m_childItems.removeAt( index );
-
-  // free the objects
-  delete r_item;
-  delete f_item;
-}
-
-void DataAbstractModule::appendChildForwardPath( DataAbstractItem *item ) {
-  if ( m_childItems.contains( item ) ) {
-    qDebug( "ERROR: detected an attepmt to add an already existing child!" );
-    return;
-  }
-  m_childItems.append( item );
-}
-
-void DataAbstractModule::appendChildReversePath( DataAbstractItem *r_item ) {
-  //TODO symbol needs to be set as well
-  if ( m_reverseChildItems.contains( r_item ) ) {
-    qDebug( "ERROR: detected an attepmt to add an already existing reverseChild!" );
-    return;
-  }
-
-  m_reverseChildItems.append( r_item );
-}
-
-void DataAbstractModule::removeChildReversePath( DataAbstractItem *item ) {
-  for ( int i = 0; i < m_reverseChildItems.size(); ++i )
-    if ( item == m_reverseChildItems[i] ) {
-//       qDebug() << (unsigned int) this << "Item to delete found";
-      m_reverseChildItems.removeAt( i );
-      return;
+        return;
     }
-//     qDebug() << (unsigned int) this <<  "Item to delete NOT found";
+
+    // this is the inverted connection item: r_item
+    DataConnection* c = static_cast<DataConnection*> ( item );
+
+    // 0. check if allowed (no loops to the same item)
+    if ( ! ( c->validate() ) ) {
+        return;
+    }
+    if ( c->srcType ( this ) == PortType::OUTPUT ) {
+        insertConnection ( c );
+        return;
+    } else {
+        DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
+        dstItem->insertConnection ( c );
+        return;
+    }
 }
 
-const QList<DataAbstractItem*> DataAbstractModule::reverseChildItems() {
-  return m_reverseChildItems;
+bool DataAbstractModule::isPortUsed(DataAbstractItem *item) {
+  DataConnection* c = static_cast<DataConnection*> ( item );
+    // a. copy all 'references' into a list
+    // b. remove all 'outputs' from that list
+    // c. filter all items except those with dstType, 
+    //    now search for an item with known portnumber, 
+    //    if item is found 'return false'
+    foreach(DataAbstractItem* ref, m_childItemsReferences) {
+      DataConnection* r = static_cast<DataConnection*> ( ref );
+      if ((c->srcType(this) == r->srcType(this)) && (c->srcPortNumber(this) == r->srcPortNumber(this)))
+        return true;
+    }
+    
+    return false;
+}
+
+bool DataAbstractModule::insertConnection ( DataConnection* c ) {
+    DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
+    // 1. check if already in use (check remote side only!)
+    //    - inputs/modputs can only be used once
+    //    - outputs may have multiple connections 
+    //      ('this' is the side with the output, this is guaranteed by 
+    //      appendChild and (c->validate() already ))
+    if ( dstItem->isPortUsed(c) )
+        return false;
+
+    // 2. insert connection & also the respective backward connection
+    m_childItems.append ( c );
+    dstItem->insertReference ( c );
+    return true;
+}
+
+void DataAbstractModule::insertReference ( DataAbstractItem* item ) {
+    m_childItemsReferences.append ( item );
+}
+
+//FIXME todo
+void DataAbstractModule::removeReference ( DataAbstractItem* item ) {
+//   m_childItemsReferences.remove ( item );
+}
+
+//FIXME todo
+void DataAbstractModule::removeChild ( unsigned int index ) {
+  // remove child
+  // removeReference at remote object
 }
 
 // will return how many ports are used per type
-int DataAbstractModule::ports(int type) {
-  switch(type) {
+int DataAbstractModule::ports ( int type ) {
+    switch ( type ) {
     case PortType::INPUT:
-      return inputs;
-      break;
+        return inputs;
+        break;
     case PortType::MODPUT:
-      return modputs;
-      break;
+        return modputs;
+        break;
     case PortType::OUTPUT:
-      return outputs;
-      break;
+        return outputs;
+        break;
     default:
-      return 0;
-  }
+        return 0;
+    }
 }

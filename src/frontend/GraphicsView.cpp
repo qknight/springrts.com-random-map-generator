@@ -64,7 +64,7 @@ void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
 
 void GraphicsView::resizeEvent(QResizeEvent* event) {
   QRectF v = sceneRect();
-  qDebug() << v;
+//   qDebug() << v;
   setSceneRect(v.x(),v.y(),v.width(),v.height());
 }
 

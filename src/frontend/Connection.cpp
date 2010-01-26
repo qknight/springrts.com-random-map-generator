@@ -16,6 +16,7 @@ Connection::Connection(QPersistentModelIndex index, Model* model, Port *startIte
 }
 
 QRectF Connection::boundingRect() const {
+  //FIXME must be done right
 //     qreal extra = (pen().width() + 20) / 2.0;
 
 /*    return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
