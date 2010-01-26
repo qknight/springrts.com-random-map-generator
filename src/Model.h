@@ -41,19 +41,13 @@ namespace customRole {
     InputsRole, // returns the amount of inputs of a module
     ModputsRole,// returns the amount of modputs of a module
     OutputsRole,// returns the amount of outputs of a module
+    ConnectionDestinationRole, // use to get the destination of a connection, that is a QModelIndex
+    SrcPortTypeRole,   // use by GraphicsScene on insertConnection to find out about the ports
+    SrcPortNumberRole, //   ..
+    DstPortTypeRole,   //   ..
+    DstPortNumberRole  //   ..
   };
 }
-
-// namespace DataType {
-//   // the idea behind yet another type identifier is that we map the types below via the model to the
-//   // types defined in DataAbstractItem.h (see TreeItemType in DataAbstractItem.h)
-//   enum TreeItemType {
-//     DATA_ROOT,
-//     MODULE,
-//     CONNECTION,
-//     UNKNOWN
-//   };
-// }
 
 /*! this is one of the core parts of this work and this code is very important in regards of syncing
 **  the different views (as TreeView/GraphicsView)
@@ -97,25 +91,9 @@ class Model : public QAbstractItemModel {
     bool insertModule(QString type, QPoint pos=QPoint());
     bool insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
                           QPersistentModelIndex dst, int dstPort, int dstType);
+    QModelIndex dst(QPersistentModelIndex item);
   private:
-    /*! reveals the type of object in the data structure represented by item in the model structure */
-//     unsigned int getTreeItemType( const QModelIndex& item );
-    /*! for debugging this function creates a QString, see the DataAbstractItem.h for reference */
-//     QString objectTypeQString( unsigned int input );
-    /*! this is used by the treeView when you insert a new destination for a connection. the
-    ** input is then converted into a DataAbstractItem.*/
-//     DataAbstractItem* DataAbstractItemFromId( unsigned int id );
-    /*! removes a node */
-//     bool removeNode( QPersistentModelIndex node );
-    /*! removes a list of nodes in sequences (no parallel processing) */
-//     bool removeNodes( QList<QPersistentModelIndex> nodeList );
-    /*! removes a connection */
-//     bool removeConnection( QPersistentModelIndex connection );
-    /*! removes a list of connection in sequences (no parallel processing) */
-//     bool removeConnections( QList<QPersistentModelIndex> nodeList );
-    /*! needed when virtually deleting an item. the intention is to find out
-    ** which QModelIndex must be deleted so that the item gets deleted by a model request */
-//     QModelIndex getQModelIndexFromAbstractNodeItem( DataAbstractItem* item );
+
     /*! the root item is set by the constructor once and can't be changed and must not be deleted */
     DataAbstractItem* rootItem;
     /*! the only instance of ModuleFactory which will add new items using the model */ 
@@ -138,7 +116,6 @@ class Model : public QAbstractItemModel {
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)
     ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>
     ** It can be called while views are attached to the model, it is not efficient performancewise */
-//     void clear();
     QVector<QString> LoadableModuleNames();
 
 };

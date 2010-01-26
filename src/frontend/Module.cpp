@@ -12,6 +12,7 @@
 #include "Model.h"
 #include "Module.h"
 #include "Port.h"
+#include <DataAbstractModule.h>
 
 Module::Module(Model* model, QPersistentModelIndex item) : QGraphicsItem(), GraphicsItemModelExtension(model, item) {
   updateData();
@@ -88,27 +89,35 @@ void Module::updateData() {
 void Module::createPorts(Model* model, QPersistentModelIndex item) {
   // inputs
   for (int i=0; i < modelData(customRole::InputsRole).toInt(); ++i) {
-    Port* p = new Port(model, item, this);  
+    Port* p = new Port(model, item, PortType::INPUT, i, this);  
     ports.push_back(p);
     p->moveBy(-10,20+i*40);
   }
   
   // modputs
   for (int i=0; i < modelData(customRole::ModputsRole).toInt(); ++i) {
-    Port* p = new Port(model, item, this);  
+    Port* p = new Port(model, item, PortType::MODPUT, i, this);  
     ports.push_back(p);
     p->moveBy(50+i*20,130);
   }
   
   // outputs
   for (int i=0; i < modelData(customRole::OutputsRole).toInt(); ++i) {
-    Port* p = new Port(model, item, this);  
+    Port* p = new Port(model, item, PortType::OUTPUT, i, this);  
     ports.push_back(p);
     p->moveBy(110,20+i*40);
   }
-  
-//   foreach(Port* p, ports) {
-//     p->setFlag(ItemIsSelectable, false);  
-//     p->setFlag(ItemIsMovable, false); 
-//   }
 }
+
+Port* Module::resolvePort(int portType, int portNumber) {
+  if (ports.size()) {
+    foreach(Port* p, ports) {
+      if (p->porttype() == portType && p->portnumber() == portNumber)
+        return p;
+    }
+  }
+  qDebug() << __PRETTY_FUNCTION__ << "FATAL: there is no such port item!, exiting";
+  exit(1);
+  return NULL;
+}
+

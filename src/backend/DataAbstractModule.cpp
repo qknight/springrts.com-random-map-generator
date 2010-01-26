@@ -44,6 +44,7 @@ unsigned int DataAbstractModule::getObjectType() {
 }
 
 void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
+  qDebug() << __PRETTY_FUNCTION__;
     if ( item->parent() != this ) {
         qDebug ( "ERROR: you can't add a child to a parent item where \
             the parent of the child doesn't match the parent you want to add it to!" );
@@ -55,6 +56,7 @@ void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
 
     // 0. check if allowed (no loops to the same item)
     if ( ! ( c->validate() ) ) {
+        qDebug() << __PRETTY_FUNCTION__ << "item not valid";
         return;
     }
     if ( c->srcType ( this ) == PortType::OUTPUT ) {
@@ -68,6 +70,7 @@ void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
 }
 
 bool DataAbstractModule::isPortUsed(DataAbstractItem *item) {
+  qDebug() << __PRETTY_FUNCTION__;
   DataConnection* c = static_cast<DataConnection*> ( item );
     // a. copy all 'references' into a list
     // b. remove all 'outputs' from that list
@@ -84,6 +87,7 @@ bool DataAbstractModule::isPortUsed(DataAbstractItem *item) {
 }
 
 bool DataAbstractModule::insertConnection ( DataConnection* c ) {
+  qDebug() << __PRETTY_FUNCTION__;
     DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
     // 1. check if already in use (check remote side only!)
     //    - inputs/modputs can only be used once
@@ -100,6 +104,7 @@ bool DataAbstractModule::insertConnection ( DataConnection* c ) {
 }
 
 void DataAbstractModule::insertReference ( DataAbstractItem* item ) {
+  qDebug() << __PRETTY_FUNCTION__;
     m_childItemsReferences.append ( item );
 }
 

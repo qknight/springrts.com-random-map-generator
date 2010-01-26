@@ -168,6 +168,34 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
       return am->ports(PortType::OUTPUT);
     }
 
+  // seen from the connection's parent this 4 functions are used to query portnumber and porttype
+  if ( role == customRole::SrcPortNumberRole)
+    if ( n->getObjectType() == DataType::CONNECTION ) {
+      DataConnection* c = static_cast<DataConnection*>(n);
+      DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
+//       qDebug() << " src  " << c->srcPortNumber(m) << " dst" << c->dstPortNumber(m);
+      return c->srcPortNumber(m);
+    }
+  if ( role == customRole::SrcPortTypeRole)
+    if ( n->getObjectType() == DataType::CONNECTION ) {
+      DataConnection* c = static_cast<DataConnection*>(n);
+      DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
+      return c->srcType(m);
+    }
+  if ( role == customRole::DstPortNumberRole)
+    if ( n->getObjectType() == DataType::CONNECTION ) {
+      DataConnection* c = static_cast<DataConnection*>(n);
+      DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
+      return c->dstPortNumber(m);
+    }
+  if ( role == customRole::DstPortTypeRole)
+    if ( n->getObjectType() == DataType::CONNECTION ) {
+      DataConnection* c = static_cast<DataConnection*>(n);
+      DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
+      return c->dstType(m);
+    }
+
+
 //   if ( role == customRole::SymbolIndexRole )
 //     if ( n->getObjectType() == NODE_CONNECTION ) {
 //       DataConnection* nc = static_cast<DataConnection*>( index.internalPointer() );
@@ -471,14 +499,25 @@ bool Model::insertModule(QString type, QPoint pos) {
 bool Model::insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
                              QPersistentModelIndex dst, int dstPort, int dstType) {
   int row = rowCount( src );
+  //FIXME i don't like this code
+  if ((srcType != PortType::OUTPUT) && (dstType != PortType::OUTPUT)) {
+    qDebug() << "can't add connection, either side must have an output port";
+    qDebug() << srcType << " " << dstType;
+    return false;
+  }
+  
   if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
     DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
     DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
     beginInsertRows( src, row, row + 0 );
     {
-        DataConnection* dc = new DataConnection( srcItem, srcType, srcPort,
-                                                 dstItem, dstType, dstPort);
-        //FIXME remove connection if not appended...
+      //FIXME i don't like this code
+        DataConnection* dc;
+        if (srcType == PortType::OUTPUT) {
+          dc = new DataConnection( srcItem, srcType, srcPort, dstItem, dstType, dstPort);
+        } else if (dstType == PortType::OUTPUT) {
+          dc = new DataConnection( dstItem, dstType, dstPort, srcItem, srcType, srcPort);
+        }
         srcItem->appendChild( dc );
     }
     endInsertRows();
@@ -493,3 +532,15 @@ bool Model::insertConnection(QPersistentModelIndex src, int srcPort, int srcType
 QVector<QString> Model::LoadableModuleNames() {
     return moduleFactory->LoadableModuleNames();
 }
+
+QModelIndex Model::dst(QPersistentModelIndex item) {
+  DataAbstractItem* src = static_cast<DataAbstractItem*> (item.internalPointer());
+  DataConnection* c = static_cast<DataConnection*> (src);
+  DataAbstractItem* dst = c->dst(src);
+//   DataAbstractItem* par = dst->parent();
+  return index(dst->row(),0, QModelIndex());
+}
+
+
+
+

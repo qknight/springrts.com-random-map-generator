@@ -1,3 +1,6 @@
+2010-01-26
+ - create functionality to 'add connections' by click'n'drag'n'drop is done
+ - modules can now be moved again but using the red line for connections works as well
 2010-01-25
  - summary: inserting connections works no backend wise
    - Model.h/cpp insertConnection(..) rewritten

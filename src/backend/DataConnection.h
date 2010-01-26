@@ -63,6 +63,7 @@ class DataConnection : public DataAbstractItem {
     DataAbstractItem* m_dst; 
     int m_dstType; 
     int m_dstPortNumber;
+    
 };
 
 #endif // DATACONNECTION_H

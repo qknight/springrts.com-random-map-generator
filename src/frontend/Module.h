@@ -28,13 +28,15 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
     Module(Model* model, QPersistentModelIndex item);
     ~Module();
+    Port* resolvePort(int portType, int portNumber);
+    QString m_label;
   private:
     QVector<Port*> ports;
    int type() const
     { return DataType::MODULE; }
     void createPorts(Model* model, QPersistentModelIndex item);
 
-    QString m_label;
+    
 //     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

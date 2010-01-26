@@ -25,11 +25,13 @@ class Port : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
     QVector<Connection*> connections;
   public:
-    Port( Model* model, QPersistentModelIndex item, QGraphicsItem * parent = 0);
+    Port( Model* model, QPersistentModelIndex item, int portType, int portNumber, QGraphicsItem * parent = 0);
     ~Port();
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);
     QRectF boundingRect() const;
+    int porttype();
+    int portnumber();
     // input=0, modput=1, output=2
     int orientation;
     void updateData() {};
@@ -37,6 +39,9 @@ class Port : public QGraphicsItem, public GraphicsItemModelExtension {
     { return DataType::PORT; }
   protected:
     QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
+  private:
+      int m_portType;
+      int m_portNumber;
 };
 
 #endif

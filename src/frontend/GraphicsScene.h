@@ -36,6 +36,8 @@ class GraphicsScene : public QGraphicsScene {
     QGraphicsItem* moduleInserted( QPersistentModelIndex item );
 //     void moduleUpdated( QPersistentModelIndex item );
     bool moduleRemoved( QPersistentModelIndex item );
+    QGraphicsItem* connectionInserted ( QPersistentModelIndex item);
+
   private:
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QMenu menu;
@@ -49,11 +51,11 @@ class GraphicsScene : public QGraphicsScene {
     /*! we handle all keyboard events here, this is only interrupted when an item got focus */
 //     void keyPressEvent( QKeyEvent * keyEvent );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
-//     void mousePressEvent ( QMouseEvent * event );
+    void mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
-//     void mouseMoveEvent( QMouseEvent * event );
+    void mouseMoveEvent( QGraphicsSceneMouseEvent *mouseEvent  );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
-//     void mouseReleaseEvent( QMouseEvent * event );
+    void mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent );
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
 
 

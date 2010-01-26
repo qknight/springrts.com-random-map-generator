@@ -1,6 +1,9 @@
 ------- current plan (near objectives): ------- 
-- create functionality to 'add connections' by click'n'drag'n'drop
+- inserting connections doesn't work yet
+  - Model::dst() functions needs rewriting
+  - void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
 - create CONNECTIONs (QGraphicsItem wise)
+
 - when exiting the program this line popps up, what is that?
   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
   -> Module::~Module() {
@@ -57,7 +60,7 @@
   textures, the textures do have a fixed orientation. later this might be adapted to reflect
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 - integrate xml save/load functionality
-
+- fix copyright
 ------- modules todo: --------
 utils modules
   NoiseMapBuilderPlane
