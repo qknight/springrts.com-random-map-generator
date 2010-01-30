@@ -515,10 +515,11 @@ bool Model::insertConnection(QPersistentModelIndex src, int srcPort, int srcType
         DataConnection* dc;
         if (srcType == PortType::OUTPUT) {
           dc = new DataConnection( srcItem, srcType, srcPort, dstItem, dstType, dstPort);
+	  srcItem->appendChild( dc );
         } else if (dstType == PortType::OUTPUT) {
           dc = new DataConnection( dstItem, dstType, dstPort, srcItem, srcType, srcPort);
+	  dstItem->appendChild( dc );
         }
-        srcItem->appendChild( dc );
     }
     endInsertRows();
     return true;

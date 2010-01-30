@@ -2,13 +2,15 @@
 - inserting connections doesn't work yet
   - Model::dst() functions needs rewriting
   - void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
+  POSSIBLE FIX: insert connections dependant on their output but insert them as:
+                - forward connection at the 'output' side
+                - backward connection on the 'modput'|'input' side
 - create CONNECTIONs (QGraphicsItem wise)
 
-- when exiting the program this line popps up, what is that?
+- when exiting the program, this line popps up, what is that?
   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
   -> Module::~Module() {
     move this check to class Port and remove all Ports instead...
-- modules don't have any QGraphicsTextItem label? why?!
 
 - make items removable & create shortcuts for that as 'del'
 - set bounding box selection using a modifier key, say ctrl
@@ -61,6 +63,9 @@
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 - integrate xml save/load functionality
 - fix copyright
+- integrate 3d viewer
+- release the source as package
+
 ------- modules todo: --------
 utils modules
   NoiseMapBuilderPlane
