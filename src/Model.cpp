@@ -496,49 +496,87 @@ bool Model::insertModule(QString type, QPoint pos) {
     return true;
 }
 
+/*!
+ * inserting connections is complex and many checks have to be done as
+ *  - checking the connection if it is valid.
+ *  - asking the modules if they accept the connection (might not be used yet)
+ */
 bool Model::insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
                              QPersistentModelIndex dst, int dstPort, int dstType) {
   int row = rowCount( src );
-  //FIXME i don't like this code
   if ((srcType != PortType::OUTPUT) && (dstType != PortType::OUTPUT)) {
     qDebug() << "can't add connection, either side must have an output port";
     qDebug() << srcType << " " << dstType;
     return false;
   }
   
-  if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE ) {
+  if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE &&
+       data( dst, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE) {
     DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
     DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
-    beginInsertRows( src, row, row + 0 );
-    {
-      //FIXME i don't like this code
-        DataConnection* dc;
-        if (srcType == PortType::OUTPUT) {
-          dc = new DataConnection( srcItem, srcType, srcPort, dstItem, dstType, dstPort);
-	  srcItem->appendChild( dc );
-        } else if (dstType == PortType::OUTPUT) {
-          dc = new DataConnection( dstItem, dstType, dstPort, srcItem, srcType, srcPort);
-	  dstItem->appendChild( dc );
-        }
+
+    // 0. create the new connection (maybe only temporarly)
+    DataConnection* dc = new DataConnection( srcItem, srcType, srcPort, dstItem, dstType, dstPort);
+
+    // 1. test if the connection itself is consistent
+    if (! dc->validate()) {
+      qDebug() << __PRETTY_FUNCTION__ << " connection validation returns invalid connection request so some sort...?";
+      delete dc;
+      return false;
     }
-    endInsertRows();
-    return true;
+    // this code is currenlty not used but can be used later
+    // 2. test here if the connection is accepted by the modules (ask both modules)
+//     DataAbstractModule* srcModule = static_cast<DataAbstractModule*>( srcItem );
+//     DataAbstractModule* dstModule = static_cast<DataAbstractModule*>( dstItem );
+//     if (srcModule->verifyConnection(dc) && dstModule->verifyConnection(dc)) {
+//       delete dc;
+//       return false;
+//     }
+
+    // 3. finally insert the connection
+    if (srcType == 0) {
+      beginInsertRows( src, row, row + 0 );
+      { 
+	dc->setParent(srcItem);
+	srcItem->appendChild( dc );
+      }
+      endInsertRows();
+      return true;
+    } else {
+      beginInsertRows( dst, row, row + 0 );
+      {
+	dc->setParent(dstItem);
+	dstItem->appendChild( dc );
+      }
+      endInsertRows();
+      return true;      
+    }
   }
   qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
-  exit(1);
+  exit(1); //FIXME once this stuff is tested, remove this check
   return false;
 }
-
 
 QVector<QString> Model::LoadableModuleNames() {
     return moduleFactory->LoadableModuleNames();
 }
 
+/*!
+ * called with a item where item is a QModelIndex representing a connection
+ */
 QModelIndex Model::dst(QPersistentModelIndex item) {
+  // 0. check if item is a 'connection'
+  if (data( item, customRole::TypeRole ).toInt() != DataType::CONNECTION) {
+    qDebug() << __PRETTY_FUNCTION__ << " fatal error: item is not a connection";
+    exit(1);
+  }
+    
   DataAbstractItem* src = static_cast<DataAbstractItem*> (item.internalPointer());
+  // 1. now resolve the connection into a DataConnection
   DataConnection* c = static_cast<DataConnection*> (src);
-  DataAbstractItem* dst = c->dst(src);
-//   DataAbstractItem* par = dst->parent();
+  
+  // 2. finally query c->dst with it's parent
+  DataAbstractItem* dst = c->src(src->parent());
   return index(dst->row(),0, QModelIndex());
 }
 

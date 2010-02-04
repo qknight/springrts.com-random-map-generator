@@ -30,6 +30,7 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
     ~Module();
     Port* resolvePort(int portType, int portNumber);
     QString m_label;
+    QPoint m_pos;
   private:
     QVector<Port*> ports;
    int type() const

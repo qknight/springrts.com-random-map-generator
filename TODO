@@ -1,4 +1,6 @@
 ------- current plan (near objectives): ------- 
+- connections should be inserted according to the parent which has the output on his side
+  this is currently done but ... i should doublecheck that...
 - inserting connections doesn't work yet
   - Model::dst() functions needs rewriting
   - void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
@@ -49,9 +51,6 @@
 
 - libNoise (backend) and 
 - libNoiseAbstraction (frontend) need to be created
-  for the former two tasks i probably need bison
-    http://www.developer.com/net/cplus/article.php/3642516/Classic-Parsing-with-Flex-and-Bison
-
 - add all modules which are in libnoise
 - integrate libNoise-view
 

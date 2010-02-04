@@ -105,7 +105,7 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
     QModelIndex item = model->index( i, 0, parent );
     if ( model->data( item, customRole::TypeRole ).toInt() == DataType::MODULE )
       scene->moduleInserted( QPersistentModelIndex( item ) );
-    else if ( model->data( item, customRole::TypeRole ).toInt() == DataType::CONNECTION ){
+    else if ( model->data( item, customRole::TypeRole ).toInt() == DataType::CONNECTION ) {
       scene->connectionInserted( QPersistentModelIndex( item ));
     }
   }

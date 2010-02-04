@@ -30,7 +30,7 @@ DataConnection::DataConnection ( DataAbstractItem* src, int srcType, int srcPort
     m_dst = dst;
     m_dstType = dstType;
     m_dstPortNumber = dstPortNumber;
-       qDebug() << "===================================================";
+    qDebug() << "===================================================";
     qDebug() << "m_src " << m_src;
     qDebug() << "m_srcType " << m_srcType;
     qDebug() << "m_srcPortNumber " << m_srcPortNumber;
@@ -61,18 +61,20 @@ DataConnection::~DataConnection() {
 }
 
 DataAbstractItem* DataConnection::src ( DataAbstractItem* querier ) {
-  qDebug() << "------------(";
-  qDebug() << querier;
-  qDebug() << parent();
-  qDebug() << ")------------";
+//   qDebug() << "------------(";
+//   qDebug() << querier;
+//   qDebug() << parent();
+//   qDebug() << m_src;
+//   qDebug() << m_dst;
+//   qDebug() << ")------------";
 //   qDebug() << static_cast<DataAbstractModule*> (querier);
 //   exit(0);
   
   qDebug() << __PRETTY_FUNCTION__ << querier->getObjectType();
     if ( parent() == querier )
-        return m_src;
-    else if ( m_dst == querier )
         return m_dst;
+    else if ( m_dst == querier )
+        return m_src;
     qDebug() << __PRETTY_FUNCTION__ << "fatal error";
     exit(1);
 }
@@ -80,9 +82,9 @@ DataAbstractItem* DataConnection::src ( DataAbstractItem* querier ) {
 int DataConnection::srcType ( DataAbstractItem* querier ) {
   qDebug() << __PRETTY_FUNCTION__ <<  querier->getObjectType();
     if ( parent() == querier )
-        return m_srcType;
-    else if ( m_dst == querier )
         return m_dstType;
+    else if ( m_dst == querier )
+        return m_srcType;
     qDebug() << __PRETTY_FUNCTION__ << "fatal error";
     exit(1);
 }
@@ -90,9 +92,9 @@ int DataConnection::srcType ( DataAbstractItem* querier ) {
 int DataConnection::srcPortNumber ( DataAbstractItem* querier ) {
   qDebug() << __PRETTY_FUNCTION__ <<  querier->getObjectType();
     if ( parent() == querier )
-        return m_srcPortNumber;
-    else if (m_dst == querier )
         return m_dstPortNumber;
+    else if (m_dst == querier )
+        return m_srcPortNumber;
     qDebug() << __PRETTY_FUNCTION__ << "fatal error";
     exit(1);
 }

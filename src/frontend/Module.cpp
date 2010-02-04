@@ -16,6 +16,7 @@
 
 Module::Module(Model* model, QPersistentModelIndex item) : QGraphicsItem(), GraphicsItemModelExtension(model, item) {
   updateData();
+
   setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
 //   labelItem->setVisible(true);
@@ -80,6 +81,8 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 void Module::updateData() {
   m_label = modelData(Qt::DisplayRole).toString();
+  m_pos =  modelData ( customRole::PosRole ).toPoint();
+  setPos ( m_pos );
 }
 
 /*!

@@ -1,3 +1,10 @@
+2010-02-02
+ - connections are now inserted at the module with the output side, using the GraphicsScene
+   one can add modules and it does not matter if one selects a free output port and connects
+   it to a free input port or vice versa.
+ - problem: modules could be asked if they like the connection but it is not implemented
+   but can be done, see Model.cpp insertConnection(...) where i have included
+   some concept code
 2010-01-26
  - create functionality to 'add connections' by click'n'drag'n'drop is done
  - modules can now be moved again but using the red line for connections works as well
