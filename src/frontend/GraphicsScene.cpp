@@ -124,7 +124,6 @@ bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
  */
 QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) {
     //FIXME use GraphcsItemModelExtension cast if possible not 3 times the same code!
-    //FIXME this code does not work yet
     QList<QGraphicsItem *> m_list = items();
 //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
 //   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";

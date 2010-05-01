@@ -33,6 +33,7 @@ SET( srmg_SOURCES
   backend/DataRoot.cpp 
   backend/DataAbstractModule.cpp
   backend/DataConnection.cpp 
+  backend/ConnectionValidator.cpp
 
   # libnoise module frontends -> QGraphicsScene items
   frontend/GraphicsScene.cpp

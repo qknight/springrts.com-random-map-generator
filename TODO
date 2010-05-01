@@ -1,4 +1,16 @@
 ------- current plan (near objectives): ------- 
+- Q: could it be easier to have an abstraction like this:
+  I) root-module-port-connection compared to II) root-module-connection (with transparent ports?)
+  A: an output port can have multiple output lines
+     an input port can only have one ingoing connection
+
+     + it might be easier to implement it the I) way since one does not need the complicated transpartent
+       port checks
+     + if ports would be QModelIndex'es it would be easy to find the parent
+       which is good since the parent needs to validate the connection request 
+       (currently this is done by the connection, which is bad)
+
+- when clicking a module in the GraphicsView write some debug output about the module to the console
 - connections should be inserted according to the parent which has the output on his side
   this is currently done but ... i should doublecheck that...
 - inserting connections doesn't work yet
@@ -8,11 +20,18 @@
                 - forward connection at the 'output' side
                 - backward connection on the 'modput'|'input' side
 - create CONNECTIONs (QGraphicsItem wise)
-
 - when exiting the program, this line popps up, what is that?
   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
   -> Module::~Module() {
     move this check to class Port and remove all Ports instead...
+
+
+
+
+
+
+
+
 
 - make items removable & create shortcuts for that as 'del'
 - set bounding box selection using a modifier key, say ctrl

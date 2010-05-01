@@ -22,7 +22,7 @@
 
 DataConnection::DataConnection ( DataAbstractItem* src, int srcType, int srcPortNumber,
                                  DataAbstractItem* dst, int dstType, int dstPortNumber ) : DataAbstractItem ( src ) {
-//                                    the problem lies in the fact that src(s) and dst(s) return the same values what is wrong!
+//                                    the problem lies in the fact that src(s) and dst(s) return the same values, which is wrong!
     qDebug() << __PRETTY_FUNCTION__;
     m_src = src;
     m_srcType = srcType;
