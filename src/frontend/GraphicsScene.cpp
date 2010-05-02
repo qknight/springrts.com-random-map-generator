@@ -60,7 +60,7 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
  * find the Port(s)
  */
 //FIXME this code has serious bugs and needs refactoring and testing
-QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex cItem ) {
+QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex cItem ) {/*
     // 0. dst QPersistentModelIndex (that is to be queried via the model)
     QPersistentModelIndex dItem = QPersistentModelIndex(model->dst(cItem));
 
@@ -97,7 +97,7 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex cItem )
     addItem ( connection );
     exit(1);
     qDebug() << __PRETTY_FUNCTION__ << "added a connection sucessfully";
-    return connection;
+    return connection;*/
 }
 
 QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
@@ -200,29 +200,30 @@ void GraphicsScene::mouseMoveEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
     }
 }
 
+//FIXME broken
 void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 //     qDebug() << __PRETTY_FUNCTION__;
-    if ( line != 0 ) {
-        QList<QGraphicsItem *> startItems = items ( line->line().p1() );
-        if ( startItems.count() && startItems.first() == line )
-            startItems.removeFirst();
-        QList<QGraphicsItem *> endItems = items ( line->line().p2() );
-        if ( endItems.count() && endItems.first() == line )
-            endItems.removeFirst();
-
-        removeItem ( line );
-        delete line;
-        line = 0;
-
-        if ( startItems.count() > 0 && endItems.count() > 0 &&
-             startItems.first()->type() == DataType::PORT &&
-             endItems.first()->type() == DataType::PORT ) {
-            Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
-            Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
-            model->insertConnection ( startItem->index(), startItem->portnumber(), startItem->porttype(),
-                                      endItem->index(), endItem->portnumber(), endItem->porttype() );
-        }
-    }
+//     if ( line != 0 ) {
+//         QList<QGraphicsItem *> startItems = items ( line->line().p1() );
+//         if ( startItems.count() && startItems.first() == line )
+//             startItems.removeFirst();
+//         QList<QGraphicsItem *> endItems = items ( line->line().p2() );
+//         if ( endItems.count() && endItems.first() == line )
+//             endItems.removeFirst();
+// 
+//         removeItem ( line );
+//         delete line;
+//         line = 0;
+// 
+//         if ( startItems.count() > 0 && endItems.count() > 0 &&
+//              startItems.first()->type() == DataType::PORT &&
+//              endItems.first()->type() == DataType::PORT ) {
+//             Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
+//             Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
+//             model->insertConnection ( startItem->index(), startItem->portnumber(), startItem->porttype(),
+//                                       endItem->index(), endItem->portnumber(), endItem->porttype() );
+//         }
+//     }
     QGraphicsScene::mouseReleaseEvent ( mouseEvent );
 }
 

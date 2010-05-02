@@ -7,7 +7,7 @@
      + it might be easier to implement it the I) way since one does not need the complicated transpartent
        port checks
      + if ports would be QModelIndex'es it would be easy to find the parent
-       which is good since the parent needs to validate the connection request 
+       which is good since the parent "could" need to validate the connection request
        (currently this is done by the connection, which is bad)
 
 - when clicking a module in the GraphicsView write some debug output about the module to the console

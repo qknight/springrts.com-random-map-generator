@@ -89,11 +89,9 @@ class Model : public QAbstractItemModel {
     /*! this is the public interface, there is an private one for internal use as well!
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     bool insertModule(QString type, QPoint pos=QPoint());
-    bool insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
-                          QPersistentModelIndex dst, int dstPort, int dstType);
-    QModelIndex dst(QPersistentModelIndex item);
+    bool insertConnection(QPersistentModelIndex src, QPersistentModelIndex dst);
+//     QModelIndex dst(QPersistentModelIndex item);
   private:
-
     /*! the root item is set by the constructor once and can't be changed and must not be deleted */
     DataAbstractItem* rootItem;
     /*! the only instance of ModuleFactory which will add new items using the model */ 

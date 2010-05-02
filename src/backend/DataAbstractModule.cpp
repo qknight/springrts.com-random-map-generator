@@ -20,24 +20,31 @@
 #include "DataAbstractModule.h"
 
 DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) {
-    this->inputs = inputs;
-    this->modputs = modputs;
-    this->outputs = outputs;
+    // create the appropriate Ports
+//     for(int i = 0; i < inputs; ++i) {
+//       insertPort(type);  
+//     }
+//     for(int i = 0; i < modputs; ++i) {
+//       insertPort(type);  
+//     }
+//     for(int i = 0; i < outputs; ++i) {
+//       insertPort(type);  
+//     }
 }
 
 DataAbstractModule::~DataAbstractModule() {
-    qDebug() << __FUNCTION__;
-    if ( m_childItems.size() > 0 ) {
-        qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
-        exit ( 1 );
-    }
-    if ( m_childItemsReferences.size() > 0 ) {
-        qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItemsReferences.size() << " reverseChildItems";
-        exit ( 1 );
-    }
+//     qDebug() << __FUNCTION__;
+//     if ( m_childItems.size() > 0 ) {
+//         qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
+//         exit ( 1 );
+//     }
+//     if ( m_childItemsReferences.size() > 0 ) {
+//         qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItemsReferences.size() << " reverseChildItems";
+//         exit ( 1 );
+//     }
 }
 
-void DataAbstractModule::dump() { }
+void DataAbstractModule::dump() {}
 
 unsigned int DataAbstractModule::getObjectType() {
     return DataItemType::DATAABSTRACTMODULE;
@@ -50,9 +57,9 @@ void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
             the parent of the child doesn't match the parent you want to add it to!" );
         return;
     }
-
+/*
     // this is the inverted connection item: r_item
-    DataConnection* c = static_cast<DataConnection*> ( item );
+    DataPort* p = static_cast<DataPort*> ( item );
 
     // 0. check if allowed (no loops to the same item)
     if ( ! ( c->validate() ) ) {
@@ -66,51 +73,24 @@ void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
         DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
         dstItem->insertConnection ( c );
         return;
-    }
+    }*/
 }
 
 bool DataAbstractModule::isPortUsed(DataAbstractItem *item) {
-  qDebug() << __PRETTY_FUNCTION__;
-  DataConnection* c = static_cast<DataConnection*> ( item );
-    // a. copy all 'references' into a list
-    // b. remove all 'outputs' from that list
-    // c. filter all items except those with dstType, 
-    //    now search for an item with known portnumber, 
-    //    if item is found 'return false'
-    foreach(DataAbstractItem* ref, m_childItemsReferences) {
-      DataConnection* r = static_cast<DataConnection*> ( ref );
-      if ((c->srcType(this) == r->srcType(this)) && (c->srcPortNumber(this) == r->srcPortNumber(this)))
-        return true;
-    }
-    
+//   qDebug() << __PRETTY_FUNCTION__;
+//   DataConnection* c = static_cast<DataConnection*> ( item );
+//     // a. copy all 'references' into a list
+//     // b. remove all 'outputs' from that list
+//     // c. filter all items except those with dstType, 
+//     //    now search for an item with known portnumber, 
+//     //    if item is found 'return false'
+//     foreach(DataAbstractItem* ref, m_childItemsReferences) {
+//       DataConnection* r = static_cast<DataConnection*> ( ref );
+//       if ((c->srcType(this) == r->srcType(this)) && (c->srcPortNumber(this) == r->srcPortNumber(this)))
+//         return true;
+//     }
+//     
     return false;
-}
-
-bool DataAbstractModule::insertConnection ( DataConnection* c ) {
-  qDebug() << __PRETTY_FUNCTION__;
-    DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
-    // 1. check if already in use (check remote side only!)
-    //    - inputs/modputs can only be used once
-    //    - outputs may have multiple connections 
-    //      ('this' is the side with the output, this is guaranteed by 
-    //      appendChild and (c->validate() already ))
-    if ( dstItem->isPortUsed(c) )
-        return false;
-
-    // 2. insert connection & also the respective backward connection
-    m_childItems.append ( c );
-    dstItem->insertReference ( c );
-    return true;
-}
-
-void DataAbstractModule::insertReference ( DataAbstractItem* item ) {
-  qDebug() << __PRETTY_FUNCTION__;
-    m_childItemsReferences.append ( item );
-}
-
-//FIXME todo
-void DataAbstractModule::removeReference ( DataAbstractItem* item ) {
-//   m_childItemsReferences.remove ( item );
 }
 
 //FIXME todo

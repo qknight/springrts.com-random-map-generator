@@ -28,6 +28,7 @@ namespace DataItemType {
   enum DataItemType {
     DATAROOT,
     DATAABSTRACTMODULE,
+    DATAPORT,
     DATACONNECTION,
     UNKNOWN
   };
@@ -38,6 +39,7 @@ class DataAbstractItem : QObject {
     friend class DataRoot;
     friend class DataAbstractModule;
     friend class DataConnection;
+    friend class DataPort;
     friend class Model;
   public:
     /*! returns the number of childs:

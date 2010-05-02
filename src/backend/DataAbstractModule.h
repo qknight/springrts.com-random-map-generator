@@ -23,17 +23,9 @@
 #include <QString>
 
 #include "DataAbstractItem.h"
-#include "DataConnection.h"
+#include "DataPort.h"
+#include "PortTypes.h"
 
-namespace PortType {
-    // the idea behind yet another type identifier is that we map the types below via the model to the
-    // types defined in DataAbstractItem.h (see DataItemType in DataAbstractItem.h)
-    enum PortType {
-        INPUT,
-        MODPUT,
-        OUTPUT
-    };
-}
 
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
@@ -55,15 +47,13 @@ class DataAbstractModule : public DataAbstractItem {
         /*! removes a child (a connection) but also removes a reverse child, see code since this is quite complex */
         void removeChild ( unsigned int index );
         /*! used to identify modules, used by the ModuleFactaory */
-        virtual QString identify() =0;
+        virtual QString identify() = 0;
         int ports ( int type );
         bool isPortUsed(DataAbstractItem *item);
     private:
         /*! This container holds all child items which reference this object as input/modput */
         QList<DataAbstractItem*> m_childItemsReferences;
-        bool insertConnection ( DataConnection* c );
-        void insertReference ( DataAbstractItem* item );
-        void removeReference ( DataAbstractItem* item );
+        bool insertPort ( DataConnection* c );
         int inputs, outputs, modputs;
 };
 

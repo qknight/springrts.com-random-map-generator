@@ -17,44 +17,36 @@
 
 */
 
-#ifndef DATACONNECTION_H
-#define DATACONNECTION_H
+#ifndef DATAPORT_H
+#define DATAPORT_H
 
 #include "DataAbstractItem.h"
-class DataAbstractModule;
+#include "PortTypes.h"
+#include "DataConnection.h"
+#include "ConnectionValidator.h"
 
-/*! 
- * this class is representing an connection (if this object is a child of a module)
- * 'in the frontend' as well as in the backend.
- * it is designed that dependant who asks (either src module or dst module) will get 
- * the wanted answer seen from these objects, meaning:
- *   'src module' named a asks for dst() using dst(a), this will return 'dst'
- * 
- * this class can be used to validate a connection, see the code to learn which criteria 
- * is tested for...
- */
-class DataConnection : public DataAbstractItem {
+class DataPort : public DataAbstractItem, public ConnectionValidator {
   Q_OBJECT
   public:
-    DataConnection( DataAbstractItem* src, int srcType, 
-		    DataAbstractItem* dst, int dstType );
+    DataPort(int portType, int portDirection);
     /*! WARNING: never delete objects as for instance childItems in the structure here
      ** since this will create inconsistencies between the model and this data structure.<br>
      ** A better way is to fail with exit(0) and a meaningful error message meant for
      ** developrs: since this problem must be handled with great care! */
-    ~DataConnection();
+    ~DataPort();
     /*! dumps the internal data structure for debugging use */
     void dump();
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
-    void removeChild( unsigned int index );
-    DataAbstractItem* dst(DataAbstractItem* querier);
-    DataAbstractItem* src(DataAbstractItem* querier);
+//     void removeChild( unsigned int index );
+
   protected:
-    DataAbstractItem* m_src;
-    int m_srcType;
-    DataAbstractItem* m_dst;
-    int m_dstType;
+    int m_portType;
+    int m_portDirection;
+    bool insertConnection ( DataConnection* c );
+    void insertReference ( DataAbstractItem* item );
+    void removeReference ( DataAbstractItem* item );
+
 };
 
-#endif // DATACONNECTION_H
+#endif // DATAPORT_H

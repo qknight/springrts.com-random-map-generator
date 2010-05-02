@@ -32,6 +32,7 @@ SET( srmg_SOURCES
   backend/DataAbstractItem.cpp 
   backend/DataRoot.cpp 
   backend/DataAbstractModule.cpp
+  backend/DataPort.cpp 
   backend/DataConnection.cpp 
   backend/ConnectionValidator.cpp
 
@@ -61,6 +62,7 @@ SET( srmg_MOC_HEADERS
   backend/DataAbstractItem.h
   backend/DataRoot.h 
   backend/DataAbstractModule.h
+  backend/DataPort.h 
   backend/DataConnection.h 
 
 # frontend 
