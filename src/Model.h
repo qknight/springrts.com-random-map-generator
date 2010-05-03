@@ -90,6 +90,9 @@ class Model : public QAbstractItemModel {
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     bool insertModule(QString type, QPoint pos=QPoint());
     bool insertConnection(QPersistentModelIndex src, QPersistentModelIndex dst);
+  public:
+    /*! most Modules do have several different ports, this function allocates the ports*/
+    bool insertPorts(QModelIndex index);    
 //     QModelIndex dst(QPersistentModelIndex item);
   private:
     /*! the root item is set by the constructor once and can't be changed and must not be deleted */
@@ -115,7 +118,6 @@ class Model : public QAbstractItemModel {
     ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>
     ** It can be called while views are attached to the model, it is not efficient performancewise */
     QVector<QString> LoadableModuleNames();
-
 };
 
 #endif

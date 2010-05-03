@@ -25,7 +25,7 @@ class Port : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
     QVector<Connection*> connections;
   public:
-    Port( Model* model, QPersistentModelIndex item, int portType, int portNumber, QGraphicsItem * parent = 0);
+    Port( Model* model, QPersistentModelIndex index, int portType, int portNumber, QGraphicsItem * parent = 0);
     ~Port();
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                 QWidget *widget);

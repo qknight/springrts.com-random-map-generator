@@ -22,7 +22,6 @@
 DataAbstractItem::DataAbstractItem( DataAbstractItem *parent ) {
 //   qDebug() << "DataAbstractItem Constructor called";
   parentItem = parent;
-//   ID = 0;
 }
 
 DataAbstractItem::~DataAbstractItem() {
@@ -31,8 +30,7 @@ DataAbstractItem::~DataAbstractItem() {
 
 void DataAbstractItem::appendChild( DataAbstractItem *item ) {
   if ( item->parent() != this ) {
-    qDebug( "ERROR: you can't add a child to a parent item where \
-            the parent of the child doesn't match the parent you want to add it to!" );
+    qDebug( "ERROR: you can't add a child to a parent item where the parent of the child doesn't match the parent you want to add it to!" );
   }
   m_childItems.append( item );
 }
@@ -65,7 +63,3 @@ QList<DataAbstractItem*> DataAbstractItem::childItems() const {
 void DataAbstractItem::setParent(DataAbstractItem *parent) {
   parentItem = parent;
 }
-
-// unsigned int DataAbstractItem::getId() {
-//   return ID;
-// }

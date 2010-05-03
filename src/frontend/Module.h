@@ -26,16 +26,17 @@ class Port;
  */
 class Module : public QGraphicsItem, public GraphicsItemModelExtension {
   public:
-    Module(Model* model, QPersistentModelIndex item);
+    Module(Model* model, QPersistentModelIndex index);
     ~Module();
     Port* resolvePort(int portType, int portNumber);
     QString m_label;
     QPoint m_pos;
   private:
     QVector<Port*> ports;
+    Model* model;
    int type() const
     { return DataType::MODULE; }
-    void createPorts(Model* model, QPersistentModelIndex item);
+//     void createPorts(Model* model, QPersistentModelIndex item);
 
     
 //     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );

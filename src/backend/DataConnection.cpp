@@ -83,7 +83,6 @@ DataAbstractItem* DataConnection::src ( DataAbstractItem* querier ) {
 //     exit(1);
 // }
 
-
 DataAbstractItem* DataConnection::dst ( DataAbstractItem* querier ) {
     return src ( querier );
 }

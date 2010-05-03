@@ -16,6 +16,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include "Model.h"
 #include "Module.h"
+#include "Port.h"
 #include "Connection.h"
 
 /**
@@ -37,6 +38,7 @@ class GraphicsScene : public QGraphicsScene {
 //     void moduleUpdated( QPersistentModelIndex item );
     bool moduleRemoved( QPersistentModelIndex item );
     QGraphicsItem* connectionInserted ( QPersistentModelIndex item);
+    QGraphicsItem* portInserted ( QPersistentModelIndex pItem );
 
   private:
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );

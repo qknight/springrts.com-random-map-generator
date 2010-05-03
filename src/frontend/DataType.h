@@ -7,8 +7,8 @@ namespace DataType {
   enum DataType {
     DATA_ROOT,
     MODULE,
-    CONNECTION,
     PORT,
+    CONNECTION,
     UNKNOWN
   };
 }

@@ -35,5 +35,6 @@ bool GraphicsItemModelExtension::setModelData( const QVariant & value, int role 
 }
 
 QPersistentModelIndex GraphicsItemModelExtension::index() {
+  qDebug() << m_index;
   return m_index;
 }

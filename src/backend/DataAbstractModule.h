@@ -14,7 +14,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 #ifndef DATAABSTRACTMODULE_H
 #define DATAABSTRACTMODULE_H
@@ -26,7 +25,6 @@
 #include "DataPort.h"
 #include "PortTypes.h"
 
-
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
         Q_OBJECT
@@ -37,19 +35,19 @@ class DataAbstractModule : public DataAbstractItem {
          ** since this will create inconsistencies between the model and this data structure.<br>
          ** A better way is to fail with exit(0) and a meaningful error message meant for
          ** developrs: since this problem must be handled with great care! */
-        ~DataAbstractModule();
+        virtual ~DataAbstractModule();
         /*! dumps the internal state for debugging */
         void dump();
         /*! returns the object type which is used in the model for example */
         unsigned int getObjectType();
         /*! adds a child (a connection) but also adds a reverse child, see code since this is quite complex */
-        void appendChild ( DataAbstractItem *child );
+//         void appendChild ( DataAbstractItem *child ) = 0;
         /*! removes a child (a connection) but also removes a reverse child, see code since this is quite complex */
         void removeChild ( unsigned int index );
         /*! used to identify modules, used by the ModuleFactaory */
         virtual QString identify() = 0;
         int ports ( int type );
-        bool isPortUsed(DataAbstractItem *item);
+//         bool isPortUsed(DataAbstractItem *item);
     private:
         /*! This container holds all child items which reference this object as input/modput */
         QList<DataAbstractItem*> m_childItemsReferences;

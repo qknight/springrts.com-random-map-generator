@@ -20,13 +20,11 @@
 
 DataRoot::DataRoot( DataAbstractItem* parent ) : DataAbstractItem( parent ) {
 //   qDebug() << "adding a new DataRoot with parent: " << parent;
-
 //   dump();
 }
 
 DataRoot::~DataRoot() {
 //   qDebug() << __PRETTY_FUNCTION__;
-
   if (childCount() != 0) {
     qDebug() << __PRETTY_FUNCTION__ << "-> FATAL ERROR: not all child items were removed prior to this function call, exiting";
     exit(1);

@@ -152,9 +152,10 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 //   if ( role == customRole::CustomLabelRole )
 //     return n->getProperty( "CustomLabelRole" );
 
-//   if ( role == customRole::PosRole )
-//     if ( n->getObjectType() == DataType::MODULE )
-//       return n->property( "pos" );
+    if ( role == customRole::PosRole )
+        if ( n->getObjectType() == DataType::MODULE )
+            return n->property( "pos" );
+
 //   if ( role == customRole::InputsRole )
 //     if ( n->getObjectType() == DataType::MODULE ) {
 //
@@ -198,6 +199,8 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 //       DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
 //       return c->dstType(m);
 //     }
+
+
 
 
 //   if ( role == customRole::SymbolIndexRole )
@@ -331,7 +334,6 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 //     if ( n->getObjectType() == NODE_CONNECTION )
 //       return QBrush( QColor( 180, 200, 200, 50 ) );
 //   }
-
     return QVariant();
 }
 
@@ -431,12 +433,7 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
     return 2;
 }
 
-bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
-    // this function is not used, use insertModule and insertConnection instead
-    return false;
-}
-
-//FIXME remove PORTS, CONNECTIONS
+//FIXME CRITICAL: implement removal of MODULEs, PORTs, CONNECTIONs
 bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
 //   qDebug() << "want to remove " << count << " item(s) beginning at row " << row;
     DataAbstractItem* abstractitem;
@@ -478,23 +475,57 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
     return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable;
 }
 
+bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
+    // this function is not used, use
+    //  - insertModule
+    //  - insertPort
+    //  - insertConnection
+    //  instead
+    return false;
+}
+
 bool Model::insertModule(QString type, QPoint pos) {
     int row = rowCount( QModelIndex() );
 
     // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
+    DataAbstractModule* module = moduleFactory->CreateModule(type);
     beginInsertRows( QModelIndex(), row, row + 0 );
     {
-        DataAbstractModule* module = moduleFactory->CreateModule(type);
-//       node* n = new node(rootItem);
         module->setProperty( "pos", pos );
         module->setProperty( "type", type );
         if (module != NULL) {
-            module->setParent( rootItem ); // FIXME CRITICAL: this should probably be done inside the rootItem itself! ;P
+            // setting the correct parent is very important since it is the foundation of the hierarchy
+            module->setParent( rootItem );
             rootItem->appendChild( module );
-//  qDebug() << __PRETTY_FUNCTION__ << ": created a new module";
+            //  qDebug() << __PRETTY_FUNCTION__ << ": created a new module";
         } else {
             qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
             exit(1);
+        }
+    }
+    endInsertRows();
+//     insertPorts(index(0,0,QModelIndex()));
+    return true;
+}
+
+/*!
+ * each Module can have several INPUT/MODPUT/OUTPUT ports which can be
+ * connected using connections.
+ * each Module does know how many ports, of each type, are required
+ */
+bool Model::insertPorts(QModelIndex index) {
+    // create the appropriate Ports
+    DataAbstractModule* module = static_cast<DataAbstractModule*>( index.internalPointer() );
+    int inputs = module->ports(PortDirection::IN);
+    int row = rowCount( index );
+//     qDebug() << inputs << " " << row;
+    beginInsertRows( index, row, row + inputs - 1 );
+    {
+        for (int i = 0; i < inputs; ++i) {
+            DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN);
+            DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+            portItem->setParent(module);
+            module->appendChild(portItem);
         }
     }
     endInsertRows();
@@ -504,7 +535,7 @@ bool Model::insertModule(QString type, QPoint pos) {
 /*!
  * inserting connections is complex and many checks have to be done as
  *  - checking the connection if it is valid.
- *  - asking the modules if they accept the connection (might not be used yet)
+ *  - asking the modules if they accept the connection (might not be implemented just yet)
  */
 bool Model::insertConnection(QPersistentModelIndex src,
                              QPersistentModelIndex dst) {
@@ -514,15 +545,15 @@ bool Model::insertConnection(QPersistentModelIndex src,
 //         qDebug() << srcType << " " << dstType;
 //         return false;
 //     }
-// 
+//
 //     if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE &&
 //             data( dst, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE) {
 //         DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
 //         DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
-// 
+//
 //         // 0. create the new connection (maybe only temporarly)
 //         DataConnection* dc = new DataConnection( srcItem, srcType, srcPort, dstItem, dstType, dstPort);
-// 
+//
 //         // 1. test if the connection itself is consistent
 //         if (! dc->validate()) {
 //             qDebug() << __PRETTY_FUNCTION__ << " connection validation returns invalid connection request so some sort...?";
@@ -537,28 +568,28 @@ bool Model::insertConnection(QPersistentModelIndex src,
 // //       delete dc;
 // //       return false;
 // //     }
-/*
-        // 3. finally insert the connection
-        if (srcType == 0) {
-            beginInsertRows( src, row, row + 0 );
-            {
-                dc->setParent(srcItem);
-                srcItem->appendChild( dc );
+    /*
+            // 3. finally insert the connection
+            if (srcType == 0) {
+                beginInsertRows( src, row, row + 0 );
+                {
+                    dc->setParent(srcItem);
+                    srcItem->appendChild( dc );
+                }
+                endInsertRows();
+                return true;
+            } else {
+                beginInsertRows( dst, row, row + 0 );
+                {
+                    dc->setParent(dstItem);
+                    dstItem->appendChild( dc );
+                }
+                endInsertRows();
+                return true;
             }
-            endInsertRows();
-            return true;
-        } else {
-            beginInsertRows( dst, row, row + 0 );
-            {
-                dc->setParent(dstItem);
-                dstItem->appendChild( dc );
-            }
-            endInsertRows();
-            return true;
         }
-    }
-    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
-    exit(1); //FIXME once this stuff is tested, remove this check*/
+        qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
+        exit(1); //FIXME once this stuff is tested, remove this check*/
     return false;
 }
 
@@ -575,11 +606,11 @@ QVector<QString> Model::LoadableModuleNames() {
 //         qDebug() << __PRETTY_FUNCTION__ << " fatal error: item is not a connection";
 //         exit(1);
 //     }
-// 
+//
 //     DataAbstractItem* src = static_cast<DataAbstractItem*> (item.internalPointer());
 //     // 1. now resolve the connection into a DataConnection
 //     DataConnection* c = static_cast<DataConnection*> (src);
-// 
+//
 //     // 2. finally query c->dst with it's parent
 //     DataAbstractItem* dst = c->src(src->parent());
 //     return index(dst->row(),0, QModelIndex());

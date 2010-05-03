@@ -12,8 +12,8 @@
 #include "Port.h"
 #include "Connection.h"
 
-Port::Port ( Model* model, QPersistentModelIndex item, int portType, int portNumber, QGraphicsItem * parent ) :
-        QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, item ) {
+Port::Port ( Model* model, QPersistentModelIndex index, int portType, int portNumber, QGraphicsItem* parent ) :
+        QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index ) {
     m_portType=portType;
     m_portNumber=portNumber;
 }
@@ -54,7 +54,6 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 }
 
 Port::~Port() {
-
 }
 
 int Port::porttype() {

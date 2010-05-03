@@ -53,6 +53,40 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
     this->loadableModuleNames=loadableModuleNames;
 }
 
+QGraphicsItem* GraphicsScene::portInserted ( QPersistentModelIndex pItem ) {
+    // 1. find out what QGraphicsItem pGraphicsItem referes to the given parent pItem
+    QGraphicsItem* pGraphicsItem = modelToSceenIndex(pItem.parent());
+    // 2. distinguish the port by 'portType' and 'portDirection'
+    //FIXME not done yet, implement this!
+    // 3. create a new Port class object and assign it as child to the parent P
+    Port* port = new Port(model, pItem, 0, 0, pGraphicsItem);
+    port->setParentItem ( pGraphicsItem );
+    return port;
+}
+
+// void Module::createPorts(Model* model, QPersistentModelIndex item) {
+//   // inputs
+//   for (int i=0; i < modelData(customRole::InputsRole).toInt(); ++i) {
+//     Port* p = new Port(model, item, PortDirection::IN, i, this);
+//     ports.push_back(p);
+//     p->moveBy(-10,20+i*40);
+//   }
+//
+//   // modputs
+//   for (int i=0; i < modelData(customRole::ModputsRole).toInt(); ++i) {
+//     Port* p = new Port(model, item, PortDirection::MOD, i, this);
+//     ports.push_back(p);
+//     p->moveBy(50+i*20,130);
+//   }
+//
+//   // outputs
+//   for (int i=0; i < modelData(customRole::OutputsRole).toInt(); ++i) {
+//     Port* p = new Port(model, item, PortDirection::OUT, i, this);
+//     ports.push_back(p);
+//     p->moveBy(110,20+i*40);
+//   }
+// }
+
 /*!
  * inserts a Connection object which represents a QModelIndex of the Model
  * we know a lot about the connection but we must find out which ports are
@@ -80,13 +114,13 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex cItem )
       qDebug() << "srcModule == dstModule";
       exit(1);
     }
-    
+
     // 1. type, number for both sides
     int srcPortType   = model->data(cItem, customRole::SrcPortTypeRole).toInt();
     int srcPortNumber = model->data(cItem, customRole::SrcPortNumberRole).toInt();;
     qDebug() << "src " << srcModule->m_label<< " porttype: " << srcPortType << " portnumber" << srcPortNumber;
     Port* srcPort = srcModule->resolvePort(srcPortType, srcPortNumber);
-    
+
     // using sItem here is not wrong since dst/src query in DataConnection is context sensitive
     int dstPortType   = model->data(cItem, customRole::DstPortTypeRole).toInt();
     int dstPortNumber = model->data(cItem, customRole::DstPortNumberRole).toInt();
@@ -121,8 +155,13 @@ bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
 
 /*!
  * look at all items in the GraphicsScene and try to find the _one_ with the index in it
+ * WARNING: be careful with using the constructor of an item to allocate child items 
+ *          since the item might not have been inserted into the scene() yet.
+ *          -> just commit complex new items (containing also childs) in one go, using 
+ *             the Model code
  */
 QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) {
+//   qDebug() << "Searching for: " << index;
     //FIXME use GraphcsItemModelExtension cast if possible not 3 times the same code!
     QList<QGraphicsItem *> m_list = items();
 //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
@@ -210,11 +249,11 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 //         QList<QGraphicsItem *> endItems = items ( line->line().p2() );
 //         if ( endItems.count() && endItems.first() == line )
 //             endItems.removeFirst();
-// 
+//
 //         removeItem ( line );
 //         delete line;
 //         line = 0;
-// 
+//
 //         if ( startItems.count() > 0 && endItems.count() > 0 &&
 //              startItems.first()->type() == DataType::PORT &&
 //              endItems.first()->type() == DataType::PORT ) {

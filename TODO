@@ -9,6 +9,26 @@
      + if ports would be QModelIndex'es it would be easy to find the parent
        which is good since the parent "could" need to validate the connection request
        (currently this is done by the connection, which is bad)
+     CURRENT STATUS OF MIGRATION:
+      - modules appear and input ports are there
+      - modputs/outputs are not done yet
+      - the concept, mentioned above, now works. however it's not complete since there is a issue:
+        I) while adding a module, transparently also add ports VS
+	II) after adding a module, the Module registers at the scene(), when that happens the ports
+	   are added.
+
+	II is currently implemented but has some limitations:
+	 - it requires the Module to interact with the model to actively query for PORTs, which is bad
+	 - it voids the concept of Connection/Port/Module using the GraphicsItemModelExtension since
+	   it requires a model pointer to access model->insertPorts(index()); using the signal provided
+	   by QGraphicsItem::ItemSceneHasChanged: after the Module has entered the scene()
+
+	I would have these benefits:
+	 - layout of the in/mod/out puts can be assigned right from one central place
+	 - no portInserted(..) function would be required
+
+        CURRENTLY II is implemented but i will try also to implement I and then we'll see what is better
+ 
 
 - when clicking a module in the GraphicsView write some debug output about the module to the console
 - connections should be inserted according to the parent which has the output on his side

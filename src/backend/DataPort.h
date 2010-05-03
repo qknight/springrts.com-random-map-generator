@@ -38,7 +38,7 @@ class DataPort : public DataAbstractItem, public ConnectionValidator {
     void dump();
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
-//     void removeChild( unsigned int index );
+    void removeChild( unsigned int index );
 
   protected:
     int m_portType;

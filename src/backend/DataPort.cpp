@@ -50,6 +50,10 @@ void DataPort::insertReference ( DataAbstractItem* item ) {
 //     m_childItemsReferences.append ( item );
 }
 
+void DataPort::removeChild ( unsigned int index ) {
+  // remove childs (all ports)
+}
+
 //FIXME todo
 void DataPort::removeReference ( DataAbstractItem* item ) {
 //   m_childItemsReferences.remove ( item );
