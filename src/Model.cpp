@@ -489,22 +489,26 @@ bool Model::insertModule(QString type, QPoint pos) {
 
     // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
     DataAbstractModule* module = moduleFactory->CreateModule(type);
+    module->setProperty( "pos", pos );
+    module->setProperty( "type", type );
+    // setting the correct parent is very important since it is the foundation of the hierarchy
+    module->setParent( rootItem );
     beginInsertRows( QModelIndex(), row, row + 0 );
     {
-        module->setProperty( "pos", pos );
-        module->setProperty( "type", type );
         if (module != NULL) {
-            // setting the correct parent is very important since it is the foundation of the hierarchy
-            module->setParent( rootItem );
             rootItem->appendChild( module );
-            //  qDebug() << __PRETTY_FUNCTION__ << ": created a new module";
+            
+            // FIXME i need to extend this code a lot but: it is a proof of concept right now
+            DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN);
+            DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+            portItem->setParent(module);
+            module->appendChild(portItem);
         } else {
             qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
             exit(1);
         }
     }
     endInsertRows();
-//     insertPorts(index(0,0,QModelIndex()));
     return true;
 }
 

@@ -90,9 +90,7 @@ class Model : public QAbstractItemModel {
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     bool insertModule(QString type, QPoint pos=QPoint());
     bool insertConnection(QPersistentModelIndex src, QPersistentModelIndex dst);
-  public:
-    /*! most Modules do have several different ports, this function allocates the ports*/
-    bool insertPorts(QModelIndex index);    
+    
 //     QModelIndex dst(QPersistentModelIndex item);
   private:
     /*! the root item is set by the constructor once and can't be changed and must not be deleted */
@@ -112,7 +110,9 @@ class Model : public QAbstractItemModel {
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint(), QString type=QString());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
-
+    /*! most Modules do have several different ports, this function allocates the ports*/
+    bool insertPorts(QModelIndex index);
+    
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)
     ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>

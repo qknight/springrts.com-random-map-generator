@@ -59,7 +59,7 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
 //       }
       break;
       case QGraphicsItem::ItemSceneHasChanged:
-        model->insertPorts(index());
+//         model->insertPorts(index());
       break;
       default:
         break;

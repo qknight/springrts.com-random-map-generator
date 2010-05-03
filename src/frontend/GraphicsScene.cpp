@@ -53,16 +53,6 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
     this->loadableModuleNames=loadableModuleNames;
 }
 
-QGraphicsItem* GraphicsScene::portInserted ( QPersistentModelIndex pItem ) {
-    // 1. find out what QGraphicsItem pGraphicsItem referes to the given parent pItem
-    QGraphicsItem* pGraphicsItem = modelToSceenIndex(pItem.parent());
-    // 2. distinguish the port by 'portType' and 'portDirection'
-    //FIXME not done yet, implement this!
-    // 3. create a new Port class object and assign it as child to the parent P
-    Port* port = new Port(model, pItem, 0, 0, pGraphicsItem);
-    port->setParentItem ( pGraphicsItem );
-    return port;
-}
 
 // void Module::createPorts(Model* model, QPersistentModelIndex item) {
 //   // inputs
@@ -138,6 +128,22 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 //   qDebug() << __PRETTY_FUNCTION__;
     Module* module = new Module ( model, item );
     addItem ( module );
+
+    int child_count = model->rowCount(item);
+    for (int i = 0; i < child_count; ++i) {
+        QPersistentModelIndex child = model->index(i, 0, item);
+        // 1. distinguish the port by 'portType' and 'portDirection'
+        //FIXME not done yet, implement this!
+        
+        // 2. find the QGraphicsItem refered to by item
+        QGraphicsItem* graphicsItem = modelToSceenIndex(item);
+
+        // 3. create a new Port class object and assign it as child to the parent P
+        Port* port = new Port(model, child, 0, 0, graphicsItem);
+        port->setParentItem ( graphicsItem );
+    }
+
+
     return module;
 }
 
@@ -155,9 +161,9 @@ bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
 
 /*!
  * look at all items in the GraphicsScene and try to find the _one_ with the index in it
- * WARNING: be careful with using the constructor of an item to allocate child items 
+ * WARNING: be careful with using the constructor of an item to allocate child items
  *          since the item might not have been inserted into the scene() yet.
- *          -> just commit complex new items (containing also childs) in one go, using 
+ *          -> just commit complex new items (containing also childs) in one go, using
  *             the Model code
  */
 QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) {

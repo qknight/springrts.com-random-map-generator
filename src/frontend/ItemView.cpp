@@ -100,7 +100,7 @@ void ItemView::reset() {
 // }
 
 void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
-//     qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
+    qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
     for ( int i = start; i <= end; ++i ) {
         QModelIndex item = model->index( i, 0, parent );
         switch (model->data( item, customRole::TypeRole ).toInt()) {
@@ -108,10 +108,10 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
             qDebug() << __FUNCTION__ << " DataType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
             scene->moduleInserted( QPersistentModelIndex( item ) );
             break;
-        case DataType::PORT:
-            qDebug() << __FUNCTION__ << " DataType::PORT " << model->data( item, customRole::TypeRole ).toInt();
-            scene->portInserted( QPersistentModelIndex( item ));
-            break;
+//         case DataType::PORT:
+//             qDebug() << __FUNCTION__ << " DataType::PORT " << model->data( item, customRole::TypeRole ).toInt();
+//             scene->portInserted( QPersistentModelIndex( item ));
+//             break;
         case DataType::CONNECTION:
             qDebug() << __FUNCTION__ << " DataType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
             scene->connectionInserted( QPersistentModelIndex( item ));
