@@ -130,6 +130,18 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
             return DataItemType::DATAPORT;
         return DataItemType::UNKNOWN;
     }
+    if ( role == customRole::PortType ) {
+      DataPort* p = static_cast<DataPort*>(n);
+      return p->PortType();
+    }
+    if ( role == customRole::PortDirection ) {
+      DataPort* p = static_cast<DataPort*>(n);
+      return p->PortDirection();
+    }
+    if ( role == customRole::PortNumber ) {
+      DataPort* p = static_cast<DataPort*>(n);
+      return p->PortNumber();
+    }
 
     switch ( index.column() ) {
     case 0:
@@ -497,12 +509,25 @@ bool Model::insertModule(QString type, QPoint pos) {
     {
         if (module != NULL) {
             rootItem->appendChild( module );
-            
-            // FIXME i need to extend this code a lot but: it is a proof of concept right now
-            DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN);
-            DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
-            portItem->setParent(module);
-            module->appendChild(portItem);
+
+            for (int i = 0; i < module->ports(PortDirection::IN); ++i) {
+                DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
+                DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+                portItem->setParent(module);
+                module->appendChild(portItem);
+            }
+            for (int i = 0; i < module->ports(PortDirection::MOD); ++i) {
+                DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::MOD, i);
+                DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+                portItem->setParent(module);
+                module->appendChild(portItem);
+            }
+            for (int i = 0; i < module->ports(PortDirection::OUT); ++i) {
+                DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::OUT, i);
+                DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+                portItem->setParent(module);
+                module->appendChild(portItem);
+            }
         } else {
             qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
             exit(1);
@@ -517,24 +542,24 @@ bool Model::insertModule(QString type, QPoint pos) {
  * connected using connections.
  * each Module does know how many ports, of each type, are required
  */
-bool Model::insertPorts(QModelIndex index) {
-    // create the appropriate Ports
-    DataAbstractModule* module = static_cast<DataAbstractModule*>( index.internalPointer() );
-    int inputs = module->ports(PortDirection::IN);
-    int row = rowCount( index );
-//     qDebug() << inputs << " " << row;
-    beginInsertRows( index, row, row + inputs - 1 );
-    {
-        for (int i = 0; i < inputs; ++i) {
-            DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN);
-            DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
-            portItem->setParent(module);
-            module->appendChild(portItem);
-        }
-    }
-    endInsertRows();
-    return true;
-}
+// bool Model::insertPorts(QModelIndex index) {
+//     // create the appropriate Ports
+//     DataAbstractModule* module = static_cast<DataAbstractModule*>( index.internalPointer() );
+//     int inputs = module->ports(PortDirection::IN);
+//     int row = rowCount( index );
+// //     qDebug() << inputs << " " << row;
+//     beginInsertRows( index, row, row + inputs - 1 );
+//     {
+//         for (int i = 0; i < inputs; ++i) {
+//             DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
+//             DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+//             portItem->setParent(module);
+//             module->appendChild(portItem);
+//         }
+//     }
+//     endInsertRows();
+//     return true;
+// }
 
 /*!
  * inserting connections is complex and many checks have to be done as

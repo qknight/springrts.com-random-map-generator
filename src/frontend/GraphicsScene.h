@@ -16,8 +16,8 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include "Model.h"
 #include "Module.h"
-#include "Port.h"
 #include "Connection.h"
+#include "PortTypes.h"
 
 /**
  @author Joachim Schiele <js@lastlog.de>

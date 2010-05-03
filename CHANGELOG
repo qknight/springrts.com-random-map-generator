@@ -1,3 +1,34 @@
+2010-05-03
+ - added a new hierarchy layer to the Model:
+   rootNode - module - port - connection 
+     istead of
+   rootNode - module - connection 
+   
+   - Q: could it be easier to have an abstraction like this:
+   I) root-module-port-connection compared to VS
+  II) root-module-connection (with transparent ports?)
+  A: an output port can have multiple output lines
+     an input port can only have one ingoing connection
+
+     + it might be easier to implement it the I) way since one does not need the complicated transpartent
+       port checks
+     + if ports would be QModelIndex'es it would be easy to find the parent
+       which is good since the parent "could" need to validate the connection request
+       (currently this is done by the connection, which is bad)
+     CURRENT STATUS OF MIGRATION:
+      - modules appear and input ports are there
+      - modputs/outputs are not done yet
+      - the concept, mentioned above, now works. however it's not complete since there is a issue:
+        I) while adding a module, transparently also add ports VS
+       II) after adding a module, the Module registers at the scene(), when that happens the ports
+           are added.
+        CURRENTLY I is implemented
+          this solution looks much much better since:
+            - less code
+            - less complex code
+            - (less object interaction)
+    FIXED
+
 2010-02-02
  - connections are now inserted at the module with the output side, using the GraphicsScene
    one can add modules and it does not matter if one selects a free output port and connects

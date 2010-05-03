@@ -78,40 +78,15 @@ void ItemView::reset() {
 //   init();
 }
 
-// void ItemView::init() {
-//   qDebug() << __PRETTY_FUNCTION__;
-//   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
-// //     qDebug() << "adding node i =" << i;
-//     QModelIndex item = model->index( i, 0, QModelIndex() );
-//     //FIXME not implemented yet//
-// //     scene->moduleInserted( QPersistentModelIndex( item ) );
-//   }
-//   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
-// //     qDebug() << "adding connection to node i =" << i;
-//     QModelIndex item = model->index( i, 0, QModelIndex() );
-//     for ( int x = 0; x < model->rowCount( item ); ++x ) {
-// //       qDebug() << "adding connection x =" << x;
-//       QModelIndex citem = model->index( x, 0, item );
-//     //FIXME not implemented yet
-//       //       scene->connectionInserted( QPersistentModelIndex( citem ) );
-//     }
-//   }
-// //   qDebug() << __FUNCTION__ << "END";
-// }
-
 void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
-    qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
+//     qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
     for ( int i = start; i <= end; ++i ) {
         QModelIndex item = model->index( i, 0, parent );
         switch (model->data( item, customRole::TypeRole ).toInt()) {
         case DataType::MODULE:
-            qDebug() << __FUNCTION__ << " DataType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
+//             qDebug() << __FUNCTION__ << " DataType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
             scene->moduleInserted( QPersistentModelIndex( item ) );
             break;
-//         case DataType::PORT:
-//             qDebug() << __FUNCTION__ << " DataType::PORT " << model->data( item, customRole::TypeRole ).toInt();
-//             scene->portInserted( QPersistentModelIndex( item ));
-//             break;
         case DataType::CONNECTION:
             qDebug() << __FUNCTION__ << " DataType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
             scene->connectionInserted( QPersistentModelIndex( item ));

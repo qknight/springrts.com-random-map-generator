@@ -1,40 +1,4 @@
 ------- current plan (near objectives): ------- 
-- Q: could it be easier to have an abstraction like this:
-  I) root-module-port-connection compared to II) root-module-connection (with transparent ports?)
-  A: an output port can have multiple output lines
-     an input port can only have one ingoing connection
-
-     + it might be easier to implement it the I) way since one does not need the complicated transpartent
-       port checks
-     + if ports would be QModelIndex'es it would be easy to find the parent
-       which is good since the parent "could" need to validate the connection request
-       (currently this is done by the connection, which is bad)
-     CURRENT STATUS OF MIGRATION:
-      - modules appear and input ports are there
-      - modputs/outputs are not done yet
-      - the concept, mentioned above, now works. however it's not complete since there is a issue:
-        I) while adding a module, transparently also add ports VS
-	II) after adding a module, the Module registers at the scene(), when that happens the ports
-	   are added.
-
-	II is currently implemented but has some limitations:
-	 - it requires the Module to interact with the model to actively query for PORTs, which is bad
-	 - it voids the concept of Connection/Port/Module using the GraphicsItemModelExtension since
-	   it requires a model pointer to access model->insertPorts(index()); using the signal provided
-	   by QGraphicsItem::ItemSceneHasChanged: after the Module has entered the scene()
-
-	I would have these benefits:
-	 - layout of the in/mod/out puts can be assigned right from one central place
-	 - no portInserted(..) function would be required
-
-        CURRENTLY I is implemented
-          this solution looks much much better since:
-            - less code
-            - less complex code
-            - (less object interaction)
- 
-
-- when clicking a module in the GraphicsView write some debug output about the module to the console
 - connections should be inserted according to the parent which has the output on his side
   this is currently done but ... i should doublecheck that...
 - inserting connections doesn't work yet
@@ -64,10 +28,10 @@
    CASE AAA                CASE BBB
   -rootNode                -rootNode
     |-module                 |-module
-    | |-connection           | |-propertyA
-    | |-connection           | |-propertyB
+    | |-port-connection      | |-propertyA
+    | |-port-connection      | |-propertyB
     |-module                 | |-propertyC
-    | |-connection           | |-propertyD
+    | |-port-connection      | |-propertyD
     ...                      ...
   but how could that be done? maybe using a QSortFilterProxyModel?
   the PROBLEM is that hosting both different child-types (connection AND property) at once 

@@ -14,34 +14,41 @@
 
 #include <QGraphicsItem>
 #include <QPainter>
+#include <QDebug>
 #include "GraphicsItemModelExtension.h"
 
 class Connection;
 
 /**
-	@author Joachim Schiele <js@lastlog.de>
+  @author Joachim Schiele <js@lastlog.de>
 */
 class Port : public QGraphicsItem, public GraphicsItemModelExtension {
-  public:
+public:
     QVector<Connection*> connections;
-  public:
-    Port( Model* model, QPersistentModelIndex index, int portType, int portNumber, QGraphicsItem * parent = 0);
+public:
+    Port( Model* model, QPersistentModelIndex index, int portDirection, int portType, int portNumber,
+          QGraphicsItem * parent = 0);
     ~Port();
-     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                QWidget *widget);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
     QRectF boundingRect() const;
-    int porttype();
-    int portnumber();
+    int portType();
+    int portNumber();
+    int portDirection();
+
     // input=0, modput=1, output=2
     int orientation;
     void updateData() {};
-   int type() const
-    { return DataType::PORT; }
-  protected:
+    int type() const
+    {
+        return DataType::PORT;
+    }
+protected:
     QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
-  private:
-      int m_portType;
-      int m_portNumber;
+private:
+    int m_portType;
+    int m_portNumber;
+    int m_portDirection;
 };
 
 #endif

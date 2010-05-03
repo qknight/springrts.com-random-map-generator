@@ -12,10 +12,13 @@
 #include "Port.h"
 #include "Connection.h"
 
-Port::Port ( Model* model, QPersistentModelIndex index, int portType, int portNumber, QGraphicsItem* parent ) :
+Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int portType, int portNumber, QGraphicsItem* parent ) :
         QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index ) {
     m_portType=portType;
     m_portNumber=portNumber;
+    m_portDirection=portDirection;
+//     qDebug() << __PRETTY_FUNCTION__;
+//     parent()->createLayout();
 }
 
 QVariant Port::itemChange ( GraphicsItemChange change, const QVariant & value ) {
@@ -56,10 +59,12 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 Port::~Port() {
 }
 
-int Port::porttype() {
+int Port::portType() {
     return m_portType;
 }
-int Port::portnumber() {
+int Port::portNumber() {
     return m_portNumber;
 }
-
+int Port::portDirection() {
+    return m_portDirection;
+}

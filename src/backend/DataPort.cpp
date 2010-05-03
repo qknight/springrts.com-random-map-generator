@@ -17,15 +17,28 @@
 */
 
 #include "DataPort.h"
-DataPort::DataPort(int portType, int portDirection) {
+DataPort::DataPort(int portType, int portDirection, int portNumber) {
     m_portType=portType;
     m_portDirection=portDirection;
+    m_portNumber=portNumber;
 }
 
 DataPort::~DataPort(){};
 
 unsigned int DataPort::getObjectType() {
     return DataItemType::DATAPORT;
+}
+
+unsigned int DataPort::PortDirection() {
+  return m_portDirection;
+}
+
+unsigned int DataPort::PortType() {
+  return m_portType;
+}
+
+unsigned int DataPort::PortNumber() {
+  return m_portNumber;
 }
 
 bool DataPort::insertConnection ( DataConnection* c ) {

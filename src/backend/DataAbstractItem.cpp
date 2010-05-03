@@ -16,7 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-
 #include "DataAbstractItem.h"
 
 DataAbstractItem::DataAbstractItem( DataAbstractItem *parent ) {
@@ -42,7 +41,6 @@ DataAbstractItem *DataAbstractItem::child( int row ) {
 int DataAbstractItem::childCount() const {
   return m_childItems.count();
 }
-
 
 DataAbstractItem *DataAbstractItem::parent() {
   return parentItem;

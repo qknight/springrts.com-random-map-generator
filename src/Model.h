@@ -42,10 +42,9 @@ namespace customRole {
     ModputsRole,// returns the amount of modputs of a module
     OutputsRole,// returns the amount of outputs of a module
     ConnectionDestinationRole, // use to get the destination of a connection, that is a QModelIndex
-    SrcPortTypeRole,   // use by GraphicsScene on insertConnection to find out about the ports
-    SrcPortNumberRole, //   ..
-    DstPortTypeRole,   //   ..
-    DstPortNumberRole  //   ..
+    PortType,
+    PortDirection,
+    PortNumber
   };
 }
 
@@ -110,8 +109,8 @@ class Model : public QAbstractItemModel {
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint(), QString type=QString());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
-    /*! most Modules do have several different ports, this function allocates the ports*/
-    bool insertPorts(QModelIndex index);
+    /*! NOT USED ANYMORE most Modules do have several different ports, this function allocates the ports*/
+//     bool insertPorts(QModelIndex index);
     
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)

@@ -26,9 +26,9 @@
 #include "ConnectionValidator.h"
 
 class DataPort : public DataAbstractItem, public ConnectionValidator {
-  Q_OBJECT
-  public:
-    DataPort(int portType, int portDirection);
+    Q_OBJECT
+public:
+    DataPort(int portType, int portDirection, int portNumber);
     /*! WARNING: never delete objects as for instance childItems in the structure here
      ** since this will create inconsistencies between the model and this data structure.<br>
      ** A better way is to fail with exit(0) and a meaningful error message meant for
@@ -39,14 +39,18 @@ class DataPort : public DataAbstractItem, public ConnectionValidator {
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
     void removeChild( unsigned int index );
+    unsigned int PortType();
+    unsigned int PortDirection();
+    unsigned int PortNumber();
 
-  protected:
-    int m_portType;
-    int m_portDirection;
+protected:
     bool insertConnection ( DataConnection* c );
     void insertReference ( DataAbstractItem* item );
     void removeReference ( DataAbstractItem* item );
-
+private:
+    int m_portNumber;
+    int m_portType;
+    int m_portDirection;
 };
 
 #endif // DATAPORT_H

@@ -19,7 +19,6 @@ Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), Gra
     this->model=model;
     setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
     QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
-//   labelItem->setVisible(true);
     labelItem->moveBy(-15,-25);
 
     w=100;
@@ -50,18 +49,18 @@ Module::~Module() {
 // void Module::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){ }
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
-    switch(change) {
-      case QGraphicsItem::ItemSceneChange:          
+    switch (change) {
+//     case QGraphicsItem::ItemSceneChange:
 //       foreach (QGraphicsItem* child, children()) {
 //         modulePort* child_ = static_cast<modulePort*>(child);
 //         child_->updatePosition();
 //         qDebug("move?");
 //       }
-      break;
-      case QGraphicsItem::ItemSceneHasChanged:
-//         model->insertPorts(index());
-      break;
-      default:
+//         break;
+    case QGraphicsItem::ItemSceneChange:
+//         createLayout();
+        break;
+    default:
         break;
     }
     return value;
@@ -93,7 +92,7 @@ void Module::updateData() {
 Port* Module::resolvePort(int portType, int portNumber) {
     if (ports.size()) {
         foreach(Port* p, ports) {
-            if (p->porttype() == portType && p->portnumber() == portNumber)
+            if (p->portType() == portType && p->portNumber() == portNumber)
                 return p;
         }
     }
@@ -102,3 +101,33 @@ Port* Module::resolvePort(int portType, int portNumber) {
     return NULL;
 }
 
+void Module::createLayout() {
+//     int in=0, mod=0, out=0;
+//     int childs = childItems().size();
+//     for (int i = 0; i < childs; ++i) {
+//         qDebug() << childs;
+//         QGraphicsItem* child = childItems().at(i);
+//         if (child->scene() == NULL) {
+//           qDebug() << "child pointer was NULL";
+//           continue;
+//         }
+//         int portDirection = PortDirection::MOD;//rand()%2;//childItems()[i];
+// 
+//         //FIXME this code crashes for unknown reasons..?@!
+//         switch (portDirection) {
+//           qDebug() << "i'm here";
+//         case PortDirection::IN:
+//             child->moveBy(-10,20+(in++)*40);
+//             break;
+//         case PortDirection::MOD:
+//             child->moveBy(50+20*(mod++),130);
+//             break;
+//         case PortDirection::OUT:
+//             child->moveBy(110,20+(out++)*40);
+//             break;
+//         default:
+//             qDebug() << "no case matched";
+//             break;
+//         }
+//     }
+}
