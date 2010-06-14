@@ -1,4 +1,5 @@
 ------- current plan (near objectives): ------- 
+- ? remove Model::insertPort(..)?
 - connections should be inserted according to the parent which has the output on his side
   this is currently done but ... i should doublecheck that...
 - inserting connections doesn't work yet

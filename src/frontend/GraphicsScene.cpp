@@ -242,30 +242,32 @@ void GraphicsScene::mouseMoveEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
     }
 }
 
-//FIXME broken
 void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
-//     qDebug() << __PRETTY_FUNCTION__;
-//     if ( line != 0 ) {
-//         QList<QGraphicsItem *> startItems = items ( line->line().p1() );
-//         if ( startItems.count() && startItems.first() == line )
-//             startItems.removeFirst();
-//         QList<QGraphicsItem *> endItems = items ( line->line().p2() );
-//         if ( endItems.count() && endItems.first() == line )
-//             endItems.removeFirst();
-//
-//         removeItem ( line );
-//         delete line;
-//         line = 0;
-//
-//         if ( startItems.count() > 0 && endItems.count() > 0 &&
-//              startItems.first()->type() == DataType::PORT &&
-//              endItems.first()->type() == DataType::PORT ) {
-//             Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
-//             Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
-//             model->insertConnection ( startItem->index(), startItem->portnumber(), startItem->porttype(),
-//                                       endItem->index(), endItem->portnumber(), endItem->porttype() );
-//         }
-//     }
+    qDebug() << __PRETTY_FUNCTION__;
+    if ( line != 0 ) {
+        QList<QGraphicsItem *> startItems = items ( line->line().p1() );
+        if ( startItems.count() && startItems.first() == line )
+            startItems.removeFirst();
+        QList<QGraphicsItem *> endItems = items ( line->line().p2() );
+        if ( endItems.count() && endItems.first() == line )
+            endItems.removeFirst();
+
+        removeItem ( line );
+        delete line;
+        line = 0;
+
+        if ( startItems.count() > 0 && endItems.count() > 0 &&
+                  startItems.first()->type() == DataType::PORT &&
+                  endItems.first()->type() == DataType::PORT ) {
+            Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
+            Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
+            qDebug() << "mouseReleaseEvent number, type, direction";
+            qDebug() << startItem->portNumber() << startItem->portType() << startItem->portDirection();
+            qDebug() << endItem->portNumber() << endItem->portType() << endItem->portDirection();
+
+            model->insertConnection ( startItem->index(), endItem->index() );
+        }
+    }
     QGraphicsScene::mouseReleaseEvent ( mouseEvent );
 }
 

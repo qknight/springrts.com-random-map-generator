@@ -1,3 +1,10 @@
+2010-06-14
+ - added some code to finally insert connections, all that is missing is:
+  - implementation of Model::insertConnection(...)
+  - formal checks for correctness of the to be inserted connection
+  - fix Connection class, which does the drawing of the connection
+  - probably changes in the backend: DataConnection
+
 2010-05-03
  - added a new hierarchy layer to the Model:
    rootNode - module - port - connection 

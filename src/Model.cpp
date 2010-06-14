@@ -568,6 +568,8 @@ bool Model::insertModule(QString type, QPoint pos) {
  */
 bool Model::insertConnection(QPersistentModelIndex src,
                              QPersistentModelIndex dst) {
+  qDebug() << __PRETTY_FUNCTION__;
+  
 //     int row = rowCount( src );
 //     if ((srcType != PortType::OUTPUT) && (dstType != PortType::OUTPUT)) {
 //         qDebug() << "can't add connection, either side must have an output port";

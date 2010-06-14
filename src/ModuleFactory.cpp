@@ -22,7 +22,7 @@ ModuleFactory::~ModuleFactory() { }
 
 ModuleFactory* ModuleFactory::Instance() {
     if (privateInstance == NULL) {
-//     qDebug() << "created ModuleFactory::Instance()";
+//         qDebug() << "created ModuleFactory::Instance()";
         privateInstance = new ModuleFactory();
     }
     return privateInstance;
