@@ -48,6 +48,7 @@ protected:
     void insertReference ( DataAbstractItem* item );
     void removeReference ( DataAbstractItem* item );
 private:
+    QList<DataAbstractItem*> m_childItemsReferences;
     int m_portNumber;
     int m_portType;
     int m_portDirection;

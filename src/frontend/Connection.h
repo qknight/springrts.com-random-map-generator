@@ -17,7 +17,7 @@ class Port;
 
 class Connection : public QGraphicsLineItem, public GraphicsItemModelExtension {
 public:
-    Connection(QPersistentModelIndex index, Model* model, Port *startItem, Port *endItem,
+    Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort,
       QGraphicsItem *parent = 0);
       void updateData();
     int type() const

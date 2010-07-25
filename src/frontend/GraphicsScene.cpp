@@ -54,50 +54,35 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
 }
 
 /*!
- * inserts a Connection object which represents a QModelIndex of the Model
- * we know a lot about the connection but we must find out which ports are
- * used as parents for the connection (Module(s) are no parents) but are used to
- * find the Port(s)
+ * adds a graphical representation (see Connection.cpp/.h) spanning from 
+ * Port a to Port b (see Port.cpp/.h)
  */
 //FIXME this code has serious bugs and needs refactoring and testing
-QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex cItem ) {/*
+QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connectionIndex ) {
     // 0. dst QPersistentModelIndex (that is to be queried via the model)
-    QPersistentModelIndex dItem = QPersistentModelIndex(model->dst(cItem));
+    QPersistentModelIndex sPortIndex = connectionIndex.parent();
+    QPersistentModelIndex dPortIndex = QPersistentModelIndex(model->dst(connectionIndex));
 
-    Module* srcModule = dynamic_cast<Module*> ( modelToSceenIndex ( cItem.parent() ) );
-    Module* dstModule = dynamic_cast<Module*> ( modelToSceenIndex ( dItem ) );
-    qDebug() << "src " << srcModule->m_label;
-    qDebug() << "dst " << dstModule->m_label;
-    if (srcModule == NULL) {
+    Port* srcPort = dynamic_cast<Port*> ( modelToSceenIndex ( sPortIndex ) );
+    Port* dstPort = dynamic_cast<Port*> ( modelToSceenIndex ( dPortIndex ) );
+
+    if (srcPort == NULL) {
       qDebug() << "srcModule == NULL";
       exit(1);
     }
-    if (dstModule == NULL) {
+    if (dstPort == NULL) {
       qDebug() << "dstModule == NULL";
       exit(1);
     }
-    if (srcModule == dstModule) {
+    if (srcPort == dstPort) {
       qDebug() << "srcModule == dstModule";
       exit(1);
     }
 
-    // 1. type, number for both sides
-    int srcPortType   = model->data(cItem, customRole::SrcPortTypeRole).toInt();
-    int srcPortNumber = model->data(cItem, customRole::SrcPortNumberRole).toInt();;
-    qDebug() << "src " << srcModule->m_label<< " porttype: " << srcPortType << " portnumber" << srcPortNumber;
-    Port* srcPort = srcModule->resolvePort(srcPortType, srcPortNumber);
-
-    // using sItem here is not wrong since dst/src query in DataConnection is context sensitive
-    int dstPortType   = model->data(cItem, customRole::DstPortTypeRole).toInt();
-    int dstPortNumber = model->data(cItem, customRole::DstPortNumberRole).toInt();
-    qDebug() << "dst " << dstModule->m_label<< " porttype: " << dstPortType << " portnumber" << dstPortNumber;
-    Port* dstPort = dstModule->resolvePort(dstPortType, dstPortNumber);
-
-    Connection* connection = new Connection ( cItem, model, srcPort, dstPort );
+    Connection* connection = new Connection ( model, connectionIndex, srcPort, dstPort);
     addItem ( connection );
-    exit(1);
-    qDebug() << __PRETTY_FUNCTION__ << "added a connection sucessfully";
-    return connection;*/
+//     qDebug() << __PRETTY_FUNCTION__ << "added a connection sucessfully";
+    return connection;
 }
 
 QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {

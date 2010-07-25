@@ -37,7 +37,7 @@ class GraphicsScene : public QGraphicsScene {
     QGraphicsItem* moduleInserted( QPersistentModelIndex item );
 //     void moduleUpdated( QPersistentModelIndex item );
     bool moduleRemoved( QPersistentModelIndex item );
-    QGraphicsItem* connectionInserted ( QPersistentModelIndex item);
+    QGraphicsItem* connectionInserted ( QPersistentModelIndex connectionIndex);
 //     QGraphicsItem* portInserted ( QPersistentModelIndex pItem );
 
   private:

@@ -608,11 +608,11 @@ bool Model::insertConnection(QPersistentModelIndex a,
     qDebug() << "FIXME: " << __FILE__ << __PRETTY_FUNCTION__ << ", see check 3: check if such a connection already exists";
 
     // 4. create the new connection (maybe only temporarily, see check 5)
-    // we flip a and b if dataPortB is the 'OUT' port
+    // we swap a and b if dataPortB is the 'OUT' port
     if (dataPortA->PortDirection() == PortDirection::OUT) {
         // do nothing
     } else {
-        // flip a and b
+        // swap both objects
         DataAbstractItem* tmp = abstractItemA;
         abstractItemA = abstractItemB;
         abstractItemB = tmp;
@@ -680,22 +680,28 @@ QVector<QString> Model::LoadableModuleNames() {
 
 /*!
  * called with a item where item is a QModelIndex representing a connection
+ * returns the QModelIndex of the connection's destination port
  */
-// QModelIndex Model::dst(QPersistentModelIndex item) {
-//     // 0. check if item is a 'connection'
-//     if (data( item, customRole::TypeRole ).toInt() != DataType::CONNECTION) {
-//         qDebug() << __PRETTY_FUNCTION__ << " fatal error: item is not a connection";
-//         exit(1);
-//     }
-//
-//     DataAbstractItem* src = static_cast<DataAbstractItem*> (item.internalPointer());
-//     // 1. now resolve the connection into a DataConnection
-//     DataConnection* c = static_cast<DataConnection*> (src);
-//
-//     // 2. finally query c->dst with it's parent
-//     DataAbstractItem* dst = c->src(src->parent());
-//     return index(dst->row(),0, QModelIndex());
-// }
+QModelIndex Model::dst(QPersistentModelIndex connection) {
+    // 0. check if item is a 'connection'
+    if (data( connection, customRole::TypeRole ).toInt() != DataType::CONNECTION) {
+        qDebug() << __PRETTY_FUNCTION__ << " fatal error: item is not a connection";
+        exit(1);
+    }
+
+    DataAbstractItem* src = static_cast<DataAbstractItem*> (connection.internalPointer());
+    // 1. now resolve the connection into a DataConnection
+    DataConnection* c = static_cast<DataConnection*> (src);
+
+    // 2. src ----connection----- dst
+    DataAbstractItem* dPortItem = c->dst();
+
+    // 3. the parent QModelIndex is important for the last step
+    QModelIndex parentModule = index(dPortItem->parent()->row(), 0 , QModelIndex());
+    
+    // 4. now we need to find the QModelIndex of dst (dst is a DataPort)
+    return index(dPortItem->row(),0 , parentModule);
+}
 
 
 

@@ -24,7 +24,7 @@ DataConnection::DataConnection ( DataAbstractItem* src, DataAbstractItem* dst) :
     qDebug() << __PRETTY_FUNCTION__;
     m_src = src;
     m_dst = dst;
-//     dump();
+    dump();
 }
 
 DataConnection::~DataConnection() {
@@ -35,24 +35,15 @@ DataAbstractItem* DataConnection::src () {
     return m_src;
 }
 
-int DataConnection::srcType ( ) {
-    return m_srcType;
-}
-
 DataAbstractItem* DataConnection::dst ( ) {
     return m_dst;
 }
 
-int DataConnection::dstType ( ) {
-    return m_dstType;
-}
-
 void DataConnection::dump() {
     qDebug() << "===================================================";
+    qDebug() << "this " << this;
     qDebug() << "m_src " << m_src;
-    qDebug() << "m_srcType " << m_srcType;
     qDebug() << "m_dst " << m_dst;
-    qDebug() << "m_dstType " << m_dstType;
     qDebug() << "===================================================";
 }
 

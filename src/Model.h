@@ -91,7 +91,7 @@ class Model : public QAbstractItemModel {
     bool insertModule(QString type, QPoint pos=QPoint());
     bool insertConnection(QPersistentModelIndex a, QPersistentModelIndex b);
     
-//     QModelIndex dst(QPersistentModelIndex item);
+    QModelIndex dst(QPersistentModelIndex item);
   private:
     /*! the root item is set by the constructor once and can't be changed and must not be deleted */
     DataAbstractItem* rootItem;

@@ -45,13 +45,9 @@ class DataConnection : public DataAbstractItem {
     void removeChild( unsigned int index );
     DataAbstractItem* dst();
     DataAbstractItem* src();
-    int srcType ();
-    int dstType ();
   protected:
     DataAbstractItem* m_src;
-    int m_srcType;
     DataAbstractItem* m_dst;
-    int m_dstType;
 };
 
 #endif // DATACONNECTION_H

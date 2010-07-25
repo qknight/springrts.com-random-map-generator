@@ -1,4 +1,6 @@
 2010-07-25
+ - connections are now drawn, they are properly added to the graph as well!
+   see also screenshots/interface3.png
  - finally implemented Mode.cpp:insertConnection(..)
    - DataConnection.cpp/.h and DataPort.cpp/.h still need to be fixed (not done yet)
    - Connection.cpp/.h need to be fixed as well (not done yet)

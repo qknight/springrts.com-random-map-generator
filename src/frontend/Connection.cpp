@@ -5,11 +5,11 @@
 
 const qreal Pi = 3.14;
 
-Connection::Connection(QPersistentModelIndex index, Model* model, Port *startItem, Port *endItem, QGraphicsItem *parent)
+Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort, QGraphicsItem *parent)
     : QGraphicsLineItem(parent), GraphicsItemModelExtension(model, index)
 {
-    myStartItem = startItem;
-    myEndItem = endItem;
+    myStartItem = sPort;
+    myEndItem = dPort;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -47,6 +47,7 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
     if (myStartItem->collidesWithItem(myEndItem))
         return;
+    
     QPointF n;
     if (myStartItem->parentItem() != 0)
       n = myStartItem->parentItem()->pos();
@@ -62,9 +63,12 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
 //     painter->drawLine(z);
 //     int stretch_ = 0.6 * -(beginPoint.x()-endPoint.x());
+
     int stretch= qAbs(0.6 * -(beginPoint.x()-endPoint.x()));
     QPainterPath myPath(QPoint(beginPoint.x(),beginPoint.y()));
-    myPath.cubicTo(beginPoint+QPoint(stretch,0),endPoint-QPoint(stretch,0),QPoint(endPoint.x(),endPoint.y()));
+    myPath.cubicTo(beginPoint-QPoint(stretch,0),
+                   endPoint+QPoint(stretch,0),
+                   QPoint(endPoint.x(),endPoint.y()));
     painter->drawPath(myPath);
 }
 

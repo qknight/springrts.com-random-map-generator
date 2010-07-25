@@ -23,48 +23,39 @@ DataPort::DataPort(int portType, int portDirection, int portNumber) {
     m_portNumber=portNumber;
 }
 
-DataPort::~DataPort(){};
+DataPort::~DataPort() {};
 
 unsigned int DataPort::getObjectType() {
     return DataItemType::DATAPORT;
 }
 
 unsigned int DataPort::PortDirection() {
-  return m_portDirection;
+    return m_portDirection;
 }
 
 unsigned int DataPort::PortType() {
-  return m_portType;
+    return m_portType;
 }
 
 unsigned int DataPort::PortNumber() {
-  return m_portNumber;
+    return m_portNumber;
 }
 
 bool DataPort::insertConnection ( DataConnection* c ) {
-//   qDebug() << __PRETTY_FUNCTION__;
-//     DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
-//     // 1. check if already in use (check remote side only!)
-//     //    - inputs/modputs can only be used once
-//     //    - outputs may have multiple connections 
-//     //      ('this' is the side with the output, this is guaranteed by 
-//     //      appendChild and (c->validate() already ))
-//     if ( dstItem->isPortUsed(c) )
-//         return false;
-// 
-//     // 2. insert connection & also the respective backward connection
-//     m_childItems.append ( c );
-//     dstItem->insertReference ( c );
+    qDebug() << __PRETTY_FUNCTION__;
+    DataPort* dstItem = static_cast<DataPort*> ( c->dst() );
+    m_childItems.append ( c );
+    dstItem->insertReference ( c );
     return true;
 }
 
 void DataPort::insertReference ( DataAbstractItem* item ) {
-//   qDebug() << __PRETTY_FUNCTION__;
-//     m_childItemsReferences.append ( item );
+  qDebug() << __PRETTY_FUNCTION__;
+    m_childItemsReferences.append ( item );
 }
 
 void DataPort::removeChild ( unsigned int index ) {
-  // remove childs (all ports)
+    // remove childs (all ports)
 }
 
 //FIXME todo
@@ -72,4 +63,4 @@ void DataPort::removeReference ( DataAbstractItem* item ) {
 //   m_childItemsReferences.remove ( item );
 }
 
-void DataPort::dump(){};
+void DataPort::dump() {};
