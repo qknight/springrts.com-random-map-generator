@@ -44,8 +44,21 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     gradient.setColorAt ( 0, QColor::fromRgbF ( 0, 1, 0, 1 ) );
     gradient.setColorAt ( 1, QColor::fromRgbF ( 0, 0, 0, 0 ) );
 
-    QBrush b ( QColor ( Qt::green ) );
-
+    QBrush b;
+    switch (m_portDirection) {
+     case 0:
+       b = QColor ( Qt::green );
+       break;
+      case 1:
+       b = QColor ( Qt::red );
+       break;
+      case 2:
+       b = QColor ( Qt::blue );
+       break;
+      default:
+       b = QColor ( Qt::black );
+    }
+      
     painter->setBrush ( b );
     painter->setPen ( p );
     QPainterPath* mypath = new QPainterPath;

@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DataRoot.h"
 #include "DataAbstractItem.h"
+#include "DataPort.h"
 #include "DataConnection.h"
 #include "DataAbstractModule.h"
 #include "ModuleFactory.h"
@@ -131,16 +132,16 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
         return DataItemType::UNKNOWN;
     }
     if ( role == customRole::PortType ) {
-      DataPort* p = static_cast<DataPort*>(n);
-      return p->PortType();
+        DataPort* p = static_cast<DataPort*>(n);
+        return p->PortType();
     }
     if ( role == customRole::PortDirection ) {
-      DataPort* p = static_cast<DataPort*>(n);
-      return p->PortDirection();
+        DataPort* p = static_cast<DataPort*>(n);
+        return p->PortDirection();
     }
     if ( role == customRole::PortNumber ) {
-      DataPort* p = static_cast<DataPort*>(n);
-      return p->PortNumber();
+        DataPort* p = static_cast<DataPort*>(n);
+        return p->PortNumber();
     }
 
     switch ( index.column() ) {
@@ -501,6 +502,9 @@ bool Model::insertModule(QString type, QPoint pos) {
 
     // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
     DataAbstractModule* module = moduleFactory->CreateModule(type);
+
+    //FIXME this should go into a child item of module called property
+    //      which should be in the same hierarchy level as the DataPort item
     module->setProperty( "pos", pos );
     module->setProperty( "type", type );
     // setting the correct parent is very important since it is the foundation of the hierarchy
@@ -538,95 +542,141 @@ bool Model::insertModule(QString type, QPoint pos) {
 }
 
 /*!
- * each Module can have several INPUT/MODPUT/OUTPUT ports which can be
- * connected using connections.
- * each Module does know how many ports, of each type, are required
- */
-// bool Model::insertPorts(QModelIndex index) {
-//     // create the appropriate Ports
-//     DataAbstractModule* module = static_cast<DataAbstractModule*>( index.internalPointer() );
-//     int inputs = module->ports(PortDirection::IN);
-//     int row = rowCount( index );
-// //     qDebug() << inputs << " " << row;
-//     beginInsertRows( index, row, row + inputs - 1 );
-//     {
-//         for (int i = 0; i < inputs; ++i) {
-//             DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
-//             DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
-//             portItem->setParent(module);
-//             module->appendChild(portItem);
-//         }
-//     }
-//     endInsertRows();
-//     return true;
-// }
+ * this could be read as:
+ *  - insertConnection(Port* a, Port* b); or
+ *  - insertConnection(DataPort* a, DataPort* b);
+ * WARNING: only add/remove connections using insertConnection and removeConnection
+ * very important design goals:
+ * - connections can only be bidirectional (between exactly two ports)
+ * - no loops
+ * - output ports might be used several times, when hosting connections to different 'other ports'
+ * - in contrast: input-ports or modput-ports may only host one connection each
+ * - connections must be unique (there can not be two similar connections connecting portX and portY)
+ * - a connection is added to it's parent. the parent is always the port with portType=OUT
+*/
+bool Model::insertConnection(QPersistentModelIndex a,
+                             QPersistentModelIndex b) {
+    qDebug() << __PRETTY_FUNCTION__;
 
-/*!
- * inserting connections is complex and many checks have to be done as
- *  - checking the connection if it is valid.
- *  - asking the modules if they accept the connection (might not be implemented just yet)
- */
-bool Model::insertConnection(QPersistentModelIndex src,
-                             QPersistentModelIndex dst) {
-  qDebug() << __PRETTY_FUNCTION__;
-  
-//     int row = rowCount( src );
-//     if ((srcType != PortType::OUTPUT) && (dstType != PortType::OUTPUT)) {
-//         qDebug() << "can't add connection, either side must have an output port";
-//         qDebug() << srcType << " " << dstType;
-//         return false;
+    // convert both indexes into DataAbstractItem(s)
+    DataAbstractItem* abstractItemA = static_cast<DataAbstractItem*>( a.internalPointer() );
+    DataAbstractItem* abstractItemB = static_cast<DataAbstractItem*>( b.internalPointer() );
+
+    // convert both indexes into DataPortItem(s)
+    DataPort* dataPortA = dynamic_cast<DataPort*>(abstractItemA);
+    DataPort* dataPortB = dynamic_cast<DataPort*>(abstractItemB);
+
+    // for debugging purpose (WARNING: elements might be flipped later)
+//     qDebug() << "port syntax is: type, number, direction";
+//     qDebug() << dataPortA->PortType() << dataPortA->PortNumber()  << dataPortA->PortDirection();
+//     qDebug() << dataPortB->PortType() << dataPortB->PortNumber()  << dataPortB->PortDirection();
+
+    // 1. check if the ports are of compatible types
+    if (dataPortA->PortType() != dataPortB->PortType()) {
+        qDebug() << "both ports need to be of compatible type, for example: PortType::LIBNOISE -- PortType::LIBNOISE";
+        return false;
+    }
+
+    // 2. check if a connection is possible implementing the connection matrix below
+    // invalid connections
+    // - x not possible
+    // - o possible
+    //      in  out  mod
+    // in   x   o    x
+    // out  o   x    o
+    // mod  x   o    x
+
+    // we need 3 blocking rules to implement the above diagramm (all other cases will pass)
+    //   1. rule
+    if (dataPortA->PortDirection() == dataPortB->PortDirection()) {
+        qDebug() << "RULE1: PortA must have a different PortDirection than PortB";
+        return false;
+    }
+    //   2. rule
+    if ((dataPortA->PortDirection() == PortDirection::MOD) && (dataPortB->PortDirection() == PortDirection::IN)) {
+        qDebug() << "RULE2a: can't add connection between MOD and IN";
+        return false;
+    }
+    //   3. rule
+    if ((dataPortA->PortDirection() == PortDirection::IN) && (dataPortB->PortDirection() == PortDirection::MOD)) {
+        qDebug() << "RULE2b: can't add connection between IN and MOD";
+        return false;
+    }
+
+    // 3. check if such a connection already exists
+    //FIXME: implement this rule set
+    qDebug() << "FIXME: " << __FILE__ << __PRETTY_FUNCTION__ << ", see check 3: check if such a connection already exists";
+
+    // 4. create the new connection (maybe only temporarily, see check 5)
+    // we flip a and b if dataPortB is the 'OUT' port
+    if (dataPortA->PortDirection() == PortDirection::OUT) {
+        // do nothing
+    } else {
+        // flip a and b
+        DataAbstractItem* tmp = abstractItemA;
+        abstractItemA = abstractItemB;
+        abstractItemB = tmp;
+
+        DataPort* tmp2 = dataPortA;
+        dataPortA = dataPortB;
+        dataPortB = tmp2;
+        
+        QModelIndex tmpIndex = a;
+        a=b;
+        b=tmpIndex;
+    }
+
+    DataConnection* dc = new DataConnection( abstractItemA, abstractItemB );
+
+    // 5. test here if the connection is accepted by the modules (ask both modules)
+    //FIXME: this code is currenlty not used but can be used later
+//     DataAbstractModule* srcModule = static_cast<DataAbstractModule*>( srcItem );
+//     DataAbstractModule* dstModule = static_cast<DataAbstractModule*>( dstItem );
+//     if (srcModule->verifyConnection(dc) && dstModule->verifyConnection(dc)) {
+//       delete dc;
+//       return false;
 //     }
-//
-//     if ( data( src, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE &&
-//             data( dst, customRole::TypeRole ).toInt() == DataItemType::DATAABSTRACTMODULE) {
-//         DataAbstractItem* srcItem = static_cast<DataAbstractItem*>( src.internalPointer() );
-//         DataAbstractItem* dstItem = static_cast<DataAbstractItem*>( dst.internalPointer() );
-//
-//         // 0. create the new connection (maybe only temporarly)
-//         DataConnection* dc = new DataConnection( srcItem, srcType, srcPort, dstItem, dstType, dstPort);
-//
-//         // 1. test if the connection itself is consistent
-//         if (! dc->validate()) {
-//             qDebug() << __PRETTY_FUNCTION__ << " connection validation returns invalid connection request so some sort...?";
-//             delete dc;
-//             return false;
-//         }
-//         // this code is currenlty not used but can be used later
-//         // 2. test here if the connection is accepted by the modules (ask both modules)
-// //     DataAbstractModule* srcModule = static_cast<DataAbstractModule*>( srcItem );
-// //     DataAbstractModule* dstModule = static_cast<DataAbstractModule*>( dstItem );
-// //     if (srcModule->verifyConnection(dc) && dstModule->verifyConnection(dc)) {
-// //       delete dc;
-// //       return false;
-// //     }
-    /*
-            // 3. finally insert the connection
-            if (srcType == 0) {
-                beginInsertRows( src, row, row + 0 );
-                {
-                    dc->setParent(srcItem);
-                    srcItem->appendChild( dc );
-                }
-                endInsertRows();
-                return true;
-            } else {
-                beginInsertRows( dst, row, row + 0 );
-                {
-                    dc->setParent(dstItem);
-                    dstItem->appendChild( dc );
-                }
-                endInsertRows();
-                return true;
-            }
-        }
-        qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
-        exit(1); //FIXME once this stuff is tested, remove this check*/
-    return false;
+
+    // 6. finally (after changing the core data structure using the Model) we are
+    //    going to update the QGraphicsScene via the QAbstractItemModel -> insert the connection
+    int row = rowCount( a );
+    beginInsertRows( a, row, row + 0 );
+    {
+        dc->setParent(abstractItemA);
+        abstractItemA->appendChild( dc );
+    }
+    endInsertRows();
+    qDebug() << "successfully added a new connection";
+    return true;
 }
 
 QVector<QString> Model::LoadableModuleNames() {
     return moduleFactory->LoadableModuleNames();
 }
+
+// QModelIndex Model::AbstractNodeItem2QModelIndex( DataAbstractItem* item ) {
+//   QModelIndex ret;
+//   QModelIndex z;
+//   switch ( item->getObjectType() ) {
+//     case DataItemType::DATAROOT:
+//     break;
+//   case DataItemType::DATAABSTRACTMODULE:
+//     ret = index( item->row(), 0, QModelIndex() );
+//     return ret;
+//   case DataItemType::DATAPORT:
+//   case DataItemType::DATACONNECTION:
+//     z = AbstractNodeItem2QModelIndex( item->parent() );
+//     ret = index( item->row(), 0, z );
+//     return ret;
+//     break;
+//   default:
+//     qDebug() << "In " << __FILE__ << ", " << __FUNCTION__ << " something went very wrong!";
+//     exit( 0 );
+//   }
+//   return QModelIndex();
+// }
+
+
 
 /*!
  * called with a item where item is a QModelIndex representing a connection

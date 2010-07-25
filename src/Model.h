@@ -30,6 +30,7 @@ class ModuleFactory;
 class DataAbstractItem;
 class DataRoot;
 class DataAbstractModule;
+class DataPort;
 class DataConnection;
 
 namespace customRole {
@@ -88,7 +89,7 @@ class Model : public QAbstractItemModel {
     /*! this is the public interface, there is an private one for internal use as well!
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     bool insertModule(QString type, QPoint pos=QPoint());
-    bool insertConnection(QPersistentModelIndex src, QPersistentModelIndex dst);
+    bool insertConnection(QPersistentModelIndex a, QPersistentModelIndex b);
     
 //     QModelIndex dst(QPersistentModelIndex item);
   private:
@@ -109,8 +110,8 @@ class Model : public QAbstractItemModel {
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint(), QString type=QString());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
-    /*! NOT USED ANYMORE most Modules do have several different ports, this function allocates the ports*/
-//     bool insertPorts(QModelIndex index);
+    /*! will translate a AbstractNodeItem* into a QModelIndex (item must exist there) */
+//     QModelIndex AbstractNodeItem2QModelIndex( DataAbstractItem* item );
     
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)

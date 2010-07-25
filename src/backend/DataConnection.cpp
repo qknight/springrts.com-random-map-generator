@@ -20,87 +20,48 @@
 #include "DataConnection.h"
 #include "DataAbstractModule.h"
 
-DataConnection::DataConnection ( DataAbstractItem* src, int srcType,
-                                 DataAbstractItem* dst, int dstType ) : DataAbstractItem ( src ) {
+DataConnection::DataConnection ( DataAbstractItem* src, DataAbstractItem* dst) : DataAbstractItem ( src ) {
     qDebug() << __PRETTY_FUNCTION__;
     m_src = src;
-    m_srcType = srcType;
     m_dst = dst;
-    m_dstType = dstType;
+//     dump();
+}
+
+DataConnection::~DataConnection() {
+//   qDebug() << __PRETTY_FUNCTION__;
+}
+
+DataAbstractItem* DataConnection::src () {
+    return m_src;
+}
+
+int DataConnection::srcType ( ) {
+    return m_srcType;
+}
+
+DataAbstractItem* DataConnection::dst ( ) {
+    return m_dst;
+}
+
+int DataConnection::dstType ( ) {
+    return m_dstType;
+}
+
+void DataConnection::dump() {
     qDebug() << "===================================================";
     qDebug() << "m_src " << m_src;
     qDebug() << "m_srcType " << m_srcType;
     qDebug() << "m_dst " << m_dst;
     qDebug() << "m_dstType " << m_dstType;
     qDebug() << "===================================================";
-//    test(src);
-//       qDebug() << "===================================================";
-//    test(dst);
-//       qDebug() << "===================================================";
-//    exit(0);
-   
 }
-
-// void DataConnection::test(DataAbstractItem* s) {
-//   qDebug() << src(s);
-//   qDebug() << dst(s);
-//   qDebug() << srcType(s);
-//   qDebug() << dstType(s);
-// 
-// }
-
-DataConnection::~DataConnection() {
-//   qDebug() << __PRETTY_FUNCTION__;
-}
-
-DataAbstractItem* DataConnection::src ( DataAbstractItem* querier ) {
-//   qDebug() << "------------(";
-//   qDebug() << querier;
-//   qDebug() << parent();
-//   qDebug() << m_src;
-//   qDebug() << m_dst;
-//   qDebug() << ")------------";
-//   qDebug() << static_cast<DataAbstractModule*> (querier);
-//   exit(0);
-  
-  qDebug() << __PRETTY_FUNCTION__ << querier->getObjectType();
-    if ( parent() == querier )
-        return m_dst;
-    else if ( m_dst == querier )
-        return m_src;
-    qDebug() << __PRETTY_FUNCTION__ << "fatal error";
-    exit(1);
-}
-
-//FIXME broken
-// int DataConnection::srcType ( DataAbstractItem* querier ) {
-//   qDebug() << __PRETTY_FUNCTION__ <<  querier->getObjectType();
-// //     if ( parent() == querier )
-// //         return m_dstType;
-// //     else if ( m_dst == querier )
-// //         return m_srcType;
-//     qDebug() << __PRETTY_FUNCTION__ << "fatal error";
-//     exit(1);
-// }
-
-DataAbstractItem* DataConnection::dst ( DataAbstractItem* querier ) {
-    return src ( querier );
-}
-
-//FIXME broken
-// int DataConnection::dstType ( DataAbstractItem* querier ) {
-// //     return srcType ( querier );
-// }
-
-void DataConnection::dump() {}
 
 unsigned int DataConnection::getObjectType() {
     return DataItemType::DATACONNECTION;
 }
 
 void DataConnection::removeChild ( unsigned int index ) {
-    qDebug() << "Fatal error, this should not be called, exiting...";
-//     qDebug() << "having " << m_childItems.size() << " childs";
+    qDebug() << "Fatal error, this should not be called as connections don't have childs, exiting...";
     exit ( 1 );
 }
 

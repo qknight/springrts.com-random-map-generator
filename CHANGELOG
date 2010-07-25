@@ -1,3 +1,7 @@
+2010-07-25
+ - finally implemented Mode.cpp:insertConnection(..)
+   - DataConnection.cpp/.h and DataPort.cpp/.h still need to be fixed (not done yet)
+   - Connection.cpp/.h need to be fixed as well (not done yet)
 2010-06-14
  - added some code to finally insert connections, all that is missing is:
   - implementation of Model::insertConnection(...)

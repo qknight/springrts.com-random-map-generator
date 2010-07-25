@@ -57,8 +57,10 @@
    i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
    can use data(...) and setData(...) which will update it's data and as well as the other views data.
 
+
 - libNoise (backend) and 
 - libNoiseAbstraction (frontend) need to be created
+
 - add all modules which are in libnoise
 - integrate libNoise-view
 
@@ -68,10 +70,11 @@
   the height-texturizer is basically the same but instead of applying a color it inserts
   textures, the textures do have a fixed orientation. later this might be adapted to reflect
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
-- integrate xml save/load functionality
+
+- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
 - fix copyright
 - integrate 3d viewer
-- release the source as package
+- release the source as package (and i'm done)
 
 ------- modules todo: --------
 utils modules
@@ -201,7 +204,7 @@ A) somehow through the model, we need to request images for x,y pairs through th
 
   the model is the central core in this paradigm. this helps to keep everything in sync
   although it might slow down the views. a threading model is needed to set priorities so that
-  the view has always a pleasant responsiveness.
+  the view has always a pleasant responsiveness (when rendering images in the background).
 Q) how to represent data?
 A) either as the qt example or as a xml document. xml document would be cool since this could
    be used to save the map without having to convert it first on save/load.

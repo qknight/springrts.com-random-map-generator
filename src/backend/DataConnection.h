@@ -26,20 +26,15 @@ class DataAbstractModule;
 /*! 
  * this class is representing an connection (if this object is a child of a module)
  * 'in the frontend' as well as in the backend.
- * it is designed that dependant who asks (either src module or dst module) will get 
- * the wanted answer seen from these objects, meaning:
- *   'src module' named a asks for dst() using dst(a), this will return 'dst'
- * 
- * this class can be used to validate a connection, see the code to learn which criteria 
- * is tested for...
+ * A connection has a src and a dst, see respective functions
  */
 class DataConnection : public DataAbstractItem {
   Q_OBJECT
   public:
-    DataConnection( DataAbstractItem* src, int srcType, 
-		    DataAbstractItem* dst, int dstType );
+    DataConnection( DataAbstractItem* src, DataAbstractItem* dst);
     /*! WARNING: never delete objects as for instance childItems in the structure here
      ** since this will create inconsistencies between the model and this data structure.<br>
+     ** Do delete child items from the model first!
      ** A better way is to fail with exit(0) and a meaningful error message meant for
      ** developrs: since this problem must be handled with great care! */
     ~DataConnection();
@@ -48,8 +43,10 @@ class DataConnection : public DataAbstractItem {
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
     void removeChild( unsigned int index );
-    DataAbstractItem* dst(DataAbstractItem* querier);
-    DataAbstractItem* src(DataAbstractItem* querier);
+    DataAbstractItem* dst();
+    DataAbstractItem* src();
+    int srcType ();
+    int dstType ();
   protected:
     DataAbstractItem* m_src;
     int m_srcType;
