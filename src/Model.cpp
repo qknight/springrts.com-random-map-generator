@@ -491,7 +491,6 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
     // this function is not used, use
     //  - insertModule
-    //  - insertPort
     //  - insertConnection
     //  instead
     return false;
@@ -545,7 +544,9 @@ bool Model::insertModule(QString type, QPoint pos) {
  * this could be read as:
  *  - insertConnection(Port* a, Port* b); or
  *  - insertConnection(DataPort* a, DataPort* b);
- * WARNING: only add/remove connections using insertConnection and removeConnection
+ * WARNING: - only add/remove connections using insertConnection and removeConnection
+ *          - when removing a module using removeModule(..) ensure that removeModule(..) deletes
+ *            all connections and then all ports before said module is removed
  * very important design goals:
  * - connections can only be bidirectional (between exactly two ports)
  * - no loops
@@ -556,7 +557,7 @@ bool Model::insertModule(QString type, QPoint pos) {
 */
 bool Model::insertConnection(QPersistentModelIndex a,
                              QPersistentModelIndex b) {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
 
     // convert both indexes into DataAbstractItem(s)
     DataAbstractItem* abstractItemA = static_cast<DataAbstractItem*>( a.internalPointer() );
@@ -603,12 +604,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
         return false;
     }
 
-    // 3. check if such a connection already exists
-    //FIXME: implement this rule set
-    qDebug() << "FIXME: " << __FILE__ << __PRETTY_FUNCTION__ << ", see check 3: check if such a connection already exists";
-
-    // 4. create the new connection (maybe only temporarily, see check 5)
-    // we swap a and b if dataPortB is the 'OUT' port
+    // 3. we swap a and b if dataPortB is the 'OUT' port
     if (dataPortA->PortDirection() == PortDirection::OUT) {
         // do nothing
     } else {
@@ -620,24 +616,76 @@ bool Model::insertConnection(QPersistentModelIndex a,
         DataPort* tmp2 = dataPortA;
         dataPortA = dataPortB;
         dataPortB = tmp2;
-        
+
         QModelIndex tmpIndex = a;
         a=b;
         b=tmpIndex;
     }
 
+    // 4. check if such a connection already exists
+    for (int i = 0; i < dataPortA->childCount(); ++i) {
+        DataConnection* childConnection = static_cast<DataConnection*>(dataPortA->childItems()[i]);
+        if (childConnection->dst() == abstractItemB) {
+            qDebug() << "rule 4: there is already a connection, can't connect the same port pairs twice";
+            return false;
+        }
+    }
+    
+    // 5. check if a modput/input port is already in use 
+    if (dataPortB->referenceCount() > 0) {
+        qDebug() << "rule 5: remote input/modput port already in use, not adding another connection";
+        return false;
+    }
+
+    // 6. check if there is a loop, moduleA -- moduleB - .. - moduleA
+    //    since loops are not allowed, checking for possible loops, when adding a new connection, is mandatory.
+    //    - this function checks only for loops which 'would' be added with this 'connection'
+    //    - the graph MUST NOT yet contain loops (added prior to 'adding this connection')
+    // would create a loop if we can find a way (only traverse outputs) from abstractItemB to abstractItemA
+    QVector<DataAbstractItem*> visited;
+    QVector<DataConnection*> connections;
+    DataAbstractModule* m = static_cast<DataAbstractModule*>(abstractItemB->parent());
+    visited << abstractItemA->parent();
+    visited << abstractItemB->parent();
+//     qDebug()<< "check 6: START: loop detection running";
+    do {
+//         qDebug() << "check 6: main loop started";
+        // loop through all output ports
+        for (int i = 0; i < m->childCount(); ++i) {
+//             qDebug()<< "check 6: m->childCount()" << i;
+            // loop through all connections
+            DataAbstractItem* childItem = m->childItems()[i];
+            DataPort* p = static_cast<DataPort*>(childItem);
+            if (p->PortDirection() != PortDirection::OUT) {
+              continue;
+            }
+            for (int j = 0; j < childItem->childCount(); ++j) {
+//                 qDebug()<< "check 6: processing output connection: " << j;
+                DataConnection* c = static_cast<DataConnection*> (childItem->childItems()[j]);
+                connections << c;
+            }
+        }
+//         qDebug() << "check 6: " << "connections.size(): " << connections.size();
+        if (connections.size() == 0) {
+            break;
+        } else {
+            DataConnection* c = connections.at(0);
+            connections.remove(0);
+            m = static_cast<DataAbstractModule*>(c->dst()->parent());
+            if (visited.contains(m)) {
+//                 qDebug() << "check 6: visited.size(): " << visited.size();
+                qDebug() << "check 6: adding this connection would create a loop which is not allowed by definition!";
+                return false;
+            }
+            visited << m;
+        }
+    } while (true);
+//     qDebug() << "check 6: END loop detection: NO LOOP";
+
+    // 7. create the new connection
     DataConnection* dc = new DataConnection( abstractItemA, abstractItemB );
 
-    // 5. test here if the connection is accepted by the modules (ask both modules)
-    //FIXME: this code is currenlty not used but can be used later
-//     DataAbstractModule* srcModule = static_cast<DataAbstractModule*>( srcItem );
-//     DataAbstractModule* dstModule = static_cast<DataAbstractModule*>( dstItem );
-//     if (srcModule->verifyConnection(dc) && dstModule->verifyConnection(dc)) {
-//       delete dc;
-//       return false;
-//     }
-
-    // 6. finally (after changing the core data structure using the Model) we are
+    // 8. finally (after changing the core data structure using the Model) we are
     //    going to update the QGraphicsScene via the QAbstractItemModel -> insert the connection
     int row = rowCount( a );
     beginInsertRows( a, row, row + 0 );
@@ -646,7 +694,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
         abstractItemA->appendChild( dc );
     }
     endInsertRows();
-    qDebug() << "successfully added a new connection";
+//     qDebug() << "successfully added a new connection";
     return true;
 }
 
@@ -698,7 +746,7 @@ QModelIndex Model::dst(QPersistentModelIndex connection) {
 
     // 3. the parent QModelIndex is important for the last step
     QModelIndex parentModule = index(dPortItem->parent()->row(), 0 , QModelIndex());
-    
+
     // 4. now we need to find the QModelIndex of dst (dst is a DataPort)
     return index(dPortItem->row(),0 , parentModule);
 }

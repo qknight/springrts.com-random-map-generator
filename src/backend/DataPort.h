@@ -39,10 +39,11 @@ public:
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
     void removeChild( unsigned int index );
+    void appendChild( DataAbstractItem *child );
     unsigned int PortType();
     unsigned int PortDirection();
     unsigned int PortNumber();
-
+    unsigned int referenceCount();
 protected:
     bool insertConnection ( DataConnection* c );
     void insertReference ( DataAbstractItem* item );

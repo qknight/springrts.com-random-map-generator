@@ -41,6 +41,11 @@ unsigned int DataPort::PortNumber() {
     return m_portNumber;
 }
 
+void DataPort::appendChild( DataAbstractItem *child ) {
+  DataConnection* c = static_cast<DataConnection*>(child);
+  insertConnection(c);  
+}
+
 bool DataPort::insertConnection ( DataConnection* c ) {
     qDebug() << __PRETTY_FUNCTION__;
     DataPort* dstItem = static_cast<DataPort*> ( c->dst() );
@@ -54,6 +59,11 @@ void DataPort::insertReference ( DataAbstractItem* item ) {
     m_childItemsReferences.append ( item );
 }
 
+unsigned int DataPort::referenceCount ( ) {
+    return m_childItemsReferences.size();
+}
+
+//FIXME todo
 void DataPort::removeChild ( unsigned int index ) {
     // remove childs (all ports)
 }

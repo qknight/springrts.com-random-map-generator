@@ -1,29 +1,22 @@
 ------- current plan (near objectives): ------- 
-- ? remove Model::insertPort(..)?
-- connections should be inserted according to the parent which has the output on his side
-  this is currently done but ... i should doublecheck that...
-- inserting connections doesn't work yet
-  - Model::dst() functions needs rewriting
-  - void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
-  POSSIBLE FIX: insert connections dependant on their output but insert them as:
-                - forward connection at the 'output' side
-                - backward connection on the 'modput'|'input' side
-- create CONNECTIONs (QGraphicsItem wise)
+- fix: drawing of connections (modput needs 90degree painting)
 - when exiting the program, this line popps up, what is that?
   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
   -> Module::~Module() {
     move this check to class Port and remove all Ports instead...
 
-
-
-
-
-
-
-
-
+- make items selectable with
+ - all items need to be selectable
+ - boundingbox selection
 - make items removable & create shortcuts for that as 'del'
+ - also add a little 'x' button on the top right side
 - set bounding box selection using a modifier key, say ctrl
+
+
+
+
+
+
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
@@ -56,15 +49,24 @@
   possible solution:
    i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
    can use data(...) and setData(...) which will update it's data and as well as the other views data.
+- clicking an item in the right list should focus the view of the graphicsscene over the respective item
+
+
+
+
+
+
+
+
 
 
 - libNoise (backend) and 
 - libNoiseAbstraction (frontend) need to be created
-
 - add all modules which are in libnoise
 - integrate libNoise-view
-
 - integrate spring map exporter
+- simple export demo (smf)
+
 - integrate height-colorizer and height-texturizer
   the height-c0olorizer is easy to implement and gives a basic look&feel for the heightmap
   the height-texturizer is basically the same but instead of applying a color it inserts
@@ -73,6 +75,7 @@
 
 - integrate xml save/load functionality (add an object serializer to all nodes in the graph)
 - fix copyright
+
 - integrate 3d viewer
 - release the source as package (and i'm done)
 
@@ -251,7 +254,7 @@ A) input, modput, output are the 3 possible port types all represented by a Port
 			   QGraphicsItem* dstModule, int dstPortNumber, int dstType);
 
 Q) how do we track backward connections? how was it done in the 'automate' project?
-A) ... let's see!
+A) it was done using references. this system has been cloned ;-)
 
 ----- later fixing ------
 - clicking in the property dialog on a module should not trigger an editor but instead

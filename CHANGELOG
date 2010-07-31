@@ -1,3 +1,6 @@
+2010-08-01
+ - adding a connection twice is not possible anymore as there is now a prevention check, see Model.cpp
+ - Model.cpp::insertConnection is now complete! *yepee*
 2010-07-25
  - connections are now drawn, they are properly added to the graph as well!
    see also screenshots/interface3.png
