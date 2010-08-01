@@ -647,6 +647,11 @@ bool Model::insertConnection(QPersistentModelIndex a,
     DataAbstractModule* m = static_cast<DataAbstractModule*>(abstractItemB->parent());
     visited << abstractItemA->parent();
     visited << abstractItemB->parent();
+    
+    if (abstractItemA->parent() == abstractItemB->parent()) {
+        qDebug() << "check 6: a loop within one module is not allowed";
+        return false;
+    }
 //     qDebug()<< "check 6: START: loop detection running";
     do {
 //         qDebug() << "check 6: main loop started";

@@ -1,4 +1,6 @@
 2010-08-01
+ - drawing of modput connections looks nicer now
+ - Model.cpp::insertConnection fixed bug where a module output could be connected to the same module's input
  - adding a connection twice is not possible anymore as there is now a prevention check, see Model.cpp
  - Model.cpp::insertConnection is now complete! *yepee*
 2010-07-25

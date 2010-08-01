@@ -1,5 +1,4 @@
 ------- current plan (near objectives): ------- 
-- fix: drawing of connections (modput needs 90degree painting)
 - when exiting the program, this line popps up, what is that?
   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
   -> Module::~Module() {
