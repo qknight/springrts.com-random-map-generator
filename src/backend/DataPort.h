@@ -44,12 +44,13 @@ public:
     unsigned int PortDirection();
     unsigned int PortNumber();
     unsigned int referenceCount();
+    QList<DataAbstractItem*> referenceChildItems() const;
 protected:
     bool insertConnection ( DataConnection* c );
     void insertReference ( DataAbstractItem* item );
     void removeReference ( DataAbstractItem* item );
 private:
-    QList<DataAbstractItem*> m_childItemsReferences;
+    QList<DataAbstractItem*> m_referencesChildItems;
     int m_portNumber;
     int m_portType;
     int m_portDirection;

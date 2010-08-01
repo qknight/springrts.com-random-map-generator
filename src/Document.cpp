@@ -26,18 +26,20 @@ Document::Document() {
     model = new Model;
     scene = new GraphicsScene(model);
     itemView = new ItemView(scene, model);
-    
+
     scene->setLoadableModuleNames(model->LoadableModuleNames());
     connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
-	    this, SLOT(CreateModuleSlot(QString,QPoint)));
+            this, SLOT(CreateModuleSlot(QString,QPoint)));
+
+    model->insertModule("NoiseGen::Billow", QPoint(-200,0));
+    model->insertModule("NoiseGen::Perlin", QPoint(-200,200));
+    model->insertModule("NoiseGen::Perlin", QPoint( 0,350));
+    model->insertModule("Utils::NoiseMap" , QPoint( 350,50));
+    model->insertModule("Selector::Selector", QPoint(100,100));
     
-  model->insertModule("NoiseGen::Billow", QPoint(-200,0));
-  model->insertModule("NoiseGen::Perlin", QPoint(-200,200));
-  model->insertModule("NoiseGen::Perlin", QPoint( 0,350));
-  model->insertModule("Utils::NoiseMap" , QPoint( 350,50));
-  model->insertModule("Selector::Selector", QPoint(100,100));
-//   insertConnection(QPersistentModelIndex src, int srcPort, int srcType, 
-//                           QPersistentModelIndex dst, int dstPort, int dstType);
+//     QModelIndex port1, port2;
+//     model->insertConnection(port1, port2);
+
 //   scene->addLine(-500,-500,-500,-501);
 //   scene->addLine(500,500,500,501);
 //   scene->addLine(-100,0,100,0);
@@ -45,10 +47,11 @@ Document::Document() {
 }
 
 Document::~Document() {
+    delete itemView;
     delete scene;
     delete model;
 }
 
 void Document::CreateModuleSlot(QString type, QPoint position) {
-  model->insertModule(type, position);
+    model->insertModule(type, position);
 }

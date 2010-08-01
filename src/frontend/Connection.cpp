@@ -59,8 +59,11 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     QPointF beginPoint = myEndItem->pos()+m;
     QPointF endPoint = myStartItem->pos()+n;
 
+    // FIXME: the next two lines are needed since the drawing has a bug (wrong boundingbox ...)
+    //        if that is fixed, the next two lines can be removed
     QLineF z = QLineF(beginPoint, endPoint);
     setLine(z);
+    
     int stretch= qAbs(0.6 * -(beginPoint.x()-endPoint.x()));
     QPainterPath myPath(QPoint(beginPoint.x(),beginPoint.y()));
     QPointF xPoint;

@@ -28,7 +28,7 @@ DataConnection::DataConnection ( DataAbstractItem* src, DataAbstractItem* dst) :
 }
 
 DataConnection::~DataConnection() {
-//   qDebug() << __PRETTY_FUNCTION__;
+  qDebug() << __PRETTY_FUNCTION__;
 }
 
 DataAbstractItem* DataConnection::src () {

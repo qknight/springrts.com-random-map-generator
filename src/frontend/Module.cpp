@@ -29,7 +29,7 @@ Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), Gra
 
 Module::~Module() {
     // FIXME we should remove all ports, this check should be relocated to the ports instead
-    if (children().size() > 0) {
+//     if (children().size() > 0) {
         // when removing a graphical item, this must always be done from the lower layer (by the Model)
         // WARNING this comment might be wrong, didn't check it yet 2010-01-06 (js)
         // example: removing a object which has 2 connections from the gui involves:
@@ -41,22 +41,15 @@ Module::~Module() {
         //          3. when all references (connections) are removed, remove the visual item (gui counterpart)
         //          4. next remove the actual item (maybe a noisegen for instance)
         //          5. now we are set and since we don't have loops this should be quite easy
-        qDebug() << __PRETTY_FUNCTION__ << " FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string!";
-        exit(1);
-    }
+//         qDebug() << __PRETTY_FUNCTION__ << " FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string!";
+//         exit(1);
+//     }
 }
 
 // void Module::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){ }
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
     switch (change) {
-//     case QGraphicsItem::ItemSceneChange:
-//       foreach (QGraphicsItem* child, children()) {
-//         modulePort* child_ = static_cast<modulePort*>(child);
-//         child_->updatePosition();
-//         qDebug("move?");
-//       }
-//         break;
     case QGraphicsItem::ItemSceneChange:
 //         createLayout();
         break;
@@ -89,45 +82,5 @@ void Module::updateData() {
     setPos ( m_pos );
 }
 
-Port* Module::resolvePort(int portType, int portNumber) {
-    if (ports.size()) {
-        foreach(Port* p, ports) {
-            if (p->portType() == portType && p->portNumber() == portNumber)
-                return p;
-        }
-    }
-    qDebug() << __PRETTY_FUNCTION__ << "FATAL: there is no such port item!, exiting";
-    exit(1);
-    return NULL;
-}
-
 void Module::createLayout() {
-//     int in=0, mod=0, out=0;
-//     int childs = childItems().size();
-//     for (int i = 0; i < childs; ++i) {
-//         qDebug() << childs;
-//         QGraphicsItem* child = childItems().at(i);
-//         if (child->scene() == NULL) {
-//           qDebug() << "child pointer was NULL";
-//           continue;
-//         }
-//         int portDirection = PortDirection::MOD;//rand()%2;//childItems()[i];
-// 
-//         //FIXME this code crashes for unknown reasons..?@!
-//         switch (portDirection) {
-//           qDebug() << "i'm here";
-//         case PortDirection::IN:
-//             child->moveBy(-10,20+(in++)*40);
-//             break;
-//         case PortDirection::MOD:
-//             child->moveBy(50+20*(mod++),130);
-//             break;
-//         case PortDirection::OUT:
-//             child->moveBy(110,20+(out++)*40);
-//             break;
-//         default:
-//             qDebug() << "no case matched";
-//             break;
-//         }
-//     }
 }

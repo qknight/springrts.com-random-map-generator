@@ -34,10 +34,41 @@
 #include "DataAbstractModule.h"
 #include "ModuleFactory.h"
 
-Model::Model( /*DataAbstractItem* root, QObject* parent*/ ) /*: QAbstractItemModel( parent )*/ {
+Model::Model() {
     rootItem = new DataRoot;
     moduleFactory = ModuleFactory::Instance();
-    moduleFactory->ListLoadableModules();
+//     moduleFactory->ListLoadableModules();
+}
+
+Model::~Model() {
+//     qDebug() << __PRETTY_FUNCTION__;
+    // we assume that if this function is called, no views are attached anymore
+    // 1. remove all connections and references
+    // 2. remove all ports
+    // 3. remove all modules
+    // 4. remove rootItem
+    qDebug() << "modules: " << rootItem->childCount();
+    for (int w = 0; w < rootItem->childCount(); ++w) {
+        DataAbstractItem* m = rootItem->childItems()[w];
+        qDebug() << " ports: " << m->childCount();
+        for (int x = 0; x < m->childCount(); ++x) {
+            DataAbstractItem* p = m->childItems()[x];
+            qDebug() << "  connections: " << p->childCount();
+            for (int y = 0; y < p->childCount(); ++y) {
+                DataAbstractItem* c = p->childItems()[y];
+                delete c;
+            }
+            DataPort* portItem = static_cast<DataPort*>(p);
+            qDebug() << "  references: " << portItem->referenceCount();
+            for (int z = 0; z < portItem->referenceCount(); ++z) {
+                DataAbstractItem* cref = portItem->referenceChildItems()[z];
+                delete cref;
+            }
+            delete p;
+        }
+        delete m;
+    }
+    delete rootItem;
 }
 
 QModelIndex Model::index( int row, int column, const QModelIndex & parent ) const {
@@ -489,7 +520,7 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
 }
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
-    // this function is not used, use
+    // this function is not used, see
     //  - insertModule
     //  - insertConnection
     //  instead
@@ -630,8 +661,8 @@ bool Model::insertConnection(QPersistentModelIndex a,
             return false;
         }
     }
-    
-    // 5. check if a modput/input port is already in use 
+
+    // 5. check if a modput/input port is already in use
     if (dataPortB->referenceCount() > 0) {
         qDebug() << "rule 5: remote input/modput port already in use, not adding another connection";
         return false;
@@ -647,7 +678,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
     DataAbstractModule* m = static_cast<DataAbstractModule*>(abstractItemB->parent());
     visited << abstractItemA->parent();
     visited << abstractItemB->parent();
-    
+
     if (abstractItemA->parent() == abstractItemB->parent()) {
         qDebug() << "check 6: a loop within one module is not allowed";
         return false;
@@ -662,7 +693,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
             DataAbstractItem* childItem = m->childItems()[i];
             DataPort* p = static_cast<DataPort*>(childItem);
             if (p->PortDirection() != PortDirection::OUT) {
-              continue;
+                continue;
             }
             for (int j = 0; j < childItem->childCount(); ++j) {
 //                 qDebug()<< "check 6: processing output connection: " << j;

@@ -1,15 +1,51 @@
 ------- current plan (near objectives): ------- 
-- when exiting the program, this line popps up, what is that?
-  FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
-  -> Module::~Module() {
-    move this check to class Port and remove all Ports instead...
+current task: "refactoring"
+- GraphicsScene.cpp, see FIXME
+- fix Model.cpp::insertConnection|Modules to return the respective QModelIndex or an invalid QModelIndex if something went wrong
+- create an inteface to add connections via Document.cpp
+- fix all cleaning up routines on program exit
+ - implement ~Model()
+ - when exiting the program, this line popps up, what is that?
+   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
+   -> Module::~Module() {}
+     move this check to class Port and remove all Ports instead...
+- a plan to 'bootstrap' and 'shutdown' the random map generator with:
+ - model
+ - document
+ - all backend items (the whole graph)
+ - all frontend items (the whole QGraphicsView stuff)
 
-- make items selectable with
+
+
+
+
+
+
+- make items selectable with:
  - all items need to be selectable
  - boundingbox selection
-- make items removable & create shortcuts for that as 'del'
- - also add a little 'x' button on the top right side
-- set bounding box selection using a modifier key, say ctrl
+  - set bounding box selection using a modifier key, say ctrl
+ - a selection model should 'sync' select of items, in both views
+- make items removable:
+ - create shortcuts for that as 'del'-key associated with the active selection
+ - also add a little 'x' button on the top right side of the module (similar to widgets)
+
+
+
+
+
+- clicking in the property dialog on a module should not trigger an editor but instead
+  focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
+  -> nearly done with that, still the slot is not called, ... why?
+- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
+  they should indicated the document width()/height() and making it work might be by using
+  POSSIBLE FIX: centerOn(..) or scroll(..)
+- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
+ - when inserting, either center the item itself or on insertion see width/height of the item
+   and insert it at -width()/2,-height()/2
+ - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
+   GraphicsScene.cpp ~ line 40
+
 
 
 
@@ -48,6 +84,7 @@
   possible solution:
    i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
    can use data(...) and setData(...) which will update it's data and as well as the other views data.
+ ->> probably two proxymodels will do ;-)
 - clicking an item in the right list should focus the view of the graphicsscene over the respective item
 
 
@@ -58,9 +95,12 @@
 
 
 
-
-- libNoise (backend) and 
+- fix QGraphicsItems
+ - boundingbox issues
+ - drawing could be nicer
+- libNoise (backend) and
 - libNoiseAbstraction (frontend) need to be created
+
 - add all modules which are in libnoise
 - integrate libNoise-view
 - integrate spring map exporter
@@ -73,9 +113,10 @@
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 
 - integrate xml save/load functionality (add an object serializer to all nodes in the graph)
-- fix copyright
+- fix copyright, linking to the library .... is that possible?
 
 - integrate 3d viewer
+- include libnoise into this CMakeLists.txt (build it as well and use that)
 - release the source as package (and i'm done)
 
 ------- modules todo: --------
@@ -224,12 +265,6 @@ A) either as the qt example or as a xml document. xml document would be cool sin
                 - doubleconnections
                 - one output, two different modules relay on this output ...
                 - and so on
-Q) when using a graph like data model "simpletreemodel" what events might be of importance?
-A) event based graph:
-   events as: - new element (a module is added)
-              - new connection is made
-              - parameterChange (of any given module)
-              - direct command (as buttonclick for generating some output as a *.sd7)
 
 Q) what kind of connections and modules do we have
 A) connections:
@@ -242,28 +277,13 @@ A) connections:
     * pixel filter modules
     * spring modules (to create maps)
 
+
+-- solved problems --
+Q) how do we track backward connections? how was it done in the 'automate' project?
+A) this project is now using references. a port does have also a QList of connections which reference this port
+
 Q) modules do have ports, how to know which port is where in regars to model <-> view?
 A) input, modput, output are the 3 possible port types all represented by a Port object which
-   is a usually a child of a Module
+   is a child of a Module
  
-   2 possible ways to add a connection:
-   graphicsscene->insertConnection(Port* srcPort, Port* dstPort); // convenient function where Port is a QGraphicsItem
-     will translate into:
-   model->insertConnection(QGraphicsItem* srcModule, int srcPortNumber, int srcType,
-			   QGraphicsItem* dstModule, int dstPortNumber, int dstType);
-
-Q) how do we track backward connections? how was it done in the 'automate' project?
-A) it was done using references. this system has been cloned ;-)
-
------ later fixing ------
-- clicking in the property dialog on a module should not trigger an editor but instead
-  focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
-  -> nearly done with that, still the slot is not called, ... why?
-- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
-  they should indicated the document width()/height() and making it work might be by using
-  POSSIBLE FIX: centerOn(..) or scroll(..)
-- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
-  when inserting, either center the item itself or on insertion see width/height of the item
-  and insert it at -width()/2,-height()/2
-- item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
-  GraphicsScene.cpp ~ line 40
+   model->insertConnection(QPersistentModelIndex a, QPersistentModelIndex b); where a and b are representing a Port, see Document.cpp

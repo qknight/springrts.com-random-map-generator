@@ -101,7 +101,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
         // 2. create a new Port class object and assign it as child to the parent P
         unsigned int portDirection = model->data(child, customRole::PortDirection).toInt();
         unsigned int portType = model->data(child, customRole::PortType).toInt();
-        unsigned int portNumber = model->data(child, customRole::PortNumber).toInt();
+//         unsigned int portNumber = model->data(child, customRole::PortNumber).toInt();
         Port* port = new Port(model, child, portDirection, portType, i, graphicsItem);
         port->setParentItem ( graphicsItem );
         
@@ -126,6 +126,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
             break;
         }
     }
+    return NULL;
 }
 
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {

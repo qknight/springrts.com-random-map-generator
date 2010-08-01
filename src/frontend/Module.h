@@ -28,7 +28,7 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
 public:
     Module(Model* model, QPersistentModelIndex index);
     ~Module();
-    Port* resolvePort(int portType, int portNumber);
+//     Port* resolvePort(int portType, int portNumber);
 
     QString m_label;
     QPoint m_pos;

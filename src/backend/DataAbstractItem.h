@@ -58,7 +58,7 @@ class DataAbstractItem : QObject {
       - only one item doesn't have a parent, that is the AutomateRoot
       - all other items MUST have a valid parent*/
     DataAbstractItem *parent();
-    /*! returns m_childItems.size() */
+    /*! returns a list of all child items */
     QList<DataAbstractItem*> childItems() const;
     /*! appends a new child to m_childItems, child has to have this as parent already! */
     virtual void appendChild( DataAbstractItem *child );

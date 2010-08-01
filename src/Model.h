@@ -61,8 +61,10 @@ class Model : public QAbstractItemModel {
     friend class ItemView;
 
   protected:
-    /*! a root node is mendatory to query for child items */
-    Model( /*DataAbstractItem* root, QObject* parent = 0*/ );
+    /*! rootItem is the root of the data structure, living in this Model class */
+    Model();
+    /*! if this is called, we assume that no more view is attached */
+    ~Model();
     /*! see the Qt docs about QAbstractItemModel */
     QModelIndex index( int row, int column, const QModelIndex & parent ) const;
     /*! see the Qt docs about QAbstractItemModel */
@@ -111,7 +113,6 @@ class Model : public QAbstractItemModel {
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
     /*! will translate a AbstractNodeItem* into a QModelIndex (item must exist there) */
-//     QModelIndex AbstractNodeItem2QModelIndex( DataAbstractItem* item );
     
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)

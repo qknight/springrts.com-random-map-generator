@@ -23,7 +23,9 @@ DataPort::DataPort(int portType, int portDirection, int portNumber) {
     m_portNumber=portNumber;
 }
 
-DataPort::~DataPort() {};
+DataPort::~DataPort() {
+
+};
 
 unsigned int DataPort::getObjectType() {
     return DataItemType::DATAPORT;
@@ -56,11 +58,11 @@ bool DataPort::insertConnection ( DataConnection* c ) {
 
 void DataPort::insertReference ( DataAbstractItem* item ) {
   qDebug() << __PRETTY_FUNCTION__;
-    m_childItemsReferences.append ( item );
+    m_referencesChildItems.append ( item );
 }
 
 unsigned int DataPort::referenceCount ( ) {
-    return m_childItemsReferences.size();
+    return m_referencesChildItems.size();
 }
 
 //FIXME todo
@@ -71,6 +73,10 @@ void DataPort::removeChild ( unsigned int index ) {
 //FIXME todo
 void DataPort::removeReference ( DataAbstractItem* item ) {
 //   m_childItemsReferences.remove ( item );
+}
+
+QList<DataAbstractItem*> DataPort::referenceChildItems() const {
+  return m_referencesChildItems;
 }
 
 void DataPort::dump() {};
