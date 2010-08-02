@@ -60,7 +60,7 @@ Model::~Model() {
             }
             DataPort* portItem = static_cast<DataPort*>(p);
             qDebug() << "  references: " << portItem->referenceCount();
-            for (int z = 0; z < portItem->referenceCount(); ++z) {
+            for (unsigned int z = 0; z < portItem->referenceCount(); ++z) {
                 DataAbstractItem* cref = portItem->referenceChildItems()[z];
                 delete cref;
             }
@@ -527,7 +527,7 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
     return false;
 }
 
-bool Model::insertModule(QString type, QPoint pos) {
+QModelIndex Model::insertModule(QString type, QPoint pos) {
     int row = rowCount( QModelIndex() );
 
     // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
@@ -568,7 +568,7 @@ bool Model::insertModule(QString type, QPoint pos) {
         }
     }
     endInsertRows();
-    return true;
+    return index(row, 0, QModelIndex());
 }
 
 /*!
@@ -586,7 +586,7 @@ bool Model::insertModule(QString type, QPoint pos) {
  * - connections must be unique (there can not be two similar connections connecting portX and portY)
  * - a connection is added to it's parent. the parent is always the port with portType=OUT
 */
-bool Model::insertConnection(QPersistentModelIndex a,
+QModelIndex Model::insertConnection(QPersistentModelIndex a,
                              QPersistentModelIndex b) {
 //     qDebug() << __PRETTY_FUNCTION__;
 
@@ -606,7 +606,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
     // 1. check if the ports are of compatible types
     if (dataPortA->PortType() != dataPortB->PortType()) {
         qDebug() << "both ports need to be of compatible type, for example: PortType::LIBNOISE -- PortType::LIBNOISE";
-        return false;
+        return QModelIndex();
     }
 
     // 2. check if a connection is possible implementing the connection matrix below
@@ -622,17 +622,17 @@ bool Model::insertConnection(QPersistentModelIndex a,
     //   1. rule
     if (dataPortA->PortDirection() == dataPortB->PortDirection()) {
         qDebug() << "RULE1: PortA must have a different PortDirection than PortB";
-        return false;
+        return QModelIndex();
     }
     //   2. rule
     if ((dataPortA->PortDirection() == PortDirection::MOD) && (dataPortB->PortDirection() == PortDirection::IN)) {
         qDebug() << "RULE2a: can't add connection between MOD and IN";
-        return false;
+        return QModelIndex();
     }
     //   3. rule
     if ((dataPortA->PortDirection() == PortDirection::IN) && (dataPortB->PortDirection() == PortDirection::MOD)) {
         qDebug() << "RULE2b: can't add connection between IN and MOD";
-        return false;
+        return QModelIndex();
     }
 
     // 3. we swap a and b if dataPortB is the 'OUT' port
@@ -658,14 +658,14 @@ bool Model::insertConnection(QPersistentModelIndex a,
         DataConnection* childConnection = static_cast<DataConnection*>(dataPortA->childItems()[i]);
         if (childConnection->dst() == abstractItemB) {
             qDebug() << "rule 4: there is already a connection, can't connect the same port pairs twice";
-            return false;
+            return QModelIndex();
         }
     }
 
     // 5. check if a modput/input port is already in use
     if (dataPortB->referenceCount() > 0) {
         qDebug() << "rule 5: remote input/modput port already in use, not adding another connection";
-        return false;
+        return QModelIndex();
     }
 
     // 6. check if there is a loop, moduleA -- moduleB - .. - moduleA
@@ -681,7 +681,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
 
     if (abstractItemA->parent() == abstractItemB->parent()) {
         qDebug() << "check 6: a loop within one module is not allowed";
-        return false;
+        return QModelIndex();
     }
 //     qDebug()<< "check 6: START: loop detection running";
     do {
@@ -711,7 +711,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
             if (visited.contains(m)) {
 //                 qDebug() << "check 6: visited.size(): " << visited.size();
                 qDebug() << "check 6: adding this connection would create a loop which is not allowed by definition!";
-                return false;
+                return QModelIndex();
             }
             visited << m;
         }
@@ -731,7 +731,7 @@ bool Model::insertConnection(QPersistentModelIndex a,
     }
     endInsertRows();
 //     qDebug() << "successfully added a new connection";
-    return true;
+    return index(row, 0, a);
 }
 
 QVector<QString> Model::LoadableModuleNames() {

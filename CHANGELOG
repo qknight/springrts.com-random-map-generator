@@ -1,3 +1,6 @@
+2010-08-02
+- fix Model.cpp::insertConnection|Modules to return the respective QModelIndex or an invalid QModelIndex if something went wrong
+- created an inteface to add connections via Document.cpp
 2010-08-01
  - minor fixes
  - drawing of modput connections looks nicer now

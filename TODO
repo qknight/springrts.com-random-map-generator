@@ -1,8 +1,7 @@
 ------- current plan (near objectives): ------- 
 current task: "refactoring"
+- using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
 - GraphicsScene.cpp, see FIXME
-- fix Model.cpp::insertConnection|Modules to return the respective QModelIndex or an invalid QModelIndex if something went wrong
-- create an inteface to add connections via Document.cpp
 - fix all cleaning up routines on program exit
  - implement ~Model()
  - when exiting the program, this line popps up, what is that?
