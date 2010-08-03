@@ -24,7 +24,7 @@ DataAbstractItem::DataAbstractItem( DataAbstractItem *parent ) {
 }
 
 DataAbstractItem::~DataAbstractItem() {
-  qDebug() << __PRETTY_FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
 }
 
 void DataAbstractItem::appendChild( DataAbstractItem *item ) {

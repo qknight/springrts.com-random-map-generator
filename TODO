@@ -1,41 +1,36 @@
 ------- current plan (near objectives): ------- 
-current task: "refactoring"
-- using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
-- GraphicsScene.cpp, see FIXME
-- fix all cleaning up routines on program exit
- - implement ~Model()
- - when exiting the program, this line popps up, what is that?
-   FIXME: critical error -> this section should never be called!!! Read the comments in the code above this error string! 
-   -> Module::~Module() {}
-     move this check to class Port and remove all Ports instead...
-- a plan to 'bootstrap' and 'shutdown' the random map generator with:
- - model
- - document
- - all backend items (the whole graph)
- - all frontend items (the whole QGraphicsView stuff)
-
-
-
-
-
-
-
+- maybe refactor ~DataRoot and ~DataAbstractModules' code into the base class ~ destructor, to reduce code 
 - make items selectable with:
  - all items need to be selectable
+  - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
  - boundingbox selection
   - set bounding box selection using a modifier key, say ctrl
  - a selection model should 'sync' select of items, in both views
 - make items removable:
- - create shortcuts for that as 'del'-key associated with the active selection
- - also add a little 'x' button on the top right side of the module (similar to widgets)
+ - general:
+  - create shortcuts for that as 'del'-key associated with the active selection
+  - also add a little 'x' button on the top right side of the module (similar to widgets)
+ - single items should be removable
+ - a selection of several different items should be deletable
+ - QTreeView should be able to handle multiple selection
+ - QTreeView should have 'selection' enabled
 
 
 
 
 
-- clicking in the property dialog on a module should not trigger an editor but instead
-  focusIn over the item clicked on the QGraphicsScene/QGraphicsView and vice versa
-  -> nearly done with that, still the slot is not called, ... why?
+
+
+
+
+
+
+
+
+
+- using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
+ - so i have to fix my QGraphicsView code once again
+ - it's funny that clicking a item in the right side will now focus over the respecitive QGraphicsItem (didn't work before)
 - scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
   they should indicated the document width()/height() and making it work might be by using
   POSSIBLE FIX: centerOn(..) or scroll(..)
@@ -44,6 +39,32 @@ current task: "refactoring"
    and insert it at -width()/2,-height()/2
  - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
    GraphicsScene.cpp ~ line 40
+- fix QGraphicsItems
+ - boundingbox issues
+ - drawing could be nicer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -94,9 +115,13 @@ current task: "refactoring"
 
 
 
-- fix QGraphicsItems
- - boundingbox issues
- - drawing could be nicer
+
+
+
+
+
+
+
 - libNoise (backend) and
 - libNoiseAbstraction (frontend) need to be created
 
@@ -117,6 +142,11 @@ current task: "refactoring"
 - integrate 3d viewer
 - include libnoise into this CMakeLists.txt (build it as well and use that)
 - release the source as package (and i'm done)
+
+
+
+
+
 
 ------- modules todo: --------
 utils modules
@@ -159,130 +189,3 @@ new moduels which might be nice:
  - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
                 the same image, the same goes for intel vs spark)
 
----- workflow analysis: how to generate a map ----
-this is a guideline which helps me to define the problem i try to solve:
-
-user case:
- 1. user joins a new game (in the qtlobby)
- 2. server offers game settings and the meta-map
- 3. user downloads the meta-map information
- 4. user generates map
- 5. user signals ready state to the server
- 6. server starts the game for all users
-
-mapgenerator:
- 1. mapgenerator input is a xml file
- 2. the output generated based on different noise modules is a 1-30+mb map image
-
----- libnoise use case example ----
-how to create the frontend-library for the libnoise library used by the mapper?
-
- 1. user starts by adding modules
- 2. user connects modules and defines an output
-   here i need a usability analysis! what workflow comes in handy? ideas:
-    - the user can see the output of a module right after connection in a preview
-    - the user can doubleclick the preview to obtain a complete image
-    - 3d heightmap visualizer (copied from qtlobby)
-    - the preview should contain a way to assign color
-     - gradient (done already)
-     - gradient assigning textures (not done yet)
-     - possibility to select several different gradient types of either case
-     - parameter changes on modules should output new images immediately
-      - this might require using the cache module in a transparent manner
-      - this might require implementing changes instead of pure flush/rebuild
-        of the renderer chain
-
-  module::RidgedMulti myModule;
-  myModule.SetOctaveCount (job.octave);
-  myModule.SetFrequency (job.frequency);
-
----- how to write the frontend for the backend? ----
-    define: frontend: the library which builds the scene:
-                      a set of genmodules with combiners and one output module
-                      -> this must be done using the ModuleFactory of course since it has to
-                         be done in a dynamic way based on the data he produced with his graphic
-                         module clicking
-             backend: the libnoise library (unmodified)
-
----- how to obtain a map -> x*y dimension heightmap ----
-problem: how to select the bounding box for the map in the libnoiseview?
- 1. user defines a map dimension
- 2. user adds noisegen modules
- 3. user adds and connects a renderer (output module)
- 4. user looks at the result (output) and then decides which x or y coordinate
-    has to be changed in order to get his desired map-design done.
-    example: a user wants to have a hill in the middle of the map on a isle
-             he would have to generate a suitable isle with one module. on
-             the next step he would user a max(isle_gen,hill_gen) combiner
-             module to 'add' the hill to the map. he has to find a suitable
-             hill heightmap in the second noisegen
-
----- general class design and data storage ----
-current plan:
-                                            QTableView or similar to modify module properties
-                                                \
-                                                 \
-QGraphicsView <---> QGraphicsScene <---> QAbstractItemModel <---> (XML?) data store (the map is stored here)
-                          |                                            /          \
-                          |                                           /            \
-                     QGraphicsItem                       libNoiseAbstraction    ModuleFactory
-                          |                                (the frontend)        (create/list modules)
-                          |                                      /
-                     custom editor                              /
-                                                            libNoise (the backend)
-                                                              (bison for syntax checking)
----- unsolved issues ----
-Q) how to manage the libNoiseAbstraction layer?
-A) first we need to have a workflow. currently the plan is:
-    - keep as close as possible to the libnoise library and later
-    - introduce convenient modules which do things easier
-    - (even later) introduce pixel processing
-Q) how does a graphical module as a renderer (QGraphisItem) display an image?
-A) if the libNoiseAbstraction detects a change it will update it's image so that the
-   attached view is updated automatically.
-Q) how to view a noisegen as the libnoise-viewer does currently?
-A) somehow through the model, we need to request images for x,y pairs through the model to the
-   libNoiseAbstraction layer to the libnoise core library
-
-  the model is the central core in this paradigm. this helps to keep everything in sync
-  although it might slow down the views. a threading model is needed to set priorities so that
-  the view has always a pleasant responsiveness (when rendering images in the background).
-Q) how to represent data?
-A) either as the qt example or as a xml document. xml document would be cool since this could
-   be used to save the map without having to convert it first on save/load.
-   note: using xml directly would make this data storage quite complex since we need to maintain
-         a graph with certain conditions we have to check, example:
-            root --- node1
-                  |- node2 <--\      node3 is connected to node2 (directional graph)
-                  |- node3 ---/
-         we need this properties to check if a module is in ready state or not.
-         def: ready state: top level elements are always capable of being used as input
-              other modules relay on certain configurations before being used, so these
-              have to check first if all conditions are acceptable as:
-                - minimal input connections
-                - modifier connections
-                - doubleconnections
-                - one output, two different modules relay on this output ...
-                - and so on
-
-Q) what kind of connections and modules do we have
-A) connections:
-    - we have libnoise connections (abstract module connections)
-    - we have pixel data processing (output of a renderer module)
-      and later throughput of filters of imagemagick
-    - we have spring data specific modules and connections
-   modules
-    * libnoise modules
-    * pixel filter modules
-    * spring modules (to create maps)
-
-
--- solved problems --
-Q) how do we track backward connections? how was it done in the 'automate' project?
-A) this project is now using references. a port does have also a QList of connections which reference this port
-
-Q) modules do have ports, how to know which port is where in regars to model <-> view?
-A) input, modput, output are the 3 possible port types all represented by a Port object which
-   is a child of a Module
- 
-   model->insertConnection(QPersistentModelIndex a, QPersistentModelIndex b); where a and b are representing a Port, see Document.cpp

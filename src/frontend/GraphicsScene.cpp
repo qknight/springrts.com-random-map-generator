@@ -54,10 +54,10 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
 }
 
 /*!
- * adds a graphical representation (see Connection.cpp/.h) spanning from 
+ * adds a graphical representation (see Connection.cpp/.h) spanning from
  * Port a to Port b (see Port.cpp/.h)
+ * this function is called by the QAbstractItemModel after a connection has been inserted
  */
-//FIXME this code has serious bugs and needs refactoring and testing
 QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connectionIndex ) {
     // 0. dst QPersistentModelIndex (that is to be queried via the model)
     QPersistentModelIndex sPortIndex = connectionIndex.parent();
@@ -67,16 +67,16 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connect
     Port* dstPort = dynamic_cast<Port*> ( modelToSceenIndex ( dPortIndex ) );
 
     if (srcPort == NULL) {
-      qDebug() << "srcModule == NULL";
-      exit(1);
+        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
+        exit(1);
     }
     if (dstPort == NULL) {
-      qDebug() << "dstModule == NULL";
-      exit(1);
+        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
+        exit(1);
     }
     if (srcPort == dstPort) {
-      qDebug() << "srcModule == dstModule";
-      exit(1);
+        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
+        exit(1);
     }
 
     Connection* connection = new Connection ( model, connectionIndex, srcPort, dstPort);
@@ -94,7 +94,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
     int in=0, mod=0, out=0;
     for (int i = 0; i < child_count; ++i) {
         QPersistentModelIndex child = model->index(i, 0, item);
-        
+
         // 1. find the QGraphicsItem refered to by item
         QGraphicsItem* graphicsItem = modelToSceenIndex(item);
 
@@ -104,13 +104,13 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 //         unsigned int portNumber = model->data(child, customRole::PortNumber).toInt();
         Port* port = new Port(model, child, portDirection, portType, i, graphicsItem);
         port->setParentItem ( graphicsItem );
-        
+
         // now we do the layout of the items
         // FIXME 'this' is probably not the best case to do it (it would be better to do it in the Module context)
         //       since it makes absolute sense to make the graphical Module the layout master
         // FIXME we ignore portType currently
         // FIXME this implementation expects the ports to be ordered by portNumber
-            
+
         switch (portDirection) {
         case PortDirection::IN:
             port->moveBy(-10,20+(in++)*40);
@@ -122,7 +122,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
             port->moveBy(110,20+(out++)*40);
             break;
         default:
-            qDebug() << "no case matched";
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "no case matched";
             break;
         }
     }
@@ -144,7 +144,7 @@ bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
 /*!
  * look at all items in the GraphicsScene and try to find the _one_ with the index in it
  * WARNING: be careful with using the constructor of an QGraphicsItem to allocate child items
- *          as ports (when using a module), since the required item might not have been inserted 
+ *          as ports (when using a module), since the required item might not have been inserted
  *          into the scene() yet.
  *          -> just commit complex new items (containing also childs) in one go, using
  *             the Model code, see Model.cpp:insertModule(..) where this is done
@@ -243,8 +243,8 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
         line = 0;
 
         if ( startItems.count() > 0 && endItems.count() > 0 &&
-                  startItems.first()->type() == DataType::PORT &&
-                  endItems.first()->type() == DataType::PORT ) {
+                startItems.first()->type() == DataType::PORT &&
+                endItems.first()->type() == DataType::PORT ) {
             Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
             Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
 
@@ -254,3 +254,11 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
     QGraphicsScene::mouseReleaseEvent ( mouseEvent );
 }
 
+void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
+    if (keyEvent->key() == Qt::Key_Delete){
+        qDebug() << "delete key pressed";
+        //FIXME: implement that
+        // for i in QGraphicsView::activeSelection() do
+        //    remove i;
+    }
+}

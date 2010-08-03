@@ -21,6 +21,10 @@ Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int p
 //     parent()->createLayout();
 }
 
+Port::~Port() {
+//     qDebug() << __PRETTY_FUNCTION__;
+}
+
 QVariant Port::itemChange ( GraphicsItemChange change, const QVariant & value ) {
     if ( change == QGraphicsItem::ItemPositionChange ) {
         foreach ( Connection *c, connections ) {
@@ -67,9 +71,6 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     painter->setPen ( oldpen );
     painter->setBrush ( oldbrush );
-}
-
-Port::~Port() {
 }
 
 int Port::portType() {

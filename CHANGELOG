@@ -1,6 +1,14 @@
+2010-08-04
+ - fixed the Data* backend. now the program does not crash anymore if a Document is removed
+   (this happens on program exit) but later this program might contain multiple documents at once
+ - now the class Model should be able to remove:
+  - either everything using delete DataRoot or
+  - remove a single module or connection
+2010-08-03
+ - removed dump() framework from the backend
 2010-08-02
-- fix Model.cpp::insertConnection|Modules to return the respective QModelIndex or an invalid QModelIndex if something went wrong
-- created an inteface to add connections via Document.cpp
+ - fix Model.cpp::insertConnection|Modules to return the respective QModelIndex or an invalid QModelIndex if something went wrong
+ - created an inteface to add connections via Document.cpp
 2010-08-01
  - minor fixes
  - drawing of modput connections looks nicer now

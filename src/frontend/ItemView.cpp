@@ -73,7 +73,7 @@ QRegion ItemView::visualRegionForSelection( const QItemSelection &/*selection*/ 
 }
 
 void ItemView::reset() {
-//   qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     emit clearScene();
 //   init();
 }
@@ -88,7 +88,7 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
             scene->moduleInserted( QPersistentModelIndex( item ) );
             break;
         case DataType::CONNECTION:
-            qDebug() << __FUNCTION__ << " DataType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
+//             qDebug() << __FUNCTION__ << " DataType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
             scene->connectionInserted( QPersistentModelIndex( item ));
             break;
         default:
@@ -152,7 +152,7 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
             break;
         case DataType::CONNECTION:
 //        qDebug() << __FUNCTION__ << "Connection modification";
-            //FIXME not implemented yet
+            //FIXME not implemented, but we probably don't need that
 //         scene->updateConnection( QPersistentModelIndex( tmpIndex ) );
             break;
         default:

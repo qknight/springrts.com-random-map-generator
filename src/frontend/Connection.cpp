@@ -15,6 +15,10 @@ Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, P
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 }
 
+Connection::~Connection() {
+  //     qDebug() << __PRETTY_FUNCTION__;
+}
+
 QRectF Connection::boundingRect() const {
     //FIXME must be done right
 //     qreal extra = (pen().width() + 20) / 2.0;
@@ -63,22 +67,29 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     //        if that is fixed, the next two lines can be removed
     QLineF z = QLineF(beginPoint, endPoint);
     setLine(z);
-    
+
     int stretch= qAbs(0.6 * -(beginPoint.x()-endPoint.x()));
     QPainterPath myPath(QPoint(beginPoint.x(),beginPoint.y()));
     QPointF xPoint;
-    
+
     // either draw input or output ports (where lines go in horizontally)
     // or draw modputs (where outputs are drawn downwards)
     //FIXME fixed port direction is bad
     if (myEndItem->portDirection() != 1)
-      xPoint = beginPoint-QPoint(stretch,0);
+        xPoint = beginPoint-QPoint(stretch,0);
     else
-      xPoint = beginPoint-QPoint(0,-stretch);
+        xPoint = beginPoint-QPoint(0,-stretch);
     myPath.cubicTo(xPoint,
                    endPoint+QPoint(stretch,0),
                    QPoint(endPoint.x(),endPoint.y()));
+                   
     painter->drawPath(myPath);
+    
+    // if the connection is selected
+    if ( isSelected() ) {
+        painter->setPen ( QPen ( QColor ( "red" ), 4, Qt::DashLine ) );
+        painter->drawPath ( myPath );
+    }
 }
 
 void Connection::updateData() {

@@ -29,13 +29,6 @@ class DataPort : public DataAbstractItem, public ConnectionValidator {
     Q_OBJECT
 public:
     DataPort(int portType, int portDirection, int portNumber);
-    /*! WARNING: never delete objects as for instance childItems in the structure here
-     ** since this will create inconsistencies between the model and this data structure.<br>
-     ** A better way is to fail with exit(0) and a meaningful error message meant for
-     ** developrs: since this problem must be handled with great care! */
-    ~DataPort();
-    /*! dumps the internal data structure for debugging use */
-    void dump();
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
     void removeChild( unsigned int index );
@@ -48,7 +41,12 @@ public:
 protected:
     bool insertConnection ( DataConnection* c );
     void insertReference ( DataAbstractItem* item );
-    void removeReference ( DataAbstractItem* item );
+    void removeReference ( unsigned int index );
+    /*! WARNING: never delete objects as for instance childItems in the structure here
+    ** since this will create inconsistencies between the model and this data structure.<br>
+    ** A better way is to fail with exit(0) and a meaningful error message meant for
+    ** developrs: since this problem must be handled with great care! */
+    ~DataPort();
 private:
     QList<DataAbstractItem*> m_referencesChildItems;
     int m_portNumber;

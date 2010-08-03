@@ -26,6 +26,7 @@
  ** this is the only instance which is able to give valid IDs */
 class DataRoot : public DataAbstractItem {
   Q_OBJECT
+  friend class Model;
   public:
     DataRoot( DataAbstractItem* parent = 0 );
     /*! WARNING: never delete objects as for instance childItems in the structure here
@@ -33,8 +34,6 @@ class DataRoot : public DataAbstractItem {
      ** A better way is to fail with exit(0) and a meaningful error message meant for
      ** developrs: since this problem must be handled with great care! */
     ~DataRoot();
-    /*! dumps out all needed information about the data for debugging */
-    void dump();
     /*! helper to identify what kind of object 'this' is */
     unsigned int getObjectType();
     /*! removes a node at index position [index]

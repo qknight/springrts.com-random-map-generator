@@ -24,7 +24,15 @@ DataPort::DataPort(int portType, int portDirection, int portNumber) {
 }
 
 DataPort::~DataPort() {
-
+//   qDebug() << __PRETTY_FUNCTION__;
+  // remove all connections
+  foreach(DataAbstractItem* item, m_childItems) {
+    removeChild(m_childItems.indexOf(item));
+  }
+  // remove all references
+  foreach(DataAbstractItem* item, m_referencesChildItems) {
+    removeReference(m_referencesChildItems.indexOf(item));
+  }
 };
 
 unsigned int DataPort::getObjectType() {
@@ -49,7 +57,7 @@ void DataPort::appendChild( DataAbstractItem *child ) {
 }
 
 bool DataPort::insertConnection ( DataConnection* c ) {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     DataPort* dstItem = static_cast<DataPort*> ( c->dst() );
     m_childItems.append ( c );
     dstItem->insertReference ( c );
@@ -57,7 +65,7 @@ bool DataPort::insertConnection ( DataConnection* c ) {
 }
 
 void DataPort::insertReference ( DataAbstractItem* item ) {
-  qDebug() << __PRETTY_FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
     m_referencesChildItems.append ( item );
 }
 
@@ -65,18 +73,25 @@ unsigned int DataPort::referenceCount ( ) {
     return m_referencesChildItems.size();
 }
 
-//FIXME todo
 void DataPort::removeChild ( unsigned int index ) {
-    // remove childs (all ports)
+  if ( m_childItems.size() < index ) {
+    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
+    exit( 1 );
+  }
+  DataAbstractItem* child = m_childItems[index];
+  m_childItems.removeAt( index );
+  delete child;
 }
 
-//FIXME todo
-void DataPort::removeReference ( DataAbstractItem* item ) {
-//   m_childItemsReferences.remove ( item );
+void DataPort::removeReference ( unsigned int index ) {
+  if ( m_referencesChildItems.size() < index ) {
+    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
+    exit( 1 );
+  }
+  DataAbstractItem* child = m_referencesChildItems[index];
+  m_referencesChildItems.removeAt( index );
 }
 
 QList<DataAbstractItem*> DataPort::referenceChildItems() const {
   return m_referencesChildItems;
 }
-
-void DataPort::dump() {};

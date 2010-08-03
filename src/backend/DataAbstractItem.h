@@ -34,18 +34,17 @@ namespace DataItemType {
   };
 }
 
-class DataAbstractItem : QObject {
+class DataAbstractItem : public QObject {
   Q_OBJECT
     friend class DataRoot;
     friend class DataAbstractModule;
     friend class DataConnection;
     friend class DataPort;
-    friend class Model;
   public:
     /*! returns the number of childs:
       - 0 no childs
       - >0 child amount
-      - <0 error
+      - <0 error   
     */
     int childCount() const;
     /*! returns the m_childItems position offset of this in/from the parent item */
@@ -66,35 +65,22 @@ class DataAbstractItem : QObject {
     virtual unsigned int getObjectType() = 0;
     /*! removes a child from m_childItems */
     virtual void removeChild( unsigned int index ) = 0;
+    /*! This function was introduced when I found out that we need to move the reverse connection
+        from one parent to another since we don't want to create a new reverse connection for every
+        forward connection which changes it's destination.*/
+    void setParent(DataAbstractItem *parent);
   protected:
     /*! WARNING: never delete objects as for instance childItems within the destructor
     since this will create inconsistencies between the model and this data structure.
     A better way is to fail with exit(0) since this problem must be handled with great care! */
     virtual ~DataAbstractItem();
-
+  private:
     /*! the constructor is protected to enforce the policy, which is:
       - only derived classes may be used to create objects from:
         - that is: AutomateRoot, node, node_connection*/
     DataAbstractItem( DataAbstractItem *parent = 0 );
-    /*! id of this object
-      - 0 is default but it's overwritten in the constructor of the deriving class
-      - only the AutomateRoot may leave the 0 unchanged! */
-//     unsigned int ID;
-    /*! see TreeItemType
-      This variable is used to identify what kind of object we have.*/
-//     unsigned int objectType;
     /*! This container holds all child items */
     QList<DataAbstractItem*> m_childItems;
-    /*! This function was introduced when I found out that we need to move the reverse connection
-        from one parent to another since we don't want to create a new reverse connection for every
-        forward connection which changes it's destination.*/
-    void setParent(DataAbstractItem *parent);
-    /*! This function dumps the whole data to stdout which is helpful when doing debugging. You could use the
-        provided functionality also for other purposes as calling external algorithms which operate on the
-        data structure of this automate. For example: automate_algorithms could be ported to this data structure
-        so that one can convert a NDA to a DFA and stuff like that, see automate_algorithms.cpp */
-    virtual void dump() = 0;
-  private:
     /*! This parent item is used to traverse the tree upwards. */
     DataAbstractItem *parentItem;
 };

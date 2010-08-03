@@ -20,22 +20,18 @@
 
 DataRoot::DataRoot( DataAbstractItem* parent ) : DataAbstractItem( parent ) {
 //   qDebug() << "adding a new DataRoot with parent: " << parent;
-//   dump();
 }
 
+// WARNING
+// - this function can only be called by the class Model 
+// - it MAY only be called when no view is attached anymore
+// - calling ~DataRoot will recycle the whole Data* backend structure
+// - removing single elements maybe be done by class Model using the item's parent with removeChild(item) instead
+//   of direct access by the model
 DataRoot::~DataRoot() {
 //   qDebug() << __PRETTY_FUNCTION__;
-  if (childCount() != 0) {
-    qDebug() << __PRETTY_FUNCTION__ << "-> FATAL ERROR: not all child items were removed prior to this function call, exiting";
-    exit(1);
-  }
-}
-
-void DataRoot::dump() {
-//   qDebug() << "automateroot::ID=" << ID << " -> " << childCount() << ": " << ( unsigned int ) this;
-  // call dump for all children
-  for ( int i = 0; i < childCount(); ++i ) {
-    child( i )->dump();
+  foreach(DataAbstractItem* item, m_childItems) {
+    removeChild(m_childItems.indexOf(item));
   }
 }
 
@@ -44,9 +40,8 @@ unsigned int DataRoot::getObjectType() {
 }
 
 void DataRoot::removeChild( unsigned int index ) {
-  if ( (unsigned int)m_childItems.size() < index ) {
-    qDebug() << "Fatal error, childItems.size() < index!";
-    qDebug() << "having " << m_childItems.size() << " childs";
+  if ( m_childItems.size() < index ) {
+    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
     exit( 1 );
   }
   DataAbstractItem* child = m_childItems[index];

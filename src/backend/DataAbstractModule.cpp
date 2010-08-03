@@ -27,16 +27,11 @@ DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) 
 }
 
 DataAbstractModule::~DataAbstractModule() {
-    // we have to take care about the Ports, just remove all of them!
-    qDebug() << __FUNCTION__;
-    while ( m_childItems.size() > 0  ) {
-      DataAbstractItem* i = m_childItems.takeLast();
-      delete i;
-    }
-}
-
-void DataAbstractModule::dump() {
-    //FIXME currently not used
+//   qDebug() << __PRETTY_FUNCTION__;
+  // we have to take care about the Ports, just remove all of them!
+  foreach(DataAbstractItem* item, m_childItems) {
+    removeChild(m_childItems.indexOf(item));
+  }
 }
 
 unsigned int DataAbstractModule::getObjectType() {
@@ -44,8 +39,13 @@ unsigned int DataAbstractModule::getObjectType() {
 }
 
 void DataAbstractModule::removeChild ( unsigned int index ) {
-  // remove all Ports, that means: remove all childs
-  //FIXME implement that
+  if ( m_childItems.size() < index ) {
+    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
+    exit( 1 );
+  }
+  DataAbstractItem* child = m_childItems[index];
+  m_childItems.removeAt( index );
+  delete child;
 }
 
 // will return how many ports are used per type
@@ -64,51 +64,4 @@ int DataAbstractModule::ports ( int type ) {
         return 0;
     }
 }
-
-
-
-
-// void DataAbstractModule::appendChild ( DataAbstractItem *item ) {
-//   qDebug() << __PRETTY_FUNCTION__;
-//     if ( item->parent() != this ) {
-//         qDebug ( "ERROR: you can't add a child to a parent item where \
-//             the parent of the child doesn't match the parent you want to add it to!" );
-//         return;
-//     }
-// 
-// //     this is the inverted connection item: r_item
-// //     DataPort* p = static_cast<DataPort*> ( item );
-// 
-// // //     0. check if allowed (no loops to the same item)
-// //     if ( ! ( c->validate() ) ) {
-// //         qDebug() << __PRETTY_FUNCTION__ << "item not valid";
-// //         return;
-// //     }
-// //     if ( c->srcType ( this ) == PortType::OUTPUT ) {
-// //         insertConnection ( c );
-// //         return;
-// //     } else {
-// //         DataAbstractModule* dstItem = static_cast<DataAbstractModule*> ( c->dst ( this ) );
-// //         dstItem->insertConnection ( c );
-// //         return;
-// //     }
-// //     
-// }
-
-// bool DataAbstractModule::isPortUsed(DataAbstractItem *item) {
-// //   qDebug() << __PRETTY_FUNCTION__;
-// //   DataConnection* c = static_cast<DataConnection*> ( item );
-// //     // a. copy all 'references' into a list
-// //     // b. remove all 'outputs' from that list
-// //     // c. filter all items except those with dstType, 
-// //     //    now search for an item with known portnumber, 
-// //     //    if item is found 'return false'
-// //     foreach(DataAbstractItem* ref, m_childItemsReferences) {
-// //       DataConnection* r = static_cast<DataConnection*> ( ref );
-// //       if ((c->srcType(this) == r->srcType(this)) && (c->srcPortNumber(this) == r->srcPortNumber(this)))
-// //         return true;
-// //     }
-// //     
-//     return false;
-// }
 

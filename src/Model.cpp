@@ -43,32 +43,7 @@ Model::Model() {
 Model::~Model() {
 //     qDebug() << __PRETTY_FUNCTION__;
     // we assume that if this function is called, no views are attached anymore
-    // 1. remove all connections and references
-    // 2. remove all ports
-    // 3. remove all modules
-    // 4. remove rootItem
-    qDebug() << "modules: " << rootItem->childCount();
-    for (int w = 0; w < rootItem->childCount(); ++w) {
-        DataAbstractItem* m = rootItem->childItems()[w];
-        qDebug() << " ports: " << m->childCount();
-        for (int x = 0; x < m->childCount(); ++x) {
-            DataAbstractItem* p = m->childItems()[x];
-            qDebug() << "  connections: " << p->childCount();
-            for (int y = 0; y < p->childCount(); ++y) {
-                DataAbstractItem* c = p->childItems()[y];
-                delete c;
-            }
-            DataPort* portItem = static_cast<DataPort*>(p);
-            qDebug() << "  references: " << portItem->referenceCount();
-            for (unsigned int z = 0; z < portItem->referenceCount(); ++z) {
-                DataAbstractItem* cref = portItem->referenceChildItems()[z];
-                delete cref;
-            }
-            delete p;
-        }
-        delete m;
-    }
-    delete rootItem;
+    delete static_cast<DataRoot*> (rootItem);
 }
 
 QModelIndex Model::index( int row, int column, const QModelIndex & parent ) const {
@@ -537,6 +512,7 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
     //      which should be in the same hierarchy level as the DataPort item
     module->setProperty( "pos", pos );
     module->setProperty( "type", type );
+    
     // setting the correct parent is very important since it is the foundation of the hierarchy
     module->setParent( rootItem );
     beginInsertRows( QModelIndex(), row, row + 0 );

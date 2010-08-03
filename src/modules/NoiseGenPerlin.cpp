@@ -72,8 +72,7 @@ NoiseGenPerlin::NoiseGenPerlin() : DataAbstractModule(0,0,1) {
 }
 
 NoiseGenPerlin::~NoiseGenPerlin() {
-  // delete all Ports
-  // delete graphical module
+//     qDebug() << __PRETTY_FUNCTION__;
 }
 
 QString NoiseGenPerlin::identify() {

@@ -51,7 +51,7 @@ class GraphicsScene : public QGraphicsScene {
     /*! the GraphicsScene visualizes the data of this model */
     Model *model;
     /*! we handle all keyboard events here, this is only interrupted when an item got focus */
-//     void keyPressEvent( QKeyEvent * keyEvent );
+    void keyPressEvent( QKeyEvent * keyEvent );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
     void mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */

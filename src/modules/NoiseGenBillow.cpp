@@ -21,6 +21,7 @@ NoiseGenBillow::NoiseGenBillow() : DataAbstractModule(0,0,1) {
 }
 
 NoiseGenBillow::~NoiseGenBillow() {
+//     qDebug() << __PRETTY_FUNCTION__;
 }
 
 QString NoiseGenBillow::identify() {

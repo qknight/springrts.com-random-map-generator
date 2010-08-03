@@ -31,22 +31,34 @@ Document::Document() {
     connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
             this, SLOT(CreateModuleSlot(QString,QPoint)));
 
-    QModelIndex m1 = model->insertModule("NoiseGen::Billow",   QPoint(-200,0));
-    QModelIndex m2 = model->insertModule("NoiseGen::Perlin",   QPoint(-200,200));
-    QModelIndex m3 = model->insertModule("NoiseGen::Perlin",   QPoint( 0,350));
-    QModelIndex m4 = model->insertModule("Utils::NoiseMap" ,   QPoint( 350,50));
-    QModelIndex m5 = model->insertModule("Selector::Selector", QPoint(100,100));
-    
-    QModelIndex m1_port1 = m1.child(model->rowCount(m1)-1,0);
-    QModelIndex m4_port1 = m4.child(model->rowCount(m4)-1,0);
+    // WARNING: this interface using the model with insertModule is only a hack and will not be used
+    //          - it is there to make testing easier
+    //          - after the xml save/load function is implemented
+    //          - additionally: this interface is not guaranteed to be stable
+    QModelIndex m1 = model->insertModule("NoiseGen::Billow",   QPoint(-200,-100));
+    QModelIndex m2 = model->insertModule("NoiseGen::Perlin",   QPoint(-200,100));
+    QModelIndex m3 = model->insertModule("NoiseGen::Perlin",   QPoint( 0,250));
+    QModelIndex m4 = model->insertModule("Selector::Selector", QPoint(100,0));
+    QModelIndex m5 = model->insertModule("Utils::NoiseMap" ,   QPoint( 350,50));
 
-    if (m1_port1.isValid() && m4_port1.isValid())
-      model->insertConnection(m1_port1, m4_port1);
+    QModelIndex m1_output1 = m1.child(model->rowCount(m1)-1,0);
+    QModelIndex m2_output1 = m2.child(model->rowCount(m2)-1,0);
+    QModelIndex m3_output1 = m3.child(model->rowCount(m3)-1,0);
 
-//   scene->addLine(-500,-500,-500,-501);
-//   scene->addLine(500,500,500,501);
-//   scene->addLine(-100,0,100,0);
-//   scene->addLine(0,-100,0,100);
+    QModelIndex m4_input1 = m4.child(0,0);
+    QModelIndex m4_input2 = m4.child(1,0);
+    QModelIndex m4_modput1 = m4.child(2,0);
+    QModelIndex m4_output1 = m4.child(3,0);
+
+    QModelIndex m5_input1 = m5.child(model->rowCount(m5)-1,0);
+
+    model->insertConnection(m1_output1, m4_input1);
+    model->insertConnection(m2_output1, m4_input2);
+    model->insertConnection(m3_output1, m4_modput1);
+    model->insertConnection(m4_output1, m5_input1);
+
+    scene->addLine(-100,0,100,0);
+    scene->addLine(0,-100,0,100);
 }
 
 Document::~Document() {
