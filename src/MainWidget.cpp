@@ -11,7 +11,7 @@ MainWidget::MainWidget ( QMainWindow *parent ) : QMainWindow ( parent ) {
     doc = new Document();
     graphicsView->setRenderHints ( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
     graphicsView->show();
-
+    
     connect (treeView, SIGNAL(clicked ( const QModelIndex & ) ),
              this, SLOT(clickRelay(const QModelIndex &)));
 

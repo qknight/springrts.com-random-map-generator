@@ -29,9 +29,13 @@ class DataRoot : public DataAbstractItem {
   public:
     DataRoot( DataAbstractItem* parent = 0 );
     /*! WARNING: never delete objects as for instance childItems in the structure here
-     ** since this will create inconsistencies between the model and this data structure.<br>
-     ** A better way is to fail with exit(0) and a meaningful error message meant for
-     ** developrs: since this problem must be handled with great care! */
+    ** since this will create inconsistencies between the model and this data structure.<br>
+    ** if you want to delete items, use removeRows() in the Model.cpp and do add/remove items
+    ** with parent->appendChild(..) and parent->removeChild(..) as removing might be quite complex. 
+    **
+    ** if you want to quit the program and all views have been detached, you can delete the DataRoot which
+    ** will then remove all it's childs.
+    ***/
     ~DataRoot();
     /*! helper to identify what kind of object 'this' is */
     unsigned int getObjectType();

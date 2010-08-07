@@ -183,8 +183,8 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) 
             }
         }
     }
-    qDebug() << __PRETTY_FUNCTION__ << " FATAL: failed to find the item since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found, exiting";
-    exit ( 1 );
+    qDebug() << __PRETTY_FUNCTION__ << "DataType::PROPERTY does not focus anywhere";
+    return NULL;
 }
 
 bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
@@ -203,6 +203,8 @@ void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
   // port and connections 
   QModelIndex srcIndex = index;
     QGraphicsItem* item = modelToSceenIndex ( QPersistentModelIndex ( srcIndex ) );
+    if (item == NULL)
+      return;
     // we do have only one view
     if ( views().size() ) {
         views().first()->centerOn ( item );

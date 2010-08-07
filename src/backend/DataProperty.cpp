@@ -17,7 +17,21 @@
 */
 
 #include "DataProperty.h"
-DataProperty::DataProperty() {
+DataProperty::DataProperty(QString key, QVariant value) {
+  m_key = key;
+  m_value = value;
+}
+
+QString DataProperty::key() {
+    return m_key;
+}
+
+QVariant DataProperty::value() {
+    return m_value;
+}
+
+void DataProperty::setValue(QVariant value) {
+    m_value = value;
 }
 
 DataProperty::~DataProperty() {

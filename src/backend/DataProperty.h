@@ -20,22 +20,30 @@
 #ifndef DATAPROPERTY_H
 #define DATAPROPERTY_H
 
+#include <QVariant>
+
 #include "DataAbstractItem.h"
 
 class DataProperty : public DataAbstractItem {
 public:
-    DataProperty();
+    DataProperty(QString key, QVariant value);
     /*! returns the object type which is used in the model for example */
     unsigned int getObjectType();
     void removeChild( unsigned int index );
     void appendChild( DataAbstractItem *child );
+    QString key();
+    QVariant value();
+    void setValue(QVariant value);
 protected:
     /*! WARNING: never delete objects as for instance childItems in the structure here
     ** since this will create inconsistencies between the model and this data structure.<br>
-    ** A better way is to fail with exit(0) and a meaningful error message meant for
-    ** developrs: since this problem must be handled with great care! */
+    ** if you want to delete items, use removeRows() in the Model.cpp and do add/remove items
+    ** with parent->appendChild(..) and parent->removeChild(..) as removing might be quite complex. */
     ~DataProperty();
 private:
+private:
+    QVariant m_value;
+    QString m_key;
 };
 
 #endif // DATAPROPERTY_H

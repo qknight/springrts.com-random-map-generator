@@ -25,6 +25,8 @@
 #include "DataPort.h"
 #include "PortTypes.h"
 
+class DataProperty;
+
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
     friend class DataConnection;
@@ -37,11 +39,15 @@ public:
     /*! used to identify modules, used by the ModuleFactaory */
     virtual QString identify() = 0;
     int ports ( int type );
+    
+    QVariant property(QString key);
+    void setProperty(QString key, QVariant value);
+    
 protected:
     /*! WARNING: never delete objects as for instance childItems in the structure here
     ** since this will create inconsistencies between the model and this data structure.<br>
-    ** A better way is to fail with exit(0) and a meaningful error message meant for
-    ** developrs: since this problem must be handled with great care! */
+    ** if you want to delete items, use removeRows() in the Model.cpp and do add/remove items
+    ** with parent->appendChild(..) and parent->removeChild(..) as removing might be quite complex. */
     virtual ~DataAbstractModule();
 private:
 

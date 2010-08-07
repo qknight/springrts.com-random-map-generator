@@ -174,16 +174,30 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
                 return "connection";
             if ( n->getObjectType() == DataItemType::DATAPORT )
                 return "port";
-            if ( n->getObjectType() == DataItemType::DATAPROPERTY )
-                return "property";
+            if ( n->getObjectType() == DataItemType::DATAPROPERTY ) {
+                DataProperty* p = dynamic_cast<DataProperty*>(n);
+                return p->key();
+            }
         }
         break;
+    case 1:
+        switch (role) {
+          case Qt::DisplayRole:
+            if ( n->getObjectType() == DataItemType::DATAPROPERTY ) {
+                DataProperty* p = dynamic_cast<DataProperty*>(n);
+                return p->value();
+            }
+            break;
+          default:
+            break;
+        }
     }
 
-    //FIXME: this functionneeds to be implemeted properly
     if ( role == customRole::PosRole )
-        if ( n->getObjectType() == DataType::MODULE )
-            return QPoint(0,0);//n->property( "pos" );
+        if ( n->getObjectType() == DataType::MODULE ) {
+          DataAbstractModule* m = dynamic_cast<DataAbstractModule*>(n);
+            return m->property("pos");
+        }
 
 
 
@@ -470,18 +484,12 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
 QModelIndex Model::insertModule(QString type, QPoint pos) {
     int row = rowCount( QModelIndex() );
 
-    // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
+    // this will also add module specific properties
     DataAbstractModule* module = moduleFactory->CreateModule(type);
 
-//     module->setProperty( "pos", pos );
-    DataProperty* p;
-    int ff = qrand() % 4;
-    for (int i =0; i < ff; ++i) {
-        p = new DataProperty();
-        p->setParent(module);
-        module->appendChild(p);
-    }
-
+    // add properties every module has
+    module->setProperty("pos", pos);
+    
     // setting the correct parent is very important since it is the foundation of the hierarchy
     module->setParent( rootItem );
     beginInsertRows( QModelIndex(), row, row + 0 );

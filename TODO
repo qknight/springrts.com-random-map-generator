@@ -1,6 +1,5 @@
 ------- current plan (near objectives): ------- 
 - concept: see assistant, the QTreeView there is basically what i want to clone
-- fix crash when clicking QTreeView item which does not have a QGraphicsItem associated
 - fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
                   -> it does however work if there are no DataProperties...?!
 - fix this:
