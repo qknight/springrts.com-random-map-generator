@@ -25,6 +25,7 @@ SET( srmg_SOURCES
   MainWidget.cpp
   ModuleFactory.cpp
   Model.cpp
+  FilterProxyModel.cpp
   Document.cpp
   registermodule_macro.cpp
 
@@ -32,9 +33,9 @@ SET( srmg_SOURCES
   backend/DataAbstractItem.cpp 
   backend/DataRoot.cpp 
   backend/DataAbstractModule.cpp
+  backend/DataProperty.cpp 
   backend/DataPort.cpp 
   backend/DataConnection.cpp 
-  backend/ConnectionValidator.cpp
 
   # libnoise module frontends -> QGraphicsScene items
   frontend/GraphicsScene.cpp
@@ -57,13 +58,7 @@ SET( srmg_MOC_HEADERS
   MainWidget.h
   ModuleFactory.h
   Document.h
-
-# main backend data structure
-  backend/DataAbstractItem.h
-  backend/DataRoot.h 
-  backend/DataAbstractModule.h
-  backend/DataPort.h 
-  backend/DataConnection.h 
+  FilterProxyModel.h
 
 # frontend 
   frontend/GraphicsScene.h

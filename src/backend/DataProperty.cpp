@@ -14,36 +14,27 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
+#include "DataProperty.h"
+DataProperty::DataProperty() {
+}
 
-#include <QString>
-#include <QPoint>
-#include <QObject>
-
-#include "FilterProxyModel.h"
-
-class GraphicsScene;
-class ItemView;
-class Model;
-
-class Document : QObject {
-  Q_OBJECT
-  friend class MainWidget;
-  public:
-    Document();
-    ~Document();
-  protected:
-    Model* model;
-    GraphicsScene* scene;
-    ItemView* itemView;
-    FilterProxyModel* filter;
-
-  protected Q_SLOTS:
-    void CreateModuleSlot(QString, QPoint);
+DataProperty::~DataProperty() {
+//   qDebug() << __PRETTY_FUNCTION__;
 };
 
-#endif // DOCUMENT_H
+unsigned int DataProperty::getObjectType() {
+    return DataItemType::DATAPROPERTY;
+}
+
+void DataProperty::appendChild( DataAbstractItem *child ) {
+  //nothing to do here
+}
+
+void DataProperty::removeChild ( unsigned int index ) {
+    //nothing to do here
+}
+
+
+

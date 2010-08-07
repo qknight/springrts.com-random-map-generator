@@ -5,29 +5,40 @@
 #include "GraphicsScene.h"
 
 // http://doc.trolltech.com/qq/qq13-attributes.html
-
 MainWidget::MainWidget ( QMainWindow *parent ) : QMainWindow ( parent ) {
     setupUi ( this );
     setupMenus();
     doc = new Document();
     graphicsView->setRenderHints ( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
     graphicsView->show();
+
+    connect (treeView, SIGNAL(clicked ( const QModelIndex & ) ),
+             this, SLOT(clickRelay(const QModelIndex &)));
+
     // the next line of code must be used if multi document support is required
     changeActiveDocument ( doc );
 }
 
 MainWidget::~MainWidget() {
-  delete doc;
+    delete doc;
 }
 
 void MainWidget::changeActiveDocument ( Document* doc ) {
-  listView->setModel(doc->model);
-  graphicsView->setScene ( doc->scene );
-  //FIXME this breaks multi document support since we must disconnect this signal on doc change
-  connect (listView, SIGNAL(clicked ( const QModelIndex & ) ),
-	   doc->scene, SLOT(listViewWantsItemFocus ( const QModelIndex & ) ));
-  connect ( doc->scene, SIGNAL ( selectionChanged() ),
+    // filter out port and connection elements
+    treeView->setModel(doc->filter);
+
+    graphicsView->setScene ( doc->scene );
+    //FIXME this breaks multi document support since we must disconnect this signal on doc change
+    connect (this, SIGNAL(clickRelaySig(const QModelIndex &)),
+             doc->scene, SLOT(treeViewWantsItemFocus ( const QModelIndex & ) ));
+    connect ( doc->scene, SIGNAL ( selectionChanged() ),
               this, SLOT ( selectionChanged() ) );
+}
+
+/*! this relay translates the filter's QModelIndex(es) into the model's ones */
+void MainWidget::clickRelay ( const QModelIndex & index ) {
+    QModelIndex translatedIndex = doc->filter->mapToSource(index);
+    emit clickRelaySig (translatedIndex);
 }
 
 void MainWidget::save() {

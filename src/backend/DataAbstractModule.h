@@ -27,7 +27,6 @@
 
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
-    Q_OBJECT
     friend class DataConnection;
 public:
     DataAbstractModule ( int inputs, int modputs, int outputs );

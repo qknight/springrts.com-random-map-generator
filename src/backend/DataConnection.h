@@ -29,7 +29,6 @@ class DataAbstractModule;
  * A connection has a src and a dst, see respective functions
  */
 class DataConnection : public DataAbstractItem {
-    Q_OBJECT
 public:
     DataConnection( DataAbstractItem* src, DataAbstractItem* dst);
     /*! returns the object type which is used in the model for example */

@@ -31,12 +31,13 @@ class DataAbstractItem;
 class DataRoot;
 class DataAbstractModule;
 class DataPort;
+class DataProperty;
 class DataConnection;
 
 namespace customRole {
   enum CustomRole {
     // UserRole is the first number one can use for selfassigned roles by the Qt-toolkit
-    TypeRole = Qt::UserRole, // used by views to query a QModelIndex for its type [NODE or NODE_CONNECTION .. or whatever]
+    TypeRole = Qt::UserRole, // used by views to query a QModelIndex for its type rootNode, module, property, port, connection
     SortRole, // used by the TreeView to sort items
     PosRole, // used by GraphicsView to place a new node on 'node-creation-time'
     InputsRole, // returns the amount of inputs of a module
@@ -112,7 +113,6 @@ class Model : public QAbstractItemModel {
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint(), QString type=QString());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
-    /*! will translate a AbstractNodeItem* into a QModelIndex (item must exist there) */
     
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)

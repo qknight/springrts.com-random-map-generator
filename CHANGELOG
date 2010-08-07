@@ -1,3 +1,9 @@
+2010-08-07
+ - this is an incomplete commit, more or less a momentum of my codebase
+ - the data backend does now have a DataProperty
+ - the QListView was replaced by a QTreeView
+ - currently some things are broken since code has to be adapted to that the new property system will be used
+ - reassigned many things, see TODO
 2010-08-04
  - fixed the Data* backend. now the program does not crash anymore if a Document is removed
    (this happens on program exit) but later this program might contain multiple documents at once

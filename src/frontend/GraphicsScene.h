@@ -59,13 +59,6 @@ class GraphicsScene : public QGraphicsScene {
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent );
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
-
-
-    
-//   public slots:
-    /*! when a user want's to add a node we need to call this function which will request a node on the model side*/
-//     void insertNode();
-//     void insertNode(QPoint pos);
     
   protected slots:
     void clearScene();
@@ -94,7 +87,7 @@ class GraphicsScene : public QGraphicsScene {
     void setLoadableModuleNames(QVector<QString> loadableModuleNames);
 public Q_SLOTS:
     void menuSelectionMade(QAction* action);
-    void listViewWantsItemFocus ( const QModelIndex & ) ;
+    void treeViewWantsItemFocus ( const QModelIndex & ) ;
 
 };
 

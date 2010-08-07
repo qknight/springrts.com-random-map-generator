@@ -38,6 +38,7 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
     case QGraphicsItem::ItemSceneChange:
 //         createLayout();
         break;
+        m_pos =  modelData ( customRole::PosRole ).toPoint();
     default:
         break;
     }

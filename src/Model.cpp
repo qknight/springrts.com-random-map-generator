@@ -30,6 +30,7 @@
 #include "DataRoot.h"
 #include "DataAbstractItem.h"
 #include "DataPort.h"
+#include "DataProperty.h"
 #include "DataConnection.h"
 #include "DataAbstractModule.h"
 #include "ModuleFactory.h"
@@ -131,11 +132,13 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
             return DataItemType::DATAROOT;
         if ( n->getObjectType() == DataItemType::DATACONNECTION )
             return DataItemType::DATACONNECTION;
+        if ( n->getObjectType() == DataItemType::DATAPROPERTY )
+            return DataItemType::DATAPROPERTY;
         if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
             return DataItemType::DATAABSTRACTMODULE;
         if ( n->getObjectType() == DataItemType::DATAPORT )
             return DataItemType::DATAPORT;
-        return DataItemType::UNKNOWN;
+        return DataItemType::DATAUNKNOWN;
     }
     if ( role == customRole::PortType ) {
         DataPort* p = static_cast<DataPort*>(n);
@@ -148,6 +151,13 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     if ( role == customRole::PortNumber ) {
         DataPort* p = static_cast<DataPort*>(n);
         return p->PortNumber();
+    }
+
+    if ( role == Qt::BackgroundRole) {
+        if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
+            return QBrush( QColor( 0, 0, 0, 255 ) );
+        if ( n->getObjectType() == DataItemType::DATAPROPERTY )
+            return QBrush( QColor( 255, 255, 191, 100 ));
     }
 
     switch ( index.column() ) {
@@ -164,61 +174,16 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
                 return "connection";
             if ( n->getObjectType() == DataItemType::DATAPORT )
                 return "port";
+            if ( n->getObjectType() == DataItemType::DATAPROPERTY )
+                return "property";
         }
         break;
     }
 
-//   if ( role == customRole::CustomLabelRole )
-//     return n->getProperty( "CustomLabelRole" );
-
+    //FIXME: this functionneeds to be implemeted properly
     if ( role == customRole::PosRole )
         if ( n->getObjectType() == DataType::MODULE )
-            return n->property( "pos" );
-
-//   if ( role == customRole::InputsRole )
-//     if ( n->getObjectType() == DataType::MODULE ) {
-//
-//       DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
-//       return am->ports(PortType::INPUT);
-//     }
-//   if ( role == customRole::ModputsRole )
-//     if ( n->getObjectType() == DataType::MODULE ) {
-//       DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
-//       return am->ports(PortType::MODPUT);
-//     }
-//   if ( role == customRole::OutputsRole )
-//     if ( n->getObjectType() == DataType::MODULE ) {
-//       DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
-//       return am->ports(PortType::OUTPUT);
-//     }
-//
-//   // seen from the connection's parent this 4 functions are used to query portnumber and porttype
-//   if ( role == customRole::SrcPortNumberRole)
-//     if ( n->getObjectType() == DataType::CONNECTION ) {
-//       DataConnection* c = static_cast<DataConnection*>(n);
-//       DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
-// //       qDebug() << " src  " << c->srcPortNumber(m) << " dst" << c->dstPortNumber(m);
-//       return c->srcPortNumber(m);
-//     }
-//   if ( role == customRole::SrcPortTypeRole)
-//     if ( n->getObjectType() == DataType::CONNECTION ) {
-//       DataConnection* c = static_cast<DataConnection*>(n);
-//       DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
-//       return c->srcType(m);
-//     }
-//   if ( role == customRole::DstPortNumberRole)
-//     if ( n->getObjectType() == DataType::CONNECTION ) {
-//       DataConnection* c = static_cast<DataConnection*>(n);
-//       DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
-//       return c->dstPortNumber(m);
-//     }
-//   if ( role == customRole::DstPortTypeRole)
-//     if ( n->getObjectType() == DataType::CONNECTION ) {
-//       DataConnection* c = static_cast<DataConnection*>(n);
-//       DataAbstractModule* m = static_cast<DataAbstractModule*>(index.parent().internalPointer());
-//       return c->dstType(m);
-//     }
-
+            return QPoint(0,0);//n->property( "pos" );
 
 
 
@@ -508,11 +473,15 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
     // no valid parent -> it's a Module to add as for instance (NoiseGenBillow)
     DataAbstractModule* module = moduleFactory->CreateModule(type);
 
-    //FIXME this should go into a child item of module called property
-    //      which should be in the same hierarchy level as the DataPort item
-    module->setProperty( "pos", pos );
-    module->setProperty( "type", type );
-    
+//     module->setProperty( "pos", pos );
+    DataProperty* p;
+    int ff = qrand() % 4;
+    for (int i =0; i < ff; ++i) {
+        p = new DataProperty();
+        p->setParent(module);
+        module->appendChild(p);
+    }
+
     // setting the correct parent is very important since it is the foundation of the hierarchy
     module->setParent( rootItem );
     beginInsertRows( QModelIndex(), row, row + 0 );
@@ -563,12 +532,19 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
  * - a connection is added to it's parent. the parent is always the port with portType=OUT
 */
 QModelIndex Model::insertConnection(QPersistentModelIndex a,
-                             QPersistentModelIndex b) {
+                                    QPersistentModelIndex b) {
 //     qDebug() << __PRETTY_FUNCTION__;
 
     // convert both indexes into DataAbstractItem(s)
     DataAbstractItem* abstractItemA = static_cast<DataAbstractItem*>( a.internalPointer() );
     DataAbstractItem* abstractItemB = static_cast<DataAbstractItem*>( b.internalPointer() );
+
+    // check if both are ports
+    if (abstractItemA->getObjectType() != DataItemType::DATAPORT ||
+            abstractItemB->getObjectType() != DataItemType::DATAPORT) {
+        qDebug() << __PRETTY_FUNCTION__ << "error: both items must be ports, if you want to add a connection to";
+        return QModelIndex();
+    }
 
     // convert both indexes into DataPortItem(s)
     DataPort* dataPortA = dynamic_cast<DataPort*>(abstractItemA);
@@ -631,6 +607,8 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
 
     // 4. check if such a connection already exists
     for (int i = 0; i < dataPortA->childCount(); ++i) {
+        if (dataPortA->childItems()[i]->getObjectType() != DataItemType::DATAPORT)
+            continue;
         DataConnection* childConnection = static_cast<DataConnection*>(dataPortA->childItems()[i]);
         if (childConnection->dst() == abstractItemB) {
             qDebug() << "rule 4: there is already a connection, can't connect the same port pairs twice";
@@ -667,12 +645,18 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
 //             qDebug()<< "check 6: m->childCount()" << i;
             // loop through all connections
             DataAbstractItem* childItem = m->childItems()[i];
+            if (childItem->getObjectType() != DataItemType::DATAPORT)
+                continue;
+
             DataPort* p = static_cast<DataPort*>(childItem);
             if (p->PortDirection() != PortDirection::OUT) {
                 continue;
             }
             for (int j = 0; j < childItem->childCount(); ++j) {
 //                 qDebug()<< "check 6: processing output connection: " << j;
+                if (childItem->childItems()[j]->getObjectType() != DataItemType::DATAPORT)
+                    continue;
+
                 DataConnection* c = static_cast<DataConnection*> (childItem->childItems()[j]);
                 connections << c;
             }
@@ -714,30 +698,6 @@ QVector<QString> Model::LoadableModuleNames() {
     return moduleFactory->LoadableModuleNames();
 }
 
-// QModelIndex Model::AbstractNodeItem2QModelIndex( DataAbstractItem* item ) {
-//   QModelIndex ret;
-//   QModelIndex z;
-//   switch ( item->getObjectType() ) {
-//     case DataItemType::DATAROOT:
-//     break;
-//   case DataItemType::DATAABSTRACTMODULE:
-//     ret = index( item->row(), 0, QModelIndex() );
-//     return ret;
-//   case DataItemType::DATAPORT:
-//   case DataItemType::DATACONNECTION:
-//     z = AbstractNodeItem2QModelIndex( item->parent() );
-//     ret = index( item->row(), 0, z );
-//     return ret;
-//     break;
-//   default:
-//     qDebug() << "In " << __FILE__ << ", " << __FUNCTION__ << " something went very wrong!";
-//     exit( 0 );
-//   }
-//   return QModelIndex();
-// }
-
-
-
 /*!
  * called with a item where item is a QModelIndex representing a connection
  * returns the QModelIndex of the connection's destination port
@@ -762,7 +722,5 @@ QModelIndex Model::dst(QPersistentModelIndex connection) {
     // 4. now we need to find the QModelIndex of dst (dst is a DataPort)
     return index(dPortItem->row(),0 , parentModule);
 }
-
-
 
 

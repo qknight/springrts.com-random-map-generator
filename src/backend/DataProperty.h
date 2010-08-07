@@ -17,33 +17,25 @@
 
 */
 
-#ifndef DOCUMENT_H
-#define DOCUMENT_H
+#ifndef DATAPROPERTY_H
+#define DATAPROPERTY_H
 
-#include <QString>
-#include <QPoint>
-#include <QObject>
+#include "DataAbstractItem.h"
 
-#include "FilterProxyModel.h"
-
-class GraphicsScene;
-class ItemView;
-class Model;
-
-class Document : QObject {
-  Q_OBJECT
-  friend class MainWidget;
-  public:
-    Document();
-    ~Document();
-  protected:
-    Model* model;
-    GraphicsScene* scene;
-    ItemView* itemView;
-    FilterProxyModel* filter;
-
-  protected Q_SLOTS:
-    void CreateModuleSlot(QString, QPoint);
+class DataProperty : public DataAbstractItem {
+public:
+    DataProperty();
+    /*! returns the object type which is used in the model for example */
+    unsigned int getObjectType();
+    void removeChild( unsigned int index );
+    void appendChild( DataAbstractItem *child );
+protected:
+    /*! WARNING: never delete objects as for instance childItems in the structure here
+    ** since this will create inconsistencies between the model and this data structure.<br>
+    ** A better way is to fail with exit(0) and a meaningful error message meant for
+    ** developrs: since this problem must be handled with great care! */
+    ~DataProperty();
+private:
 };
 
-#endif // DOCUMENT_H
+#endif // DATAPROPERTY_H

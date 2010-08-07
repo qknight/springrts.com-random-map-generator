@@ -25,7 +25,6 @@
 /*! this class is only instantiated once for every automate
  ** this is the only instance which is able to give valid IDs */
 class DataRoot : public DataAbstractItem {
-  Q_OBJECT
   friend class Model;
   public:
     DataRoot( DataAbstractItem* parent = 0 );

@@ -14,7 +14,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 /**
@@ -91,9 +90,12 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
 //             qDebug() << __FUNCTION__ << " DataType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
             scene->connectionInserted( QPersistentModelIndex( item ));
             break;
+        case DataType::PROPERTY:
+          qDebug() << __PRETTY_FUNCTION__ << " DataProperty inserted, FIXME: we ignore this currently but we should not!";
+          break;
         default:
           //FIXME why does that happen?!
-          qDebug() << __FUNCTION__ << " UNKNOWN?! " << model->data( item, customRole::TypeRole ).toInt();
+          qDebug() << __PRETTY_FUNCTION__ << " UNKNOWN?! " << model->data( item, customRole::TypeRole ).toInt();
         }
     }
 }

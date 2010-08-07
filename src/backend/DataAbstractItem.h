@@ -22,22 +22,13 @@
 
 #include <QList>
 #include <QDebug>
-#include <QObject>
 
-namespace DataItemType {
-  enum DataItemType {
-    DATAROOT,
-    DATAABSTRACTMODULE,
-    DATAPORT,
-    DATACONNECTION,
-    UNKNOWN
-  };
-}
+#include "DataItemType.h"
 
-class DataAbstractItem : public QObject {
-  Q_OBJECT
+class DataAbstractItem {
     friend class DataRoot;
     friend class DataAbstractModule;
+    friend class DataProperty;
     friend class DataConnection;
     friend class DataPort;
   public:

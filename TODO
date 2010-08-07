@@ -1,96 +1,45 @@
 ------- current plan (near objectives): ------- 
-- maybe refactor ~DataRoot and ~DataAbstractModules' code into the base class ~ destructor, to reduce code 
-- make items selectable with:
- - all items need to be selectable
-  - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
- - boundingbox selection
-  - set bounding box selection using a modifier key, say ctrl
- - a selection model should 'sync' select of items, in both views
-- make items removable:
- - general:
-  - create shortcuts for that as 'del'-key associated with the active selection
-  - also add a little 'x' button on the top right side of the module (similar to widgets)
- - single items should be removable
- - a selection of several different items should be deletable
- - QTreeView should be able to handle multiple selection
- - QTreeView should have 'selection' enabled
+- concept: see assistant, the QTreeView there is basically what i want to clone
+- fix crash when clicking QTreeView item which does not have a QGraphicsItem associated
+- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
+                  -> it does however work if there are no DataProperties...?!
+- fix this:
+MainWidget.cpp:
+    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
+    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-- using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
- - so i have to fix my QGraphicsView code once again
- - it's funny that clicking a item in the right side will now focus over the respecitive QGraphicsItem (didn't work before)
-- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
-  they should indicated the document width()/height() and making it work might be by using
-  POSSIBLE FIX: centerOn(..) or scroll(..)
-- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
- - when inserting, either center the item itself or on insertion see width/height of the item
-   and insert it at -width()/2,-height()/2
- - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
-   GraphicsScene.cpp ~ line 40
-- fix QGraphicsItems
- - boundingbox issues
- - drawing could be nicer
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+but i want that be retrieved by data(..)
 
 - the model must be adapted to host two different hierarchy levels in abstraction, namely:
    CASE AAA                CASE BBB
   -rootNode                -rootNode
     |-module                 |-module
-    | |-port-connection      | |-propertyA
-    | |-port-connection      | |-propertyB
-    |-module                 | |-propertyC
-    | |-port-connection      | |-propertyD
+    | |-port                 | |-propertyA
+    | | |-connection         | |-propertyB
+    | |-port                 | |-propertyC
+    | | |-connection         | |-propertyD
+    | | |-connection         | |-propertyE
     ...                      ...
   but how could that be done? maybe using a QSortFilterProxyModel?
-  the PROBLEM is that hosting both different child-types (connection AND property) at once 
-  isn't possible as far as i understand the QAbstractItemModel MVC concept.
+  Q the PROBLEM is that hosting both different child-types (connection AND property) at once 
+    isn't possible as far as i understand the QAbstractItemModel MVC concept.
 
-  why do i need both again? case AAA is needed for the QGraphicsScene which is implemented as a 
-  QAbstractItemView. this way we can distinguish between different types and we can count
-  the rows to iterate over all items which need to be created in the QGraphicsScene, a working
-  example is hosted here: 
-   - http://invalidmagic.wordpress.com/2009/12/10/qgraphicsscene-used-as-a-qabstractitemmodel/
+  A actually it is possible, the new hierarchy look like CCC
+    CASE CCC
+    -rootNode
+     |-module
+     | |-port
+     | | |-connection
+     | |-property
+     ...
+    this results in a mixture of port and property childs
+
+  Q why do i need both again? case AAA is needed for the QGraphicsScene which is implemented as a 
+    QAbstractItemView. 
+  A a QTreeView needs items in different rows, and each row usually contains a different QModelIndex.
+    this way we can distinguish between different types and we can count the rows to iterate over 
+    all items which need to be created in the QGraphicsScene, a working example is hosted here: 
+     - http://invalidmagic.wordpress.com/2009/12/10/qgraphicsscene-used-as-a-qabstractitemmodel/
 
   case BBB is used for a QTreeView which does look like the data structure itself:
     + modulename (perlin noise)
@@ -104,13 +53,93 @@
   possible solution:
    i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
    can use data(...) and setData(...) which will update it's data and as well as the other views data.
- ->> probably two proxymodels will do ;-)
+ ->> Q: a QProxyModel will do. however a QProxyModel is obsolete: so maybe a QSortFilterProxyModel will do?!
+     A: 11:44 < AndreS_> QAbstractProxyModel
+        11:45 < AndreS_> Or QSortFilterProxyModel perhaps
+
+  Model does:
+   - setProperty in insertModule(..)
+   - property (..) in data(..)
+   - FIXME setData(..) should update x,y of a Module if moved in the QGraphicsScene
+
+Module :: QGraphicsItem bekommt in Module() via updateData() die m_pos richtig gesetzt
+posRole
+
+Q: who does access properties (of modules)?
+A: a list of uses:
+  - write property (the same as: initial creation of a property)
+    - Module.cpp::updatePosition(..) when an item is moved from x,y to x',y'
+    - Model.cpp::insertModule(..)
+    - the modules export their properties as: Perlin would create 'frequency' and 'octave count'
+      WARNING: such a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
+               an exception which we most likely don't handle which will bring down the whole program.
+               therefore: every property has to provide an input checker, which skipes invalid input with some feedback.
+  - read property
+    - ItemView.cpp to find the x,y position to place the QGraphicsItem
+    - QTreeView (this is an editor)
+
+
+
+
+
+
+
+
+
+
+
+
+
+General:
+- add a logger widget
+- DataType.h vs DataItemType.h
+
+Adding, selecting, removing of single/multiple items:
+- FIXME: AbstractItemType is now in DataAbstractItem.h (not in DataAbstractItem.h), check if a frontend class still includes DataAbstractItem.h
+- FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
+         this could avoid a lot of segfaults when inserting new concepts into the code
+- maybe refactor ~DataRoot and ~DataAbstractModules' code into the base class ~ destructor, to reduce code 
+- make items selectable with:
+ - all items need to be selectable
+  - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
+ - boundingbox selection
+  - set bounding box selection using a modifier key, say ctrl
+ - a selection model should 'sync' select of items, in both views
+- make items removable:
+ - general:
+  - create shortcuts for that as 'del'-key associated with the active selection
+ - single items should be removable
+ - a selection of several different items should be deletable
+ - QTreeView should be able to handle multiple selection
+ - QTreeView should have 'selection' enabled
 - clicking an item in the right list should focus the view of the graphicsscene over the respective item
+- using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
+ - so i have to fix my QGraphicsView code once again
+ - it's funny that clicking a item in the right side will now focus over the respecitive QGraphicsItem (didn't work before)
 
 
 
 
 
+
+
+
+
+
+Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
+- also add a little 'x' button on the top right side of the module (similar to widgets)
+- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
+  they should indicated the document width()/height() and making it work might be by using
+  POSSIBLE FIX: centerOn(..) or scroll(..)
+- QGraphicsItem(s) should be inserted with their respecitive 'center'. 
+ - when inserting, either center the item itself or on insertion see width/height of the item
+   and insert it at -width()/2,-height()/2
+ - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
+   GraphicsScene.cpp ~ line 40
+- fix QGraphicsItems
+ - boundingbox issues
+ - drawing could be nicer
+- remake the selection indicator for the Module (the Connection looks nice already)
 
 
 
@@ -124,14 +153,15 @@
 
 - libNoise (backend) and
 - libNoiseAbstraction (frontend) need to be created
-
 - add all modules which are in libnoise
-- integrate libNoise-view
+
+- integrate libNoise-view (first refactore it)
+
 - integrate spring map exporter
 - simple export demo (smf)
 
 - integrate height-colorizer and height-texturizer
-  the height-c0olorizer is easy to implement and gives a basic look&feel for the heightmap
+  the height-colorizer is easy to implement and gives a basic look&feel for the heightmap
   the height-texturizer is basically the same but instead of applying a color it inserts
   textures, the textures do have a fixed orientation. later this might be adapted to reflect
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...

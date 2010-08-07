@@ -23,10 +23,8 @@
 #include "DataAbstractItem.h"
 #include "PortTypes.h"
 #include "DataConnection.h"
-#include "ConnectionValidator.h"
 
-class DataPort : public DataAbstractItem, public ConnectionValidator {
-    Q_OBJECT
+class DataPort : public DataAbstractItem {
 public:
     DataPort(int portType, int portDirection, int portNumber);
     /*! returns the object type which is used in the model for example */

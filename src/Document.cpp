@@ -24,6 +24,11 @@
 
 Document::Document() {
     model = new Model;
+    
+    // filter elements out for the QTreeView
+    filter = new FilterProxyModel;
+    filter->setSourceModel(model);
+    
     scene = new GraphicsScene(model);
     itemView = new ItemView(scene, model);
 
@@ -64,6 +69,7 @@ Document::Document() {
 Document::~Document() {
     delete itemView;
     delete scene;
+    delete filter;
     delete model;
 }
 

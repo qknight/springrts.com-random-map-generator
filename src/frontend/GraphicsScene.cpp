@@ -12,6 +12,8 @@
 
 #include <QGraphicsView>
 #include "GraphicsScene.h"
+#include "Model.h"
+#include "DataItemType.h"
 
 GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene() {
     this->model = model;
@@ -95,6 +97,10 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
     for (int i = 0; i < child_count; ++i) {
         QPersistentModelIndex child = model->index(i, 0, item);
 
+        // 0. is it a property? if so we skip right here!
+        if (model->data(child, customRole::TypeRole) == DataItemType::DATAPROPERTY)
+          continue;
+        
         // 1. find the QGraphicsItem refered to by item
         QGraphicsItem* graphicsItem = modelToSceenIndex(item);
 
@@ -191,8 +197,13 @@ bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPer
 
 void GraphicsScene::clearScene() {}
 
-void GraphicsScene::listViewWantsItemFocus ( const QModelIndex & index ) {
-    QGraphicsItem* item = modelToSceenIndex ( QPersistentModelIndex ( index ) );
+void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
+  // we need to translate the index from the FilterProxyModel into the Model
+  // because the QTreeView uses a FilterProxyModel on top of the Model to filter
+  // port and connections 
+  QModelIndex srcIndex = index;
+    QGraphicsItem* item = modelToSceenIndex ( QPersistentModelIndex ( srcIndex ) );
+    // we do have only one view
     if ( views().size() ) {
         views().first()->centerOn ( item );
     }

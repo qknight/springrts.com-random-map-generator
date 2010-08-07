@@ -9,7 +9,7 @@
 
 #include "ui_GraphicsView.h"
 #include "Document.h"
-
+#include "FilterProxyModel.h"
 
 class MainWidget : public QMainWindow, private Ui::GraphicsViewWidget {
     Q_OBJECT
@@ -30,9 +30,12 @@ private Q_SLOTS:
     void about();
     void hidePropertyDialog();
     void unhidePropertyDialog();
+    void clickRelay ( const QModelIndex & );
 
 public Q_SLOTS:
     void selectionChanged();
+  Q_SIGNALS:
+    void clickRelaySig ( const QModelIndex & );
 };
 
 #endif
