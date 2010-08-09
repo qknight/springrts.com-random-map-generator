@@ -45,10 +45,6 @@ class ItemView : public QAbstractItemView {
     /*! destructor */
     ~ItemView();
   private:
-    /*! enabled/disables antialiasing rendering */
-    bool want_antialiasing;
-    /*! a QGraphicsScene can have several views in theory, we only have one but that can be extended later */
-//     QGraphicsView* view;
     /*! we only have one scene which this graphicsView should visualize */
     GraphicsScene* scene;
     /*! we only have one model which this graphicsView should visualize */

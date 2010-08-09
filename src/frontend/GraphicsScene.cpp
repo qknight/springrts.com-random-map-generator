@@ -135,6 +135,11 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
     return NULL;
 }
 
+
+void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
+  qDebug() <<__PRETTY_FUNCTION__ << " FIXME";
+}
+
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
 //   qDebug() << __FUNCTION__;
     QGraphicsItem* nItem = modelToSceenIndex ( item );
@@ -183,7 +188,7 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) 
             }
         }
     }
-    qDebug() << __PRETTY_FUNCTION__ << "DataType::PROPERTY does not focus anywhere";
+//     qDebug() << __PRETTY_FUNCTION__ << "DataType::PROPERTY does not focus anywhere";
     return NULL;
 }
 
@@ -275,3 +280,4 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
         //    remove i;
     }
 }
+

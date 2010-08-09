@@ -1,70 +1,9 @@
 ------- current plan (near objectives): ------- 
-- concept: see assistant, the QTreeView there is basically what i want to clone
-- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
-                  -> it does however work if there are no DataProperties...?!
-- fix this:
-MainWidget.cpp:
-    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
-    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
+- implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
+- think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
+- if a property changes, the parent (module) should get updated in the GraphicsScene
 
-but i want that be retrieved by data(..)
-
-- the model must be adapted to host two different hierarchy levels in abstraction, namely:
-   CASE AAA                CASE BBB
-  -rootNode                -rootNode
-    |-module                 |-module
-    | |-port                 | |-propertyA
-    | | |-connection         | |-propertyB
-    | |-port                 | |-propertyC
-    | | |-connection         | |-propertyD
-    | | |-connection         | |-propertyE
-    ...                      ...
-  but how could that be done? maybe using a QSortFilterProxyModel?
-  Q the PROBLEM is that hosting both different child-types (connection AND property) at once 
-    isn't possible as far as i understand the QAbstractItemModel MVC concept.
-
-  A actually it is possible, the new hierarchy look like CCC
-    CASE CCC
-    -rootNode
-     |-module
-     | |-port
-     | | |-connection
-     | |-property
-     ...
-    this results in a mixture of port and property childs
-
-  Q why do i need both again? case AAA is needed for the QGraphicsScene which is implemented as a 
-    QAbstractItemView. 
-  A a QTreeView needs items in different rows, and each row usually contains a different QModelIndex.
-    this way we can distinguish between different types and we can count the rows to iterate over 
-    all items which need to be created in the QGraphicsScene, a working example is hosted here: 
-     - http://invalidmagic.wordpress.com/2009/12/10/qgraphicsscene-used-as-a-qabstractitemmodel/
-
-  case BBB is used for a QTreeView which does look like the data structure itself:
-    + modulename (perlin noise)
-      color       |  #afafaf
-      pos         |  234,234
-      ...
-    + modulename (billow noise)
-      color       |  #afafaf
-      pos         |  234,234
-      ...
-  possible solution:
-   i need another QAbstractItemModel "model2" accessing the first model "model1" as 'data'. the second model
-   can use data(...) and setData(...) which will update it's data and as well as the other views data.
- ->> Q: a QProxyModel will do. however a QProxyModel is obsolete: so maybe a QSortFilterProxyModel will do?!
-     A: 11:44 < AndreS_> QAbstractProxyModel
-        11:45 < AndreS_> Or QSortFilterProxyModel perhaps
-
-  Model does:
-   - setProperty in insertModule(..)
-   - property (..) in data(..)
-   - FIXME setData(..) should update x,y of a Module if moved in the QGraphicsScene
-
-Module :: QGraphicsItem bekommt in Module() via updateData() die m_pos richtig gesetzt
-posRole
-
-Q: who does access properties (of modules)?
+Q: who accesses 'module properties'?
 A: a list of uses:
   - write property (the same as: initial creation of a property)
     - Module.cpp::updatePosition(..) when an item is moved from x,y to x',y'
@@ -72,11 +11,31 @@ A: a list of uses:
     - the modules export their properties as: Perlin would create 'frequency' and 'octave count'
       WARNING: such a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
                an exception which we most likely don't handle which will bring down the whole program.
-               therefore: every property has to provide an input checker, which skipes invalid input with some feedback.
+               therefore: every property has to provide an input checker, which skips invalid input with some feedback.
+    - QTreeView (this is an editor)
   - read property
     - ItemView.cpp to find the x,y position to place the QGraphicsItem
     - QTreeView (this is an editor)
 
+- QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
+- concept: see assistant, the QTreeView there is basically what i want to clone
+- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
+                  -> it does however work if there are no DataProperties...?!
+
+
+
+GraphicsView:
+ - zoomin/zoomout (mwheel) and zoomfit (gui button)
+ - move selected items should move the view if moved towards the border
+
+
+
+
+- fix this:
+MainWidget.cpp:
+    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
+    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
+ -> but i want that be retrieved by data(..) but span is not used yet!
 
 
 
@@ -85,16 +44,8 @@ A: a list of uses:
 
 
 
-
-
-
-
-General:
-- add a logger widget
-- DataType.h vs DataItemType.h
 
 Adding, selecting, removing of single/multiple items:
-- FIXME: AbstractItemType is now in DataAbstractItem.h (not in DataAbstractItem.h), check if a frontend class still includes DataAbstractItem.h
 - FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
          this could avoid a lot of segfaults when inserting new concepts into the code
 - maybe refactor ~DataRoot and ~DataAbstractModules' code into the base class ~ destructor, to reduce code 
@@ -103,19 +54,21 @@ Adding, selecting, removing of single/multiple items:
   - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
  - boundingbox selection
   - set bounding box selection using a modifier key, say ctrl
- - a selection model should 'sync' select of items, in both views
 - make items removable:
  - general:
   - create shortcuts for that as 'del'-key associated with the active selection
+   - QTreeView:    (not implemented yet)
+   - GraphicsView: skeletion for key input done
  - single items should be removable
- - a selection of several different items should be deletable
+ - a selection (of several different items) should be deletable
  - QTreeView should be able to handle multiple selection
  - QTreeView should have 'selection' enabled
 - clicking an item in the right list should focus the view of the graphicsscene over the respective item
 - using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
  - so i have to fix my QGraphicsView code once again
  - it's funny that clicking a item in the right side will now focus over the respecitive QGraphicsItem (didn't work before)
-
+ - scrollbars should always be there
+- Port.cpp should not be selectable (in QGraphicsView)
 
 
 
@@ -138,26 +91,36 @@ Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 - fix QGraphicsItems
  - boundingbox issues
  - drawing could be nicer
-- remake the selection indicator for the Module (the Connection looks nice already)
+- remake the selection indicator for the Module 
+ - (the Connection looks nice already) but is tricky to select as the area is 1px
 
 
 
 
 
 
+General:
+-- - QTreeView: add tooltips
+- DataType.h vs DataItemType.h
+
+
+Design choice:
+using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
+enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
+imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
 
 
 
 
 
-- libNoise (backend) and
 - libNoiseAbstraction (frontend) need to be created
-- add all modules which are in libnoise
+- libNoise (backend) and
+- add all modules which are in libnoise (see list below)
 
 - integrate libNoise-view (first refactore it)
 
-- integrate spring map exporter
-- simple export demo (smf)
+- integrate graphics export
+- integrate spring map exporter (smf or s3m)
 
 - integrate height-colorizer and height-texturizer
   the height-colorizer is easy to implement and gives a basic look&feel for the heightmap
@@ -168,9 +131,13 @@ Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 - integrate xml save/load functionality (add an object serializer to all nodes in the graph)
 - fix copyright, linking to the library .... is that possible?
 
-- integrate 3d viewer
+- integrate 3d viewer (adapted/copied from qlobby)
 - include libnoise into this CMakeLists.txt (build it as well and use that)
-- release the source as package (and i'm done)
+- official release of 'the source as package'
+
+
+
+
 
 
 

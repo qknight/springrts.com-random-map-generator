@@ -91,11 +91,11 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
             scene->connectionInserted( QPersistentModelIndex( item ));
             break;
         case DataType::PROPERTY:
-          qDebug() << __PRETTY_FUNCTION__ << " DataProperty inserted, FIXME: we ignore this currently but we should not!";
-          break;
+            qDebug() << __PRETTY_FUNCTION__ << " DataProperty inserted, FIXME: we ignore this currently but we should not!";
+            break;
         default:
-          //FIXME why does that happen?!
-          qDebug() << __PRETTY_FUNCTION__ << " UNKNOWN?! " << model->data( item, customRole::TypeRole ).toInt();
+            //FIXME why does that happen?!
+            qDebug() << __PRETTY_FUNCTION__ << " UNKNOWN?! " << model->data( item, customRole::TypeRole ).toInt();
         }
     }
 }
@@ -148,14 +148,14 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
 //     qDebug() << "dataChanged is now called()";
         switch (model->data( tmpIndex, customRole::TypeRole ).toInt()) {
         case DataType::MODULE:
-//        qDebug() << __FUNCTION__ << "Node modification";
-            //FIXME not implemented yet
-// scene->updateNode( QPersistentModelIndex( tmpIndex ) );
+            scene->moduleUpdated( QPersistentModelIndex( tmpIndex ) );
             break;
         case DataType::CONNECTION:
-//        qDebug() << __FUNCTION__ << "Connection modification";
-            //FIXME not implemented, but we probably don't need that
-//         scene->updateConnection( QPersistentModelIndex( tmpIndex ) );
+            //not implemented, but we probably don't need that
+            break;
+        case DataType::PROPERTY:
+            //FIXME not implemented
+            qDebug() << __PRETTY_FUNCTION__ << " FIXME: not implemented yet for PROPERTY";
             break;
         default:
             qDebug() << __PRETTY_FUNCTION__ << " didn't understand what i should be doing";

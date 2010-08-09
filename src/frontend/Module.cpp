@@ -17,7 +17,7 @@
 Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), GraphicsItemModelExtension(model, index) {
     updateData();
     this->model=model;
-    setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
+    setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemSendsGeometryChanges);
     QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
     labelItem->moveBy(-15,-25);
 
@@ -35,10 +35,21 @@ Module::~Module() {
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
     switch (change) {
+    case QGraphicsItem::ItemPositionChange:
+//         qDebug() << "QGraphicsItem::ItemPositionChange";
+        break;
+    case QGraphicsItem::ItemPositionHasChanged:
+//         qDebug() << "QGraphicsItem::ItemPositionHasChanged";
+        oldPosition = value.toPoint();
+        setModelData(oldPosition, customRole::PosRole);
+        break;
     case QGraphicsItem::ItemSceneChange:
 //         createLayout();
-        break;
         m_pos =  modelData ( customRole::PosRole ).toPoint();
+        break;
+    case QGraphicsItem::ItemScenePositionHasChanged:
+//       qDebug() << "QGraphicsItem::ItemScenePositionHasChanged";
+      break;
     default:
         break;
     }
@@ -64,7 +75,16 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 void Module::updateData() {
     m_label = modelData( Qt::DisplayRole ).toString();
-    m_pos =  modelData ( customRole::PosRole ).toPoint();
+    
+    // a QGraphicsView may be used to move the Module. It is important to know if the move request was made
+    // by the 
+    //  - QGraphicsView (which then was visualized already) or by the 
+    //  - QTreeView (in this case we move the item)
+    // if not done this way this would create a loop
+    qDebug() << "FIXME: this text should show up every time a Module has moved by (dx,dy) in either cases. See if the ItemView does updateData(..) for every changed QModelIndex";
+    QPoint newPosition = modelData ( customRole::PosRole ).toPoint();
+    if (newPosition != oldPosition)
+      m_pos =  newPosition;
     setPos ( m_pos );
 }
 

@@ -1,3 +1,7 @@
+2010-08-09 
+ - Model::setData(..) implemented
+ - Model::flags(..) implemented
+ - added a new interface screenshot, see screenshots/
 2010-08-07 II
  - module->property() and module->setProperty() work! *yepee*
  - fix crash when clicking QTreeView item which does not have a QGraphicsItem associated

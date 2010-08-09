@@ -35,8 +35,9 @@ class GraphicsScene : public QGraphicsScene {
     ~GraphicsScene();
   protected:
     QGraphicsItem* moduleInserted( QPersistentModelIndex item );
-//     void moduleUpdated( QPersistentModelIndex item );
+    void moduleUpdated( QPersistentModelIndex item );
     bool moduleRemoved( QPersistentModelIndex item );
+    
     QGraphicsItem* connectionInserted ( QPersistentModelIndex connectionIndex);
 //     QGraphicsItem* portInserted ( QPersistentModelIndex pItem );
 
@@ -88,7 +89,6 @@ class GraphicsScene : public QGraphicsScene {
 public Q_SLOTS:
     void menuSelectionMade(QAction* action);
     void treeViewWantsItemFocus ( const QModelIndex & ) ;
-
 };
 
 #endif

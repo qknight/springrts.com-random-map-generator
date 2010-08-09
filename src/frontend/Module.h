@@ -30,12 +30,13 @@ public:
     ~Module();
 //     Port* resolvePort(int portType, int portNumber);
 
-    QString m_label;
-    QPoint m_pos;
 private:
     void createLayout();
     QVector<Port*> ports;
     Model* model;
+    QString m_label;
+    QPoint m_pos;
+    QPoint oldPosition;
     int type() const
     {
         return DataType::MODULE;

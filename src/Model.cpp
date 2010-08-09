@@ -155,7 +155,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 
     if ( role == Qt::BackgroundRole) {
         if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
-            return QBrush( QColor( 0, 0, 0, 255 ) );
+            return QBrush( QColor( 0, 23, 253, 255 ) );
         if ( n->getObjectType() == DataItemType::DATAPROPERTY )
             return QBrush( QColor( 255, 255, 191, 100 ));
     }
@@ -182,20 +182,20 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
         break;
     case 1:
         switch (role) {
-          case Qt::DisplayRole:
+        case Qt::DisplayRole:
             if ( n->getObjectType() == DataItemType::DATAPROPERTY ) {
                 DataProperty* p = dynamic_cast<DataProperty*>(n);
                 return p->value();
             }
             break;
-          default:
+        default:
             break;
         }
     }
 
     if ( role == customRole::PosRole )
         if ( n->getObjectType() == DataType::MODULE ) {
-          DataAbstractModule* m = dynamic_cast<DataAbstractModule*>(n);
+            DataAbstractModule* m = dynamic_cast<DataAbstractModule*>(n);
             return m->property("pos");
         }
 
@@ -336,55 +336,18 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 }
 
 bool Model::setData( const QModelIndex & index, const QVariant & value, int role ) {
-    qDebug() << "setData " << index.column();
-//   if (( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && index.column() == 4 && role == Qt::EditRole ) ||
-//       ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && role == customRole::SymbolIndexRole ) ) {
-//     DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
-//     DataConnection* nc = static_cast<DataConnection*>( n );
-// //     nc->setSymbol_index( symbol( value.toString() ) );
-// //     qDebug() << __FUNCTION__ << value.toString() << " " << nc->symbol_index() << " " << symbol( nc->symbol_index() );
-//     emit dataChanged( index, index );
-//     return true;
-//   }
-//   // this code is used to redirect a DataConnection's destination (source is fixed to the node the
-//   // DataConnection is assigned to). if one would not have unique IDs then it would be impossible
-//   // to use a number to match a node with. say a DataConnection connects from (source node id=2) to
-//   // (destination node id=4), the code below let's you use the TreeView editor to redirect it to (say node id=7)
-//   // if 7 exists
-//   if ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && index.column() == 5 && role == Qt::EditRole ) {
-//     DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
-//     DataConnection* nc = static_cast<DataConnection*>( n );
-//     DataAbstractItem* a = DataAbstractItemFromId( value.toInt() );
-//     if ( a == NULL ) {
-//       qDebug() << "can't redirect connection because the given node id was not found in the graph, please try again later!";
-//       return false;
-//     }
-//     nc->setNext_node( a );
-//     emit dataChanged( index, index );
-//     return true;
-//   }
-//   if (( index.isValid() && index.column() == 6 && role == Qt::EditRole ) ||
-//       ( index.isValid() && role == customRole::CustomLabelRole ) ) {
-//     DataAbstractItem* nItem = static_cast<DataAbstractItem*>( index.internalPointer() );
-//     nItem->setProperty( "CustomLabelRole", value );
-//     emit dataChanged( index, index );
-//     return true;
-//   }
-//
-//   if ( index.isValid() && getTreeItemType( index ) == NODE && (( role == customRole::StartRole ) || role == customRole::FinalRole ) ) {
-//     DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
-//     QModelIndex correctedIndex;
-//     if ( role == customRole::StartRole ) {
-//       n->setProperty( "start", value );
-//       correctedIndex = Model::index( index.row(), 1, index.parent() );
-//     }
-//     if ( role == customRole::FinalRole ) {
-//       n->setProperty( "final", value );
-//       correctedIndex = Model::index( index.row(), 2, index.parent() );
-//     }
-//     emit dataChanged( correctedIndex, correctedIndex );
-//     return true;
-//   }
+    if (!index.isValid())
+        return false;
+
+    //editing properties using the QTreeView
+    DataAbstractItem* item = static_cast<DataAbstractItem*>( index.internalPointer() );
+    if (item->getObjectType() == DataItemType::DATAPROPERTY && index.column() == 1 && role == Qt::EditRole) {
+      DataProperty* p = static_cast<DataProperty*>(item);
+      p->setValue(value);
+      emit dataChanged(index,index);
+      return true;
+    }
+
     return false;
 }
 
@@ -434,26 +397,26 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 //FIXME CRITICAL: implement removal of MODULEs, PORTs, CONNECTIONs
 bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
 //   qDebug() << "want to remove " << count << " item(s) beginning at row " << row;
-    DataAbstractItem* abstractitem;
-    if ( !parent.isValid() ) {
-        abstractitem = rootItem;
-    } else {
-        abstractitem = static_cast<DataAbstractItem*>( parent.internalPointer() );
-    }
-
-//   qDebug() << "The id of the object to delete is id::" << abstractitem->getId();
-    int from_row = row;
-    int to_row = row + count - 1;
-//   qDebug() << "  beginRemoveRows(parent, row_first, row_last);" << from_row << " " <<  to_row;
-    beginRemoveRows( parent, from_row, to_row );
-    {
-        int i = count;
-        // FIXME deleting could be speeded up by better code design here
-        while ( i-- )
-            abstractitem->removeChild( row );
-    }
-    endRemoveRows();
-    return true;
+//     DataAbstractItem* abstractitem;
+//     if ( !parent.isValid() ) {
+//         abstractitem = rootItem;
+//     } else {
+//         abstractitem = static_cast<DataAbstractItem*>( parent.internalPointer() );
+//     }
+//
+// //   qDebug() << "The id of the object to delete is id::" << abstractitem->getId();
+//     int from_row = row;
+//     int to_row = row + count - 1;
+// //   qDebug() << "  beginRemoveRows(parent, row_first, row_last);" << from_row << " " <<  to_row;
+//     beginRemoveRows( parent, from_row, to_row );
+//     {
+//         int i = count;
+//         // FIXME deleting could be speeded up by better code design here
+//         while ( i-- )
+//             abstractitem->removeChild( row );
+//     }
+//     endRemoveRows();
+//     return true;
 }
 
 bool Model::hasChildren ( const QModelIndex & parent ) const {
@@ -466,11 +429,22 @@ bool Model::hasChildren ( const QModelIndex & parent ) const {
     return false;
 }
 
+/*! relevant for the 'QTreeView': is item selectable? is item editable? */
 Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
-    //FIXME only make setData able fields editable
-//   if ( !index.isValid() )
+    // if index is invalid
+    if ( !index.isValid() )
+        return 0;
+
+    DataAbstractItem* item = static_cast<DataAbstractItem*>( index.internalPointer() );
+    if (item->getObjectType() == DataItemType::DATAABSTRACTMODULE)
+        return /*Qt::ItemIsSelectable|*/Qt::ItemIsEnabled;
+
+    if (item->getObjectType() == DataItemType::DATAPROPERTY && index.column() == 1) {
+        return Qt::ItemIsEditable|Qt::ItemIsEnabled;
+    }
+
+    //default
     return 0;
-    return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable;
 }
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos, QString type ) {
@@ -489,7 +463,7 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
 
     // add properties every module has
     module->setProperty("pos", pos);
-    
+
     // setting the correct parent is very important since it is the foundation of the hierarchy
     module->setParent( rootItem );
     beginInsertRows( QModelIndex(), row, row + 0 );
