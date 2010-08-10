@@ -40,9 +40,9 @@ Document::Document() {
     //          - it is there to make testing easier
     //          - after the xml save/load function is implemented
     //          - additionally: this interface is not guaranteed to be stable
-    QModelIndex m1 = model->insertModule("NoiseGen::Billow",   QPoint(-200,-100));
-    QModelIndex m2 = model->insertModule("NoiseGen::Perlin",   QPoint(-200,100));
-    QModelIndex m3 = model->insertModule("NoiseGen::Perlin",   QPoint( 0,250));
+    QModelIndex m1 = model->insertModule("Generator::Billow",   QPoint(-200,-100));
+    QModelIndex m2 = model->insertModule("Generator::Perlin",   QPoint(-200,100));
+    QModelIndex m3 = model->insertModule("Generator::Perlin",   QPoint( 0,250));
     QModelIndex m4 = model->insertModule("Selector::Selector", QPoint(100,0));
     QModelIndex m5 = model->insertModule("Utils::NoiseMap" ,   QPoint( 350,50));
 

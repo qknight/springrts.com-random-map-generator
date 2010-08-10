@@ -54,7 +54,8 @@ DataAbstractModule* ModuleFactory::CreateModule(QString ModuleID) {
 //         qDebug() << "CreateModule created a new Module::" << ModuleID;
         return z;
     }
-    qDebug() << "weird error: can't find ModuleID to load a new module";
+    // FIXME this is just for debugging, could be removed later
+    qDebug() << __PRETTY_FUNCTION__ <<" weird error: can't find ModuleID to load a new module";
     return NULL;
 }
 

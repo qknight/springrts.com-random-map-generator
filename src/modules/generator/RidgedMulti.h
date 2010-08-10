@@ -14,9 +14,8 @@
 #define NOISEGENRIDGEDMULTI_H
 
 #include <DataAbstractModule.h>
-#include <noise/noise.h>
 
-#define ID "NoiseGen::RidgedMulti"
+#define ID "Generator::RidgedMulti"
 
 class NoiseGenRidgedMulti : public DataAbstractModule {
   public:

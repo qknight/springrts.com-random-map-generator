@@ -1,3 +1,8 @@
+2010-08-10
+ - reorganizing modules/
+ - renamed property 'pos' to 'Position'
+ - removed dependancy to noise.h and -lnoise from the backend modules
+   (this will be done differently soon)
 2010-08-09 
  - Model::setData(..) implemented
  - Model::flags(..) implemented

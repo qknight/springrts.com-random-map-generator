@@ -1,50 +1,20 @@
 ------- current plan (near objectives): ------- 
-- implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
-- think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
+Model related:
+- modules should have a category they belong to, so QMenu on the QGraphicsScene needs to be redone
 - if a property changes, the parent (module) should get updated in the GraphicsScene
-
+- implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
 Q: who accesses 'module properties'?
 A: a list of uses:
   - write property (the same as: initial creation of a property)
     - Module.cpp::updatePosition(..) when an item is moved from x,y to x',y'
     - Model.cpp::insertModule(..)
     - the modules export their properties as: Perlin would create 'frequency' and 'octave count'
-      WARNING: such a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
-               an exception which we most likely don't handle which will bring down the whole program.
-               therefore: every property has to provide an input checker, which skips invalid input with some feedback.
     - QTreeView (this is an editor)
   - read property
     - ItemView.cpp to find the x,y position to place the QGraphicsItem
     - QTreeView (this is an editor)
 
 - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
-- concept: see assistant, the QTreeView there is basically what i want to clone
-- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
-                  -> it does however work if there are no DataProperties...?!
-
-
-
-GraphicsView:
- - zoomin/zoomout (mwheel) and zoomfit (gui button)
- - move selected items should move the view if moved towards the border
-
-
-
-
-- fix this:
-MainWidget.cpp:
-    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
-    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
- -> but i want that be retrieved by data(..) but span is not used yet!
-
-
-
-
-
-
-
-
-
 Adding, selecting, removing of single/multiple items:
 - FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
          this could avoid a lot of segfaults when inserting new concepts into the code
@@ -52,6 +22,7 @@ Adding, selecting, removing of single/multiple items:
 - make items selectable with:
  - all items need to be selectable
   - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
+   - add a transparent 70% white fat paint below a connection
  - boundingbox selection
   - set bounding box selection using a modifier key, say ctrl
 - make items removable:
@@ -61,22 +32,46 @@ Adding, selecting, removing of single/multiple items:
    - GraphicsView: skeletion for key input done
  - single items should be removable
  - a selection (of several different items) should be deletable
- - QTreeView should be able to handle multiple selection
- - QTreeView should have 'selection' enabled
 - clicking an item in the right list should focus the view of the graphicsscene over the respective item
+
+
+
+
+
+
+
+
+Other:
 - using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
  - so i have to fix my QGraphicsView code once again
  - it's funny that clicking a item in the right side will now focus over the respecitive QGraphicsItem (didn't work before)
  - scrollbars should always be there
-- Port.cpp should not be selectable (in QGraphicsView)
+- softscroll to item instead of immediate focus
 
+- property may be registered only once, fail with exit(1)!
+- implement sorting of the QTreeView based on the distance from the center of the view
+- implement singleselection:
+  > if an item in the graphicsview is selected, the QTreeView should only show the respective properties of that item
+  + if more items are selected, diplay all selected items
+  + if no item is selected anymore, show all items in the QTreeView
+- implement QSettings for QTreeView column width
+    MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
 
+- think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
 
+- concept: see assistant, the QTreeView there is basically what i want to clone
+- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
+                  -> it does however work if there are no DataProperties...?!
 
+- fix this:
+MainWidget.cpp:
+    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
+    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
+ -> but i want that be retrieved by data(..) but span is not used yet!
 
-
-
-
+GraphicsView:
+ - zoomin/zoomout (mwheel or +/-) and zoomfit (gui button)
+ - move selected items should move the view if moved towards the border
 
 Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 - also add a little 'x' button on the top right side of the module (similar to widgets)
@@ -93,6 +88,9 @@ Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
  - drawing could be nicer
 - remake the selection indicator for the Module 
  - (the Connection looks nice already) but is tricky to select as the area is 1px
+- when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
+- QTreeView: add tooltips
+
 
 
 
@@ -100,20 +98,20 @@ Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 
 
 General:
--- - QTreeView: add tooltips
 - DataType.h vs DataItemType.h
-
-
-Design choice:
-using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
-enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
-imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
+- Design choice:
+  using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
+  enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
+  imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
 
 
 
 
 
 - libNoiseAbstraction (frontend) need to be created
+   WARNING: a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
+            an exception which we most likely don't handle which will bring down the whole program.
+            therefore: every property has to provide an input checker, which skips invalid input with some feedback.
 - libNoise (backend) and
 - add all modules which are in libnoise (see list below)
 
@@ -145,40 +143,34 @@ imagine a landscape with flat hills. on top of the hills are various holes but t
 
 
 ------- modules todo: --------
-utils modules
-  NoiseMapBuilderPlane
-  utils::RendererImage
-  utils::Image
+ Utils::NoiseMapBuilderPlane
+ Utils::RendererImage
+ Utils::Image
 
-generator modules
- Checkerboard
- Const
- Cylinders
- Spheres
- Voronoi
+ Generator::Checkerboard
+ Generator::Const
+ Generator::Cylinders
+ Generator::Spheres
+ Generator::Voronoi
 
-combiner modules
- Add
- Max
- Min
- Multiply
- Power
+ Combiner::Add
+ Combiner::Max
+ Combiner::Min
+ Combiner::Multiply
+ Combiner::Power
 
-modifier modules
- Abs
- Clamp
- Curve
- Exponent
- Invert
- ScaleBias
- Terrace
+ Modifier::Abs
+ Modifier::Clamp
+ Modifier::Curve
+ Modifier::Exponent
+ Modifier::Invert
+ Modifier::ScaleBias
+ Modifier::Terrace
 
-selector modules
- Blend
- Select
+ Selector::Blend
+ Selector::Select
  
-spring specific
- mapgenerator
+ Spring::Mapgenerator
 
 new moduels which might be nice:
  - rain simulation (also known as erosion)

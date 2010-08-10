@@ -21,7 +21,6 @@
 #define SELECTOR_H
 
 #include <DataAbstractModule.h>
-#include <noise/noise.h>
 
 #define ID "Selector::Selector"
 

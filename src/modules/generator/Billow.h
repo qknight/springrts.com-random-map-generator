@@ -13,9 +13,8 @@
 #define NOISEGENBILLOW_H
 
 #include <DataAbstractModule.h>
-#include <noise/noise.h>
 
-#define ID "NoiseGen::Billow"
+#define ID "Generator::Billow"
 
 /**
 	@author Joachim Schiele <js@lastlog.de>

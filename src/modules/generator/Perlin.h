@@ -13,9 +13,8 @@
 #define NOISEGENPERLIN_H
 
 #include <DataAbstractModule.h>
-#include <noise/noise.h>
 
-#define ID "NoiseGen::Perlin"
+#define ID "Generator::Perlin"
 
 class NoiseGenPerlin : public DataAbstractModule {
   public:

@@ -13,7 +13,6 @@
 #define UTILSNOISEMAP_H
 
 #include <DataAbstractModule.h>
-#include <noise/noise.h>
 
 #define ID "Utils::NoiseMap"
 

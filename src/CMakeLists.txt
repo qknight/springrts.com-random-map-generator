@@ -47,11 +47,11 @@ SET( srmg_SOURCES
   frontend/GraphicsItemModelExtension.cpp
 
   # libnoise module backends
-  modules/NoiseGenBillow.cpp
-  modules/NoiseGenPerlin.cpp
-  modules/NoiseGenRidgedMulti.cpp
-  modules/UtilsNoiseMap.cpp
-  modules/Selector.cpp
+  modules/generator/Billow.cpp
+  modules/generator/Perlin.cpp
+  modules/generator/RidgedMulti.cpp
+  modules/utils/NoiseMap.cpp
+  modules/selector/Select.cpp
 )
 
 SET( srmg_MOC_HEADERS
@@ -76,7 +76,12 @@ INCLUDE_DIRECTORIES(
   # src/NoiseGenBillow.h lives here (that is './')
   ${CMAKE_SOURCE_DIR}
   # modules
-  "${CMAKE_CURRENT_SOURCE_DIR}/modules"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/selector"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/generator"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/utils"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/combiner"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/modifier"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/spring"
   # backend 
   "${CMAKE_CURRENT_SOURCE_DIR}/backend"
   # frontend
@@ -86,7 +91,7 @@ INCLUDE_DIRECTORIES(
   # QT4_WRAP_UI writes ui_whatever.h here (that is './' and uic is used)
   ${CMAKE_CURRENT_BINARY_DIR}
   # this is the external library used (includes of libnoise live here)
-  "/usr/include/noise/"
+#   "/usr/include/noise/"
 )
 
 # QT4_WRAP_UI(outfiles inputfile ... OPTIONS ...)
@@ -98,6 +103,7 @@ QT4_WRAP_CPP (srmg_SOURCES ${srmg_MOC_HEADERS})
 ADD_EXECUTABLE(srmg ${srmg_SOURCES} )
 
 # -lnoise if for the external library
-TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} "-lnoise" )
+# TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} "-lnoise" )
+TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} )
 
 INSTALL ( TARGETS srmg DESTINATION bin )

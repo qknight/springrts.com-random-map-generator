@@ -17,6 +17,8 @@
 M_REGISTER(UtilsNoiseMap);
 
 UtilsNoiseMap::UtilsNoiseMap()  : DataAbstractModule(1,0,0) {
+  setProperty("Offset", 12);
+  setProperty("abc", 12);
 }
 
 UtilsNoiseMap::~UtilsNoiseMap() {

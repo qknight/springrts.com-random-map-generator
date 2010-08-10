@@ -155,7 +155,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
 
     if ( role == Qt::BackgroundRole) {
         if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
-            return QBrush( QColor( 0, 23, 253, 255 ) );
+            return QBrush( QColor( 253, 230, 37, 255 ) );
         if ( n->getObjectType() == DataItemType::DATAPROPERTY )
             return QBrush( QColor( 255, 255, 191, 100 ));
     }
@@ -196,7 +196,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     if ( role == customRole::PosRole )
         if ( n->getObjectType() == DataType::MODULE ) {
             DataAbstractModule* m = dynamic_cast<DataAbstractModule*>(n);
-            return m->property("pos");
+            return m->property("Position");
         }
 
 
@@ -342,10 +342,10 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
     //editing properties using the QTreeView
     DataAbstractItem* item = static_cast<DataAbstractItem*>( index.internalPointer() );
     if (item->getObjectType() == DataItemType::DATAPROPERTY && index.column() == 1 && role == Qt::EditRole) {
-      DataProperty* p = static_cast<DataProperty*>(item);
-      p->setValue(value);
-      emit dataChanged(index,index);
-      return true;
+        DataProperty* p = static_cast<DataProperty*>(item);
+        p->setValue(value);
+        emit dataChanged(index,index);
+        return true;
     }
 
     return false;
@@ -438,9 +438,15 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
     DataAbstractItem* item = static_cast<DataAbstractItem*>( index.internalPointer() );
     if (item->getObjectType() == DataItemType::DATAABSTRACTMODULE)
         return /*Qt::ItemIsSelectable|*/Qt::ItemIsEnabled;
-
-    if (item->getObjectType() == DataItemType::DATAPROPERTY && index.column() == 1) {
-        return Qt::ItemIsEditable|Qt::ItemIsEnabled;
+    switch (index.column()) {
+    case 0:
+        if (item->getObjectType() == DataItemType::DATAPROPERTY)
+            return Qt::ItemIsEnabled;
+    case 1:
+        if (item->getObjectType() == DataItemType::DATAPROPERTY)
+            return Qt::ItemIsEditable|Qt::ItemIsEnabled;
+    default:
+        break;
     }
 
     //default
@@ -462,7 +468,7 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
     DataAbstractModule* module = moduleFactory->CreateModule(type);
 
     // add properties every module has
-    module->setProperty("pos", pos);
+    module->setProperty("Position", pos);
 
     // setting the correct parent is very important since it is the foundation of the hierarchy
     module->setParent( rootItem );

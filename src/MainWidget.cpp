@@ -8,6 +8,7 @@
 MainWidget::MainWidget ( QMainWindow *parent ) : QMainWindow ( parent ) {
     setupUi ( this );
     setupMenus();
+
     doc = new Document();
     graphicsView->setRenderHints ( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
     graphicsView->show();
@@ -26,7 +27,9 @@ MainWidget::~MainWidget() {
 void MainWidget::changeActiveDocument ( Document* doc ) {
     // filter out port and connection elements
     treeView->setModel(doc->filter);
-
+    //FIXME this should go into QSettings
+    treeView->setColumnWidth(0, 230);
+    
     graphicsView->setScene ( doc->scene );
     //FIXME this breaks multi document support since we must disconnect this signal on doc change
     connect (this, SIGNAL(clickRelaySig(const QModelIndex &)),
