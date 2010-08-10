@@ -11,7 +11,7 @@
 //
 // http://libnoise.sourceforge.net/docs/classnoise_1_1module_1_1Perlin.html
 
-#include "NoiseGenPerlin.h"
+#include "Perlin.h"
 #include "ModuleFactory.h"
 
 #include "registermodule_macro.cpp"

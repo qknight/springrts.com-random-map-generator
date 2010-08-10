@@ -17,7 +17,7 @@
 
 */
 
-#include "Selector.h"
+#include "Select.h"
 #include "ModuleFactory.h"
 
 #include "registermodule_macro.cpp"

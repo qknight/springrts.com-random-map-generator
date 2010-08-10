@@ -9,7 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "UtilsNoiseMap.h"
+#include "NoiseMap.h"
 #include "ModuleFactory.h"
 
 #include "registermodule_macro.cpp"
