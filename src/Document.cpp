@@ -62,8 +62,8 @@ Document::Document() {
 //     model->insertConnection(m3_output1, m4_modput1);
 //     model->insertConnection(m4_output1, m5_input1);
 
-//     scene->addLine(-100,0,100,0);
-//     scene->addLine(0,-100,0,100);
+    scene->addLine(-100,0,100,0);
+    scene->addLine(0,-100,0,100);
 }
 
 Document::~Document() {

@@ -1,4 +1,5 @@
 2010-08-11
+ - QMenu for creating modules does now insert the module on x,y where the QMenu was created instead of QCursor::pos()
  - QMenu for creating modules has now categories which makes it far more useful, see:
      void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent )
  - created all modules which are in libnoise using the class_generator.py

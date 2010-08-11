@@ -32,41 +32,46 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
     // create menu
     menu.clear();
     for ( int i=0; i < loadableModuleNames.size(); i++ ) {
-      QString moduleIdentifier =  loadableModuleNames[i];
-        // 1. see the category c of the module. if a submenu for c already exists 
+        QString moduleIdentifier =  loadableModuleNames[i];
+        // 1. see the category c of the module. if a submenu for c already exists
         //    insert the menu entry there, if not create it first
         QString moduleCategory = moduleIdentifier.section("::",0,0);
         QString moduleName = moduleIdentifier.section("::",1,1);
         m.insert(moduleCategory, moduleName);
     }
     foreach(QString category, m.uniqueKeys()) {
-        qDebug() << category;
         QList<QString> modules = m.values(category);
         QMenu* categoryMenu = menu.addMenu ( category );
         for (int i = 0; i < modules.size(); ++i) {
-          QString moduleName = modules.at(i);
-          QAction* a = categoryMenu->addAction(moduleName);
-          a->setData(QString("%1::%2").arg(category).arg(moduleName));
+            QString moduleName = modules.at(i);
+            QAction* a = categoryMenu->addAction(moduleName);
+
+            QList<QVariant> d;
+            QString s = QString("%1::%2").arg(category).arg(moduleName);
+            d << s;
+            d << contextMenuEvent->screenPos();
+            a->setData(d);
         }
     }
-
-     menu.exec ( contextMenuEvent->screenPos() );
+    menu.exec ( contextMenuEvent->screenPos() );
 }
 
 void GraphicsScene::menuSelectionMade ( QAction* action ) {
-//   qDebug() << "creating module: " << action->text() << " at pos: " << screenPos.x() << "x" << screenPos.y();;
-    if ( ! ( views().size() ) ) {
+    if ( !( views().size() ) ) {
         qDebug() << "Error: no view is attached to this scene, this should not happen!, exiting";
         exit ( 1 );
     }
+    
     QGraphicsView* view = views().first();
-    //FIXME we need to use the QMenu::pos() instead of QCursor::pos();
-//   QMenu* menu = action->menu()->pos();
-//   if (menu == NULL)
-//     return;
-//   QPoint menupos = menu->pos();
-    QPoint pos = view->mapToScene ( view->mapFromGlobal ( QCursor::pos() ) ).toPoint();
-    emit CreateModuleSignal ( action->data().toString(), pos );
+    QList<QVariant> l = action->data().toList();
+    if (l.size() != 2) {
+        qDebug() << __PRETTY_FUNCTION__ << " problem with parsing the arguments given by QAction->data()";
+        return;
+    }
+    QString s =  l[0].toString();
+    QPoint pos = view->mapToScene ( view->mapFromGlobal ( l[1].toPoint() ) ).toPoint();
+
+    emit CreateModuleSignal ( s, pos );
 }
 
 void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleNames ) {
@@ -117,8 +122,8 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 
         // 0. is it a property? if so we skip right here!
         if (model->data(child, customRole::TypeRole) == DataItemType::DATAPROPERTY)
-          continue;
-        
+            continue;
+
         // 1. find the QGraphicsItem refered to by item
         QGraphicsItem* graphicsItem = modelToSceenIndex(item);
 
@@ -155,7 +160,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 
 
 void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
-  qDebug() <<__PRETTY_FUNCTION__ << " FIXME";
+    qDebug() <<__PRETTY_FUNCTION__ << " FIXME";
 }
 
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
@@ -221,13 +226,13 @@ bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPer
 void GraphicsScene::clearScene() {}
 
 void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
-  // we need to translate the index from the FilterProxyModel into the Model
-  // because the QTreeView uses a FilterProxyModel on top of the Model to filter
-  // port and connections 
-  QModelIndex srcIndex = index;
+    // we need to translate the index from the FilterProxyModel into the Model
+    // because the QTreeView uses a FilterProxyModel on top of the Model to filter
+    // port and connections
+    QModelIndex srcIndex = index;
     QGraphicsItem* item = modelToSceenIndex ( QPersistentModelIndex ( srcIndex ) );
     if (item == NULL)
-      return;
+        return;
     // we do have only one view
     if ( views().size() ) {
         views().first()->centerOn ( item );
@@ -291,7 +296,7 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 }
 
 void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
-    if (keyEvent->key() == Qt::Key_Delete){
+    if (keyEvent->key() == Qt::Key_Delete) {
         qDebug() << "delete key pressed";
         //FIXME: implement that
         // for i in QGraphicsView::activeSelection() do
