@@ -1,9 +1,6 @@
-------- current plan (near objectives): ------- 
 ========================================================================
   Model related: Adding, selecting, removing of single/multiple items:
 ========================================================================
-- FIXME: insertConnection has a bug: one can create a loop with combiner::add and transformer::displace
-         it seems insertConnection can't see any connections?!
 - FIXME: insert modules at 'out of sight' will create strange view relocations...
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
 - implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
@@ -98,6 +95,11 @@ GraphicsView:
 - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
 - QTreeView: add tooltips
 - add icons to the QMenu for categories as well as for single modules
+
+
+
+
+
 
 
 ========================================================================

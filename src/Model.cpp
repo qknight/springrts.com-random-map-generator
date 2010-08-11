@@ -622,34 +622,39 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
     visited << abstractItemB->parent();
 
     if (abstractItemA->parent() == abstractItemB->parent()) {
-        qDebug() << "check 6: a loop within one module is not allowed";
+//         qDebug() << "check 6: a loop within one module is not allowed";
         return QModelIndex();
     }
-    qDebug()<< "check 6: START: loop detection running";
+//     qDebug()<< "check 6: START: loop detection running";
     do {
-        qDebug() << "check 6: main loop started";
+//         qDebug() << "check 6: main loop started";
         // loop through all output ports
         for (int i = 0; i < m->childCount(); ++i) {
-            qDebug()<< "check 6: m->childCount()" << i;
+//             qDebug()<< "check 6: processing element " << i << " of " << m->childCount();
             // loop through all connections
             DataAbstractItem* childItem = m->childItems()[i];
-            if (childItem->getObjectType() != DataItemType::DATAPORT)
+            if (childItem->getObjectType() != DataItemType::DATAPORT) {
+//                 qDebug()<< "check 6: probably a property, skipping" << i;
                 continue;
+            }
 
             DataPort* p = static_cast<DataPort*>(childItem);
             if (p->PortDirection() != PortDirection::OUT) {
+//                 qDebug()<< "check 6: probably an INPUT or MODPUT, skipping" << i;
                 continue;
             }
             for (int j = 0; j < childItem->childCount(); ++j) {
-                qDebug()<< "check 6: processing output connection: " << j;
-                if (childItem->childItems()[j]->getObjectType() != DataItemType::DATAPORT)
+//                 qDebug()<< "check 6: processing output connection: " << j;
+                if (childItem->childItems()[j]->getObjectType() != DataItemType::DATACONNECTION) {
+//                     qDebug() << "check 6: this is no connection, skipping *strange*?!";
                     continue;
+                }
 
                 DataConnection* c = static_cast<DataConnection*> (childItem->childItems()[j]);
                 connections << c;
             }
         }
-        qDebug() << "check 6: " << "connections.size(): " << connections.size();
+//         qDebug() << "check 6: " << "connections.size(): " << connections.size();
         if (connections.size() == 0) {
             break;
         } else {
@@ -657,8 +662,8 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
             connections.remove(0);
             m = static_cast<DataAbstractModule*>(c->dst()->parent());
             if (visited.contains(m)) {
-                qDebug() << "check 6: visited.size(): " << visited.size();
-                qDebug() << "check 6: adding this connection would create a loop which is not allowed by definition!";
+//                 qDebug() << "check 6: visited.size(): " << visited.size();
+//                 qDebug() << "check 6: adding this connection would create a loop which is not allowed by definition!";
                 return QModelIndex();
             }
             visited << m;

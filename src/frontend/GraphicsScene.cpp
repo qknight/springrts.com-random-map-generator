@@ -25,8 +25,8 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
 
 GraphicsScene::~GraphicsScene() {}
 
+/*! a rightclick on the QGraphicsView will pop up this QMenu */
 void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ) {
-    // FIXME: add icons for each module
     QMultiMap<QString,QString> m;
     screenPos = contextMenuEvent->screenPos();
     // create menu
@@ -39,30 +39,37 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
         QString moduleName = moduleIdentifier.section("::",1,1);
         m.insert(moduleCategory, moduleName);
     }
+    // we create a collection of categories and their modules to convert them into a qmenu structure
     foreach(QString category, m.uniqueKeys()) {
         QList<QString> modules = m.values(category);
         QMenu* categoryMenu = menu.addMenu ( category );
         for (int i = 0; i < modules.size(); ++i) {
             QString moduleName = modules.at(i);
-            QAction* a = categoryMenu->addAction(moduleName);
+            QAction* action = categoryMenu->addAction(moduleName);
 
+            // we need to store two values in a QAction, so we have to use a QList
             QList<QVariant> d;
-            QString s = QString("%1::%2").arg(category).arg(moduleName);
-            d << s;
+            // this is the unique identifier used to create the module
+            QString identifier = QString("%1::%2").arg(category).arg(moduleName);
+            d << identifier;
+            // this is the position where the QMenu was created and where we put the module
             d << contextMenuEvent->screenPos();
-            a->setData(d);
+            action->setData(d);
         }
     }
     menu.exec ( contextMenuEvent->screenPos() );
 }
 
+/*! after a selection in the QMenu on the QGraphicsView has been made */
 void GraphicsScene::menuSelectionMade ( QAction* action ) {
+    // we need the active view to map the coordinates of the click to the QGraphicsScene
     if ( !( views().size() ) ) {
         qDebug() << "Error: no view is attached to this scene, this should not happen!, exiting";
         exit ( 1 );
     }
     
     QGraphicsView* view = views().first();
+    // parse the position and the string created in contextMenuEvent(..)
     QList<QVariant> l = action->data().toList();
     if (l.size() != 2) {
         qDebug() << __PRETTY_FUNCTION__ << " problem with parsing the arguments given by QAction->data()";
@@ -71,6 +78,7 @@ void GraphicsScene::menuSelectionMade ( QAction* action ) {
     QString s =  l[0].toString();
     QPoint pos = view->mapToScene ( view->mapFromGlobal ( l[1].toPoint() ) ).toPoint();
 
+    // this will finally create the module using the Model
     emit CreateModuleSignal ( s, pos );
 }
 

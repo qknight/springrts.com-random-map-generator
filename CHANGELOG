@@ -1,4 +1,5 @@
 2010-08-11
+ - fixed loop connection handling bug where two modules could be connection in a way they would form a loop
  - QMenu for creating modules does now insert the module on x,y where the QMenu was created instead of QCursor::pos()
  - QMenu for creating modules has now categories which makes it far more useful, see:
      void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent )
