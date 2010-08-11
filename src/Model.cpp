@@ -625,12 +625,12 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
         qDebug() << "check 6: a loop within one module is not allowed";
         return QModelIndex();
     }
-//     qDebug()<< "check 6: START: loop detection running";
+    qDebug()<< "check 6: START: loop detection running";
     do {
-//         qDebug() << "check 6: main loop started";
+        qDebug() << "check 6: main loop started";
         // loop through all output ports
         for (int i = 0; i < m->childCount(); ++i) {
-//             qDebug()<< "check 6: m->childCount()" << i;
+            qDebug()<< "check 6: m->childCount()" << i;
             // loop through all connections
             DataAbstractItem* childItem = m->childItems()[i];
             if (childItem->getObjectType() != DataItemType::DATAPORT)
@@ -641,7 +641,7 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
                 continue;
             }
             for (int j = 0; j < childItem->childCount(); ++j) {
-//                 qDebug()<< "check 6: processing output connection: " << j;
+                qDebug()<< "check 6: processing output connection: " << j;
                 if (childItem->childItems()[j]->getObjectType() != DataItemType::DATAPORT)
                     continue;
 
@@ -649,7 +649,7 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
                 connections << c;
             }
         }
-//         qDebug() << "check 6: " << "connections.size(): " << connections.size();
+        qDebug() << "check 6: " << "connections.size(): " << connections.size();
         if (connections.size() == 0) {
             break;
         } else {
@@ -657,7 +657,7 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
             connections.remove(0);
             m = static_cast<DataAbstractModule*>(c->dst()->parent());
             if (visited.contains(m)) {
-//                 qDebug() << "check 6: visited.size(): " << visited.size();
+                qDebug() << "check 6: visited.size(): " << visited.size();
                 qDebug() << "check 6: adding this connection would create a loop which is not allowed by definition!";
                 return QModelIndex();
             }

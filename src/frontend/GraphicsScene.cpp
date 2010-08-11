@@ -11,6 +11,7 @@
 //
 
 #include <QGraphicsView>
+#include <QMultiMap>
 #include "GraphicsScene.h"
 #include "Model.h"
 #include "DataItemType.h"
@@ -26,13 +27,30 @@ GraphicsScene::~GraphicsScene() {}
 
 void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ) {
     // FIXME: add icons for each module
+    QMultiMap<QString,QString> m;
     screenPos = contextMenuEvent->screenPos();
     // create menu
     menu.clear();
     for ( int i=0; i < loadableModuleNames.size(); i++ ) {
-        menu.addAction ( loadableModuleNames[i] );
+      QString moduleIdentifier =  loadableModuleNames[i];
+        // 1. see the category c of the module. if a submenu for c already exists 
+        //    insert the menu entry there, if not create it first
+        QString moduleCategory = moduleIdentifier.section("::",0,0);
+        QString moduleName = moduleIdentifier.section("::",1,1);
+        m.insert(moduleCategory, moduleName);
     }
-    menu.exec ( contextMenuEvent->screenPos() );
+    foreach(QString category, m.uniqueKeys()) {
+        qDebug() << category;
+        QList<QString> modules = m.values(category);
+        QMenu* categoryMenu = menu.addMenu ( category );
+        for (int i = 0; i < modules.size(); ++i) {
+          QString moduleName = modules.at(i);
+          QAction* a = categoryMenu->addAction(moduleName);
+          a->setData(QString("%1::%2").arg(category).arg(moduleName));
+        }
+    }
+
+     menu.exec ( contextMenuEvent->screenPos() );
 }
 
 void GraphicsScene::menuSelectionMade ( QAction* action ) {
@@ -48,7 +66,7 @@ void GraphicsScene::menuSelectionMade ( QAction* action ) {
 //     return;
 //   QPoint menupos = menu->pos();
     QPoint pos = view->mapToScene ( view->mapFromGlobal ( QCursor::pos() ) ).toPoint();
-    emit CreateModuleSignal ( action->text(), pos );
+    emit CreateModuleSignal ( action->data().toString(), pos );
 }
 
 void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleNames ) {

@@ -1,4 +1,6 @@
 2010-08-11
+ - QMenu for creating modules has now categories which makes it far more useful, see:
+     void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent )
  - created all modules which are in libnoise using the class_generator.py
  - added a class_generator.py
 2010-08-10
