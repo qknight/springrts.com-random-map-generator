@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef MODIFIER_INVERT__HH
+#define MODIFIER_INVERT__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Modifier::Invert"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Invert : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Invert();
+    ~Invert();
 
     QString identify();
 };

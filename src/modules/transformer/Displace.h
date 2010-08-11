@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef TRANSFORMER_DISPLACE__HH
+#define TRANSFORMER_DISPLACE__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Transformer::Displace"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Displace : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Displace();
+    ~Displace();
 
     QString identify();
 };

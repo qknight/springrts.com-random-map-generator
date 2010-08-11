@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef GENERATOR_CONST__HH
+#define GENERATOR_CONST__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Generator::Const"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Const : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Const();
+    ~Const();
 
     QString identify();
 };

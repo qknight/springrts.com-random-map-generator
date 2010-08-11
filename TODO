@@ -1,7 +1,8 @@
 ------- current plan (near objectives): ------- 
 Model related:
 - modules should have a category they belong to, so QMenu on the QGraphicsScene needs to be redone
-- if a property changes, the parent (module) should get updated in the GraphicsScene
+
+- if a property changes(a child), the parent (module) should get updated in the GraphicsScene
 - implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
 Q: who accesses 'module properties'?
 A: a list of uses:
@@ -113,7 +114,6 @@ General:
             an exception which we most likely don't handle which will bring down the whole program.
             therefore: every property has to provide an input checker, which skips invalid input with some feedback.
 - libNoise (backend) and
-- add all modules which are in libnoise (see list below)
 
 - integrate libNoise-view (first refactore it)
 
@@ -134,46 +134,7 @@ General:
 - official release of 'the source as package'
 
 
-
-
-
-
-
-
-
-
-------- modules todo: --------
- Utils::NoiseMapBuilderPlane
- Utils::RendererImage
- Utils::Image
-
- Generator::Checkerboard
- Generator::Const
- Generator::Cylinders
- Generator::Spheres
- Generator::Voronoi
-
- Combiner::Add
- Combiner::Max
- Combiner::Min
- Combiner::Multiply
- Combiner::Power
-
- Modifier::Abs
- Modifier::Clamp
- Modifier::Curve
- Modifier::Exponent
- Modifier::Invert
- Modifier::ScaleBias
- Modifier::Terrace
-
- Selector::Blend
- Selector::Select
- 
- Spring::Mapgenerator
-
 new moduels which might be nice:
  - rain simulation (also known as erosion)
  - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
                 the same image, the same goes for intel vs spark)
-

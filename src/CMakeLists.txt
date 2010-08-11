@@ -47,11 +47,38 @@ SET( srmg_SOURCES
   frontend/GraphicsItemModelExtension.cpp
 
   # libnoise module backends
-  modules/generator/Billow.cpp
+  modules/utils/NoiseMapBuilderPlane.cpp
+  modules/utils/RendererImage.cpp
+  modules/utils/Image.cpp
   modules/generator/Perlin.cpp
+  modules/generator/Billow.cpp
   modules/generator/RidgedMulti.cpp
-  modules/utils/NoiseMap.cpp
+  modules/generator/Checkerboard.cpp
+  modules/generator/Const.cpp
+  modules/generator/Cylinders.cpp
+  modules/generator/Spheres.cpp
+  modules/generator/Voronoi.cpp
+  modules/combiner/Add.cpp
+  modules/combiner/Max.cpp
+  modules/combiner/Min.cpp
+  modules/combiner/Multiply.cpp
+  modules/combiner/Power.cpp
+  modules/modifier/Abs.cpp
+  modules/modifier/Clamp.cpp
+  modules/modifier/Curve.cpp
+  modules/modifier/Exponent.cpp
+  modules/modifier/Invert.cpp
+  modules/modifier/ScaleBias.cpp
+  modules/modifier/Terrace.cpp
+  modules/selector/Blend.cpp
   modules/selector/Select.cpp
+  modules/transformer/Displace.cpp
+  modules/transformer/RotatePoint.cpp
+  modules/transformer/ScalePoint.cpp
+  modules/transformer/TranslatePoint.cpp
+  modules/transformer/Turbulence.cpp
+  modules/spring/Mapgenerator.cpp
+
 )
 
 SET( srmg_MOC_HEADERS
@@ -82,6 +109,7 @@ INCLUDE_DIRECTORIES(
   "${CMAKE_CURRENT_SOURCE_DIR}/modules/combiner"
   "${CMAKE_CURRENT_SOURCE_DIR}/modules/modifier"
   "${CMAKE_CURRENT_SOURCE_DIR}/modules/spring"
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/transformer"
   # backend 
   "${CMAKE_CURRENT_SOURCE_DIR}/backend"
   # frontend

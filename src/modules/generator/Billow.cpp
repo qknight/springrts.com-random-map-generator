@@ -1,22 +1,12 @@
-//
-// C++ Implementation: NoiseGenBillow
-//
-// Description:
-//
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2009
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+
 #include "Billow.h"
 #include "ModuleFactory.h"
 
 #include "registermodule_macro.cpp"
 
-M_REGISTER(NoiseGenBillow);
+M_REGISTER(Billow);
 
-NoiseGenBillow::NoiseGenBillow() : DataAbstractModule(0,0,1) {
+Billow::Billow() : DataAbstractModule(0,0,1) {
   setProperty("Frequency", 0.234f);
   setProperty("Lacunarity", 0.2f);
   setProperty("Octave count", 8);
@@ -25,10 +15,9 @@ NoiseGenBillow::NoiseGenBillow() : DataAbstractModule(0,0,1) {
   setProperty("Noise quality",3);
 }
 
-NoiseGenBillow::~NoiseGenBillow() {
-//     qDebug() << __PRETTY_FUNCTION__;
+Billow::~Billow() {
 }
 
-QString NoiseGenBillow::identify() {
-  return ID;
+QString Billow::identify() {
+    return ID;
 }

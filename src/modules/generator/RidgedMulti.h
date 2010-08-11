@@ -1,26 +1,21 @@
-//
-// C++ Interface: NoiseGenRidgedMulti
-//
-// Description:
-//
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2009
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
 
-#ifndef NOISEGENRIDGEDMULTI_H
-#define NOISEGENRIDGEDMULTI_H
+#ifndef GENERATOR_RIDGEDMULTI__HH
+#define GENERATOR_RIDGEDMULTI__HH
 
 #include <DataAbstractModule.h>
 
 #define ID "Generator::RidgedMulti"
 
-class NoiseGenRidgedMulti : public DataAbstractModule {
-  public:
-    NoiseGenRidgedMulti();
-    ~NoiseGenRidgedMulti();
+// http://libnoise.sourceforge.net/docs/group__modules.html
+
+/**
+	@author Joachim Schiele <js@lastlog.de>
+*/
+class RidgedMulti : public DataAbstractModule {
+public:
+    RidgedMulti();
+    ~RidgedMulti();
+
     QString identify();
 };
 

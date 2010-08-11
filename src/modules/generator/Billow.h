@@ -1,28 +1,21 @@
-//
-// C++ Interface: NoiseGenBillow
-//
-// Description:
-//
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2009
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#ifndef NOISEGENBILLOW_H
-#define NOISEGENBILLOW_H
+
+#ifndef GENERATOR_BILLOW__HH
+#define GENERATOR_BILLOW__HH
 
 #include <DataAbstractModule.h>
 
 #define ID "Generator::Billow"
 
+// http://libnoise.sourceforge.net/docs/group__modules.html
+
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class NoiseGenBillow : public DataAbstractModule {
+class Billow : public DataAbstractModule {
 public:
-    NoiseGenBillow();
-    ~NoiseGenBillow();
+    Billow();
+    ~Billow();
+
     QString identify();
 };
 

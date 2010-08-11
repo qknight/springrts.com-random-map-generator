@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef MODIFIER_EXPONENT__HH
+#define MODIFIER_EXPONENT__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Modifier::Exponent"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Exponent : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Exponent();
+    ~Exponent();
 
     QString identify();
 };

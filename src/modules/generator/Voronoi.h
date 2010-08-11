@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef GENERATOR_VORONOI__HH
+#define GENERATOR_VORONOI__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Generator::Voronoi"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Voronoi : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Voronoi();
+    ~Voronoi();
 
     QString identify();
 };

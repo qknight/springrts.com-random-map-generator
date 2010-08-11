@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef MODIFIER_SCALEBIAS__HH
+#define MODIFIER_SCALEBIAS__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Modifier::ScaleBias"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class ScaleBias : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    ScaleBias();
+    ~ScaleBias();
 
     QString identify();
 };

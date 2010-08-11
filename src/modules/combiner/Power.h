@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef COMBINER_POWER__HH
+#define COMBINER_POWER__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Combiner::Power"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Power : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Power();
+    ~Power();
 
     QString identify();
 };

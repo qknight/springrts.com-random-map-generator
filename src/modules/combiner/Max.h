@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef COMBINER_MAX__HH
+#define COMBINER_MAX__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Combiner::Max"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Max : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Max();
+    ~Max();
 
     QString identify();
 };

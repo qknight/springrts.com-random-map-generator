@@ -1,3 +1,6 @@
+2010-08-11
+ - created all modules which are in libnoise using the class_generator.py
+ - added a class_generator.py
 2010-08-10
  - reorganizing modules/
  - renamed property 'pos' to 'Position'

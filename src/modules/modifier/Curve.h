@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef MODIFIER_CURVE__HH
+#define MODIFIER_CURVE__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Modifier::Curve"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Curve : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Curve();
+    ~Curve();
 
     QString identify();
 };

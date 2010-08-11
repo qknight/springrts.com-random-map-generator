@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef COMBINER_MIN__HH
+#define COMBINER_MIN__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Combiner::Min"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Min : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Min();
+    ~Min();
 
     QString identify();
 };

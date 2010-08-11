@@ -1,20 +1,20 @@
 
-#ifndef SELECTOR_SELECT__HH
-#define SELECTOR_SELECT__HH
+#ifndef UTILS_IMAGE__HH
+#define UTILS_IMAGE__HH
 
 #include <DataAbstractModule.h>
 
-#define ID "Selector::Select"
+#define ID "Utils::Image"
 
 // http://libnoise.sourceforge.net/docs/group__modules.html
 
 /**
 	@author Joachim Schiele <js@lastlog.de>
 */
-class Select : public DataAbstractModule {
+class Image : public DataAbstractModule {
 public:
-    Select();
-    ~Select();
+    Image();
+    ~Image();
 
     QString identify();
 };
