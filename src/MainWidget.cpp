@@ -36,6 +36,13 @@ void MainWidget::changeActiveDocument ( Document* doc ) {
              doc->scene, SLOT(treeViewWantsItemFocus ( const QModelIndex & ) ));
     connect ( doc->scene, SIGNAL ( selectionChanged() ),
               this, SLOT ( selectionChanged() ) );
+    connect (doc->filter, SIGNAL(rowsInserted ( const QModelIndex & , int , int  )),
+             this, SLOT(rowsInsertedNotification ( const QModelIndex & , int , int )));
+}
+
+/*! when new items are inserted to the treeView, we expand all items */
+void MainWidget::rowsInsertedNotification ( const QModelIndex & parent, int start, int end ) {
+  treeView->expandAll();
 }
 
 /*! this relay translates the filter's QModelIndex(es) into the model's ones */

@@ -22,7 +22,7 @@
 
 #include <QPersistentModelIndex>
 #include <QGraphicsScene>
-#include "DataType.h"
+#include "DataItemType.h"
 
 class Model;
 

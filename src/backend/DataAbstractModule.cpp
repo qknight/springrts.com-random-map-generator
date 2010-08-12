@@ -38,7 +38,7 @@ DataAbstractModule::~DataAbstractModule() {
 void DataAbstractModule::setProperty(QString key, QVariant value) {
     //search if key is already there and modify it
     for (int i = 0; i < childCount(); ++i) {
-        if (childItems()[i]->getObjectType() == DataItemType::DATAPROPERTY) {
+        if (childItems()[i]->getObjectType() == DataItemType::PROPERTY) {
             DataProperty* p = static_cast<DataProperty*>( childItems()[i] );
             if (p->key() == key) {
                 p->setValue(value);
@@ -54,7 +54,7 @@ void DataAbstractModule::setProperty(QString key, QVariant value) {
 
 QVariant DataAbstractModule::property(QString key) {
     for (int i = 0; i < childCount(); ++i) {
-        if (childItems()[i]->getObjectType() == DataItemType::DATAPROPERTY) {
+        if (childItems()[i]->getObjectType() == DataItemType::PROPERTY) {
             DataProperty* p = static_cast<DataProperty*>( childItems()[i] );
             if (p->key() == key)
                 return p->value();
@@ -64,7 +64,7 @@ QVariant DataAbstractModule::property(QString key) {
 }
 
 unsigned int DataAbstractModule::getObjectType() {
-    return DataItemType::DATAABSTRACTMODULE;
+    return DataItemType::MODULE;
 }
 
 void DataAbstractModule::removeChild ( unsigned int index ) {

@@ -63,7 +63,6 @@ QModelIndex Model::index( int row, int column, const QModelIndex & parent ) cons
 
     DataAbstractItem* parentItem;
 
-    //BUG, parent is never valid
     if ( !parent.isValid() )
         parentItem = rootItem;
     else {
@@ -128,17 +127,17 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     DataAbstractItem* n = static_cast<DataAbstractItem*>( index.internalPointer() );
     //   // to understand customRole::TypeRole see the comment (Model.h - DataItemType enum comment )
     if ( role == customRole::TypeRole ) {
-        if ( n->getObjectType() == DataItemType::DATAROOT )
-            return DataItemType::DATAROOT;
-        if ( n->getObjectType() == DataItemType::DATACONNECTION )
-            return DataItemType::DATACONNECTION;
-        if ( n->getObjectType() == DataItemType::DATAPROPERTY )
-            return DataItemType::DATAPROPERTY;
-        if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
-            return DataItemType::DATAABSTRACTMODULE;
-        if ( n->getObjectType() == DataItemType::DATAPORT )
-            return DataItemType::DATAPORT;
-        return DataItemType::DATAUNKNOWN;
+        if ( n->getObjectType() == DataItemType::ROOT )
+            return DataItemType::ROOT;
+        if ( n->getObjectType() == DataItemType::CONNECTION )
+            return DataItemType::CONNECTION;
+        if ( n->getObjectType() == DataItemType::PROPERTY )
+            return DataItemType::PROPERTY;
+        if ( n->getObjectType() == DataItemType::MODULE )
+            return DataItemType::MODULE;
+        if ( n->getObjectType() == DataItemType::PORT )
+            return DataItemType::PORT;
+        return DataItemType::UNKNOWN;
     }
     if ( role == customRole::PortType ) {
         DataPort* p = static_cast<DataPort*>(n);
@@ -154,9 +153,9 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     }
 
     if ( role == Qt::BackgroundRole) {
-        if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE )
+        if ( n->getObjectType() == DataItemType::MODULE )
             return QBrush( QColor( 253, 230, 37, 255 ) );
-        if ( n->getObjectType() == DataItemType::DATAPROPERTY )
+        if ( n->getObjectType() == DataItemType::PROPERTY )
             return QBrush( QColor( 255, 255, 191, 100 ));
     }
 
@@ -166,15 +165,15 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
         case Qt::DecorationRole:
         case customRole::SortRole:
         case Qt::DisplayRole:
-            if ( n->getObjectType() == DataItemType::DATAABSTRACTMODULE ) {
+            if ( n->getObjectType() == DataItemType::MODULE ) {
                 DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
                 return am->identify();
             }
-            if ( n->getObjectType() == DataItemType::DATACONNECTION )
+            if ( n->getObjectType() == DataItemType::CONNECTION )
                 return "connection";
-            if ( n->getObjectType() == DataItemType::DATAPORT )
+            if ( n->getObjectType() == DataItemType::PORT )
                 return "port";
-            if ( n->getObjectType() == DataItemType::DATAPROPERTY ) {
+            if ( n->getObjectType() == DataItemType::PROPERTY ) {
                 DataProperty* p = dynamic_cast<DataProperty*>(n);
                 return p->key();
             }
@@ -183,7 +182,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     case 1:
         switch (role) {
         case Qt::DisplayRole:
-            if ( n->getObjectType() == DataItemType::DATAPROPERTY ) {
+            if ( n->getObjectType() == DataItemType::PROPERTY ) {
                 DataProperty* p = dynamic_cast<DataProperty*>(n);
                 return p->value();
             }
@@ -194,144 +193,10 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     }
 
     if ( role == customRole::PosRole )
-        if ( n->getObjectType() == DataType::MODULE ) {
+        if ( n->getObjectType() == DataItemType::MODULE ) {
             DataAbstractModule* m = dynamic_cast<DataAbstractModule*>(n);
             return m->property("Position");
         }
-
-
-
-//   if ( role == customRole::SymbolIndexRole )
-//     if ( n->getObjectType() == NODE_CONNECTION ) {
-//       DataConnection* nc = static_cast<DataConnection*>( index.internalPointer() );
-// //       qDebug() << __FUNCTION__ << symbol( nc->symbol_index ) << nc->symbol_index;
-//       return symbol( nc->symbol_index() ) ;
-//     }
-//   if ( role == customRole::IdRole )
-//     if ( n->getObjectType() == NODE || n->getObjectType() == NODE_CONNECTION )
-//       return n->getId();
-//   switch ( index.column() ) {
-//   case 0:
-//     switch ( role ) {
-//     case Qt::DecorationRole:
-//       if ( n->getObjectType() == NODE )
-//         return QIcon( ":/icons/node.png" );
-//       if ( n->getObjectType() == NODE_CONNECTION )
-//         return QIcon( ":/icons/connect.png" );
-//     }
-//     break;
-//   case 1:
-//     switch ( role ) {
-//     case Qt::ToolTipRole:
-//       break;
-//     case Qt::WhatsThisRole:
-//       break;
-//     case Qt::TextAlignmentRole:
-// //           if (index.column() == 1)
-// //             return Qt::AlignHCenter;
-// //           if (index.column() == 2)
-// //             return Qt::AlignHCenter;
-//       break;
-//     case customRole::SortRole:
-//     case Qt::DecorationRole:
-//       if ( n->getObjectType() == NODE ) {
-//         if ( n->getProperty( "start" ).toBool() ) {
-//           if ( role == customRole::SortRole )
-//             return 1;
-//           return QIcon( ":/icons/startNode.png" );
-//         } else {
-//           if ( role == customRole::SortRole )
-//             return 0;
-//         }
-//       }
-//       break;
-// //     case Qt::BackgroundRole:
-// //       break;
-//     }
-//     break;
-//   case 2:
-//     switch ( role ) {
-//     case customRole::SortRole:
-//     case Qt::DecorationRole:
-//       if ( n->getObjectType() == NODE ) {
-//         if ( n->getProperty( "final" ).toBool() ) {
-//           if ( role == customRole::SortRole )
-//             return 1;
-//           return QIcon( ":/icons/finalNode.png" );
-//         } else {
-//           if ( role == customRole::SortRole )
-//             return 0;
-//         }
-//       }
-//       break;
-//     }
-//     break;
-//   case 3:
-//     switch ( role ) {
-//     case customRole::SortRole:
-//     case Qt::DisplayRole:
-//       if ( n->getObjectType() == NODE ) {
-//         if ( role == customRole::SortRole ) {
-//           return n->getId();
-//         }
-//         if ( role == Qt::DisplayRole )
-//           return QString( "n%1" ).arg( n->getId() );// "node";
-//       }
-//       if ( n->getObjectType() == NODE_CONNECTION ) {
-//         if ( role == customRole::SortRole )
-//           return n->getId();
-//         if ( role == Qt::DisplayRole )
-//           return QString( "c%1" ).arg( n->getId() );// "DataConnection";
-//       }
-//       break;
-//     }
-//   case 4:
-//     switch ( role ) {
-//     case customRole::SortRole:
-//     case Qt::DisplayRole:
-//       if ( n->getObjectType() == NODE_CONNECTION ) {
-//         if ( role == customRole::SortRole )
-//           return ( static_cast<DataConnection*>( n ) )->symbol_index();// "DataConnection";
-//         if ( role == Qt::DisplayRole )
-//           return symbol(( static_cast<DataConnection*>( n ) )->symbol_index() );// "DataConnection";
-//       }
-//     }
-//
-//     break;
-//   case 5:
-//     switch ( role ) {
-//     case Qt::BackgroundRole:
-//       if ( n->getObjectType() == NODE_CONNECTION )
-//         if ((static_cast<DataConnection*>( n ) )->next_node() == NULL)
-//           return QBrush( QColor( 255, 0, 0, 250 ) );
-//       break;
-//     case customRole::SortRole:
-//     case Qt::DisplayRole:
-//       if ( n->getObjectType() == NODE_CONNECTION ) {
-//         if ((static_cast<DataConnection*>( n ) )->next_node() == NULL)
-//           return "undefined";
-//         DataAbstractItem* next_node = ( static_cast<DataConnection*>( n ) )->next_node();
-//         if ( role == customRole::SortRole )
-//           return next_node->getId();// "DataConnection";
-//         if ( role == Qt::DisplayRole )
-//           return QString( "n%1" ).arg( next_node->getId() );// "DataConnection";
-//       }
-//     }
-//     break;
-//   case 6:
-//     if ( role == Qt::DisplayRole ) {
-//       return n->getProperty( "CustomLabelRole" );
-//     }
-//     break;
-//     /*  case 7:
-//         break;*/
-//   }
-//   if ( role == Qt::BackgroundRole ) {
-//     if ( n->getObjectType() == NODE )
-//       return QBrush( QColor( 50, 160, 170, 150 ) );
-//     if ( n->getObjectType() == NODE_CONNECTION )
-//       return QBrush( QColor( 180, 200, 200, 50 ) );
-//   }
     return QVariant();
 }
 
@@ -341,7 +206,7 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
 
     //editing properties using the QTreeView
     DataAbstractItem* item = static_cast<DataAbstractItem*>( index.internalPointer() );
-    if (item->getObjectType() == DataItemType::DATAPROPERTY && index.column() == 1 && role == Qt::EditRole) {
+    if (item->getObjectType() == DataItemType::PROPERTY && index.column() == 1 && role == Qt::EditRole) {
         DataProperty* p = static_cast<DataProperty*>(item);
         p->setValue(value);
         emit dataChanged(index,index);
@@ -419,6 +284,14 @@ bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
 //     return true;
 }
 
+bool Model::removeModule( const QModelIndex & parent ) {
+  return false;
+}
+
+bool Model::removeConnection( const QModelIndex & parent ) {
+  return false;
+}
+
 bool Model::hasChildren ( const QModelIndex & parent ) const {
 //   qDebug() << "one is calling me" << __FUNCTION__;
     if (!parent.isValid())
@@ -436,14 +309,14 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
         return 0;
 
     DataAbstractItem* item = static_cast<DataAbstractItem*>( index.internalPointer() );
-    if (item->getObjectType() == DataItemType::DATAABSTRACTMODULE)
+    if (item->getObjectType() == DataItemType::MODULE)
         return /*Qt::ItemIsSelectable|*/Qt::ItemIsEnabled;
     switch (index.column()) {
     case 0:
-        if (item->getObjectType() == DataItemType::DATAPROPERTY)
+        if (item->getObjectType() == DataItemType::PROPERTY)
             return Qt::ItemIsEnabled;
     case 1:
-        if (item->getObjectType() == DataItemType::DATAPROPERTY)
+        if (item->getObjectType() == DataItemType::PROPERTY)
             return Qt::ItemIsEditable|Qt::ItemIsEnabled;
     default:
         break;
@@ -528,8 +401,8 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
     DataAbstractItem* abstractItemB = static_cast<DataAbstractItem*>( b.internalPointer() );
 
     // check if both are ports
-    if (abstractItemA->getObjectType() != DataItemType::DATAPORT ||
-            abstractItemB->getObjectType() != DataItemType::DATAPORT) {
+    if (abstractItemA->getObjectType() != DataItemType::PORT ||
+            abstractItemB->getObjectType() != DataItemType::PORT) {
         qDebug() << __PRETTY_FUNCTION__ << "error: both items must be ports, if you want to add a connection to";
         return QModelIndex();
     }
@@ -595,7 +468,7 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
 
     // 4. check if such a connection already exists
     for (int i = 0; i < dataPortA->childCount(); ++i) {
-        if (dataPortA->childItems()[i]->getObjectType() != DataItemType::DATAPORT)
+        if (dataPortA->childItems()[i]->getObjectType() != DataItemType::PORT)
             continue;
         DataConnection* childConnection = static_cast<DataConnection*>(dataPortA->childItems()[i]);
         if (childConnection->dst() == abstractItemB) {
@@ -633,7 +506,7 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
 //             qDebug()<< "check 6: processing element " << i << " of " << m->childCount();
             // loop through all connections
             DataAbstractItem* childItem = m->childItems()[i];
-            if (childItem->getObjectType() != DataItemType::DATAPORT) {
+            if (childItem->getObjectType() != DataItemType::PORT) {
 //                 qDebug()<< "check 6: probably a property, skipping" << i;
                 continue;
             }
@@ -645,7 +518,7 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
             }
             for (int j = 0; j < childItem->childCount(); ++j) {
 //                 qDebug()<< "check 6: processing output connection: " << j;
-                if (childItem->childItems()[j]->getObjectType() != DataItemType::DATACONNECTION) {
+                if (childItem->childItems()[j]->getObjectType() != DataItemType::CONNECTION) {
 //                     qDebug() << "check 6: this is no connection, skipping *strange*?!";
                     continue;
                 }
@@ -697,7 +570,7 @@ QVector<QString> Model::LoadableModuleNames() {
  */
 QModelIndex Model::dst(QPersistentModelIndex connection) {
     // 0. check if item is a 'connection'
-    if (data( connection, customRole::TypeRole ).toInt() != DataType::CONNECTION) {
+    if (data( connection, customRole::TypeRole ).toInt() != DataItemType::CONNECTION) {
         qDebug() << __PRETTY_FUNCTION__ << " fatal error: item is not a connection";
         exit(1);
     }

@@ -1,7 +1,15 @@
 ========================================================================
   Model related: Adding, selecting, removing of single/multiple items:
 ========================================================================
-- FIXME: insert modules at 'out of sight' will create strange view relocations...
+- make items removable:
+ - general:
+  - create shortcuts for that as 'del'-key associated with the active selection
+   - QTreeView:    (not implemented yet)
+   - GraphicsView: skeletion for key input done
+   - Model.cpp
+    - implement removeModule() and removeConnection()
+ - single items should be removable
+ - a selection (of several different items) should be deletable
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
 - implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
 Q: who accesses 'module properties'?
@@ -17,21 +25,15 @@ A: a list of uses:
 - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
 - FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
          this could avoid a lot of segfaults when inserting new concepts into the code
-- maybe refactor ~DataRoot and ~DataAbstractModules' code into the base class ~ destructor, to reduce code 
-- make items selectable with:
- - all items need to be selectable
-  - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
-   - add a transparent 70% white fat paint below a connection
- - boundingbox selection
-  - set bounding box selection using a modifier key, say ctrl
-- make items removable:
- - general:
-  - create shortcuts for that as 'del'-key associated with the active selection
-   - QTreeView:    (not implemented yet)
-   - GraphicsView: skeletion for key input done
- - single items should be removable
- - a selection (of several different items) should be deletable
-- clicking an item in the right list should focus the view of the graphicsscene over the respective item
+- property may be registered only once, fail with exit(1)!
+- implement sorting of the QTreeView based on the distance from the center of the view
+- implement QSettings for QTreeView column width
+    MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
+- concept: see assistant, the QTreeView there is basically what i want to clone
+- QTreeView: add tooltips
+
+
+
 
 
 
@@ -42,8 +44,18 @@ A: a list of uses:
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
-- QGraphicsItems should be QWidgets (for module preview) so that one can scroll the view port of a noisegen right from there.
-  this would be cool as it would make editing much faster and more interactive
+- make items selectable with:
+ - all items need to be selectable
+  - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
+   - add a transparent 70% white fat paint below a connection
+ - boundingbox selection
+  - set bounding box selection using a modifier key, say ctrl
+- clicking an item in the right list should focus the view of the graphicsscene over the respective item
+- FIXME: insert modules at 'out of sight' will create strange view relocations...
+         this happens when items (not connections) are inserted via Document.cpp
+- QGraphicsItem(s) should be a QWidget (for module preview) so that one can scroll the view port of a noisegen right from there.
+  + this would be cool as it would make editing much faster and more interactive
+  + also resizing could be implemented, so one could increase the area which is viewed
 - adding a connection (when no connection was added before whill relocate the view quite far away?!)
 - using Document.cpp::Document()'s insertConnection will add scrollbars to the QGraphicsView... ;P
  - so i have to fix my QGraphicsView code once again
@@ -51,19 +63,13 @@ A: a list of uses:
  - scrollbars should always be there
 - softscroll to item instead of immediate focus
 
-- property may be registered only once, fail with exit(1)!
-- implement sorting of the QTreeView based on the distance from the center of the view
-- QTreeView should show items always expanded (right now all are collapsed)
 - implement singleselection:
   > if an item in the graphicsview is selected, the QTreeView should only show the respective properties of that item
   + if more items are selected, diplay all selected items
   + if no item is selected anymore, show all items in the QTreeView
-- implement QSettings for QTreeView column width
-    MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
 
 - think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
 
-- concept: see assistant, the QTreeView there is basically what i want to clone
 - fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
                   -> it does however work if there are no DataProperties...?!
 
@@ -93,8 +99,9 @@ GraphicsView:
 - remake the selection indicator for the Module 
  - (the Connection looks nice already) but is tricky to select as the area is 1px
 - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
-- QTreeView: add tooltips
 - add icons to the QMenu for categories as well as for single modules
+
+
 
 
 
@@ -105,7 +112,6 @@ GraphicsView:
 ========================================================================
   General concepts to consider:
 ========================================================================
-- DataType.h vs DataItemType.h
 - Design choice:
   using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
   enable context sensitive coloring. this would be funny as one could create different effects on the same height. 

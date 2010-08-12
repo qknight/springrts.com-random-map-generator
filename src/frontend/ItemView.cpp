@@ -82,15 +82,15 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
     for ( int i = start; i <= end; ++i ) {
         QModelIndex item = model->index( i, 0, parent );
         switch (model->data( item, customRole::TypeRole ).toInt()) {
-        case DataType::MODULE:
-//             qDebug() << __FUNCTION__ << " DataType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
+        case DataItemType::MODULE:
+//             qDebug() << __FUNCTION__ << " DataItemType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
             scene->moduleInserted( QPersistentModelIndex( item ) );
             break;
-        case DataType::CONNECTION:
-//             qDebug() << __FUNCTION__ << " DataType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
+        case DataItemType::CONNECTION:
+//             qDebug() << __FUNCTION__ << " DataItemType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
             scene->connectionInserted( QPersistentModelIndex( item ));
             break;
-        case DataType::PROPERTY:
+        case DataItemType::PROPERTY:
             qDebug() << __PRETTY_FUNCTION__ << " DataProperty inserted, FIXME: we ignore this currently but we should not!";
             break;
         default:
@@ -104,9 +104,9 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
 //   qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
     for ( int i = start; i <= end; ++i ) {
         QModelIndex item = model->index( i, 0, parent );
-        if ( model->data( item, customRole::TypeRole ).toInt() == DataType::MODULE )
+        if ( model->data( item, customRole::TypeRole ).toInt() == DataItemType::MODULE )
             scene->moduleRemoved( QPersistentModelIndex( item ) );
-        else if ( model->data( item, customRole::TypeRole ).toInt() == DataType::CONNECTION )
+        else if ( model->data( item, customRole::TypeRole ).toInt() == DataItemType::CONNECTION )
             ;    //FIXME not implemented yet//scene->connectionRemoved( QPersistentModelIndex( item ) );
     }
 }
@@ -147,13 +147,13 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
     do {
 //     qDebug() << "dataChanged is now called()";
         switch (model->data( tmpIndex, customRole::TypeRole ).toInt()) {
-        case DataType::MODULE:
+        case DataItemType::MODULE:
             scene->moduleUpdated( QPersistentModelIndex( tmpIndex ) );
             break;
-        case DataType::CONNECTION:
+        case DataItemType::CONNECTION:
             //not implemented, but we probably don't need that
             break;
-        case DataType::PROPERTY:
+        case DataItemType::PROPERTY:
             //FIXME not implemented
             qDebug() << __PRETTY_FUNCTION__ << " FIXME: not implemented yet for PROPERTY";
             break;

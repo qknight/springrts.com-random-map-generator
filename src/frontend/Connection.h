@@ -22,7 +22,7 @@ public:
     ~Connection();
       void updateData();
     int type() const
-        { return DataType::CONNECTION; }
+        { return DataItemType::CONNECTION; }
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setColor(const QColor &color)

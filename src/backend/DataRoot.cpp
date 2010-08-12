@@ -36,7 +36,7 @@ DataRoot::~DataRoot() {
 }
 
 unsigned int DataRoot::getObjectType() {
-  return DataItemType::DATAROOT;
+  return DataItemType::ROOT;
 }
 
 void DataRoot::removeChild( unsigned int index ) {

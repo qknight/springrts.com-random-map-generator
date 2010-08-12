@@ -31,6 +31,7 @@ private Q_SLOTS:
     void hidePropertyDialog();
     void unhidePropertyDialog();
     void clickRelay ( const QModelIndex & );
+    void rowsInsertedNotification ( const QModelIndex & parent, int start, int end );
 
 public Q_SLOTS:
     void selectionChanged();

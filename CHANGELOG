@@ -1,4 +1,7 @@
+2010-08-12
+ - DataType.h vs DataItemType.h, actually DataType.h lost and was removed
 2010-08-11
+ - QTreeView show items always expanded, see MainWidget.cpp::changeActiveDocument ( Document* doc )
  - fixed loop connection handling bug where two modules could be connection in a way they would form a loop
  - QMenu for creating modules does now insert the module on x,y where the QMenu was created instead of QCursor::pos()
  - QMenu for creating modules has now categories which makes it far more useful, see:
@@ -14,10 +17,9 @@
  - Model::setData(..) implemented
  - Model::flags(..) implemented
  - added a new interface screenshot, see screenshots/
-2010-08-07 II
+2010-08-07
  - module->property() and module->setProperty() work! *yepee*
  - fix crash when clicking QTreeView item which does not have a QGraphicsItem associated
-2010-08-07
  - this is an incomplete commit, more or less a momentum of my codebase
  - the data backend does now have a DataProperty
  - the QListView was replaced by a QTreeView

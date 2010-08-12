@@ -129,7 +129,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
         QPersistentModelIndex child = model->index(i, 0, item);
 
         // 0. is it a property? if so we skip right here!
-        if (model->data(child, customRole::TypeRole) == DataItemType::DATAPROPERTY)
+        if (model->data(child, customRole::TypeRole) == DataItemType::PROPERTY)
             continue;
 
         // 1. find the QGraphicsItem refered to by item
@@ -198,20 +198,20 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) 
 //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
 //   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
     for ( int i = 0; i < m_list.size(); ++i ) {
-        if ( m_list[i]->type() == DataType::MODULE ) {
+        if ( m_list[i]->type() == DataItemType::MODULE ) {
             if ( compareIndexes ( ( ( Module * ) m_list[i] )->index(), index ) ) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "module found";
                 return m_list[i];
             }
         }
-        if ( m_list[i]->type() == DataType::CONNECTION ) {
+        if ( m_list[i]->type() == DataItemType::CONNECTION ) {
             ( ( Connection * ) m_list[i] )->index().column();
             if ( compareIndexes ( ( ( Connection * ) m_list[i] )->index(), index ) ) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "connection found";
                 return m_list[i];
             }
         }
-        if ( m_list[i]->type() == DataType::PORT ) {
+        if ( m_list[i]->type() == DataItemType::PORT ) {
             ( ( Port * ) m_list[i] )->index().column();
             if ( compareIndexes ( ( ( Port* ) m_list[i] )->index(), index ) ) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "port found";
@@ -219,7 +219,7 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) 
             }
         }
     }
-//     qDebug() << __PRETTY_FUNCTION__ << "DataType::PROPERTY does not focus anywhere";
+//     qDebug() << __PRETTY_FUNCTION__ << "DataItemType::PROPERTY does not focus anywhere";
     return NULL;
 }
 
@@ -254,7 +254,7 @@ void GraphicsScene::mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 //     qDebug() << __PRETTY_FUNCTION__;
     if ( mouseEvent->button() == Qt::LeftButton )
         if ( ( items ( mouseEvent->scenePos() ) ).count() )
-            if ( ( items ( mouseEvent->scenePos() ) ).first()->type() == DataType::PORT ) {
+            if ( ( items ( mouseEvent->scenePos() ) ).first()->type() == DataItemType::PORT ) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "CLICK";
                 QGraphicsScene::mousePressEvent ( mouseEvent );
                 line = new QGraphicsLineItem ( QLineF ( mouseEvent->scenePos(),
@@ -292,8 +292,8 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
         line = 0;
 
         if ( startItems.count() > 0 && endItems.count() > 0 &&
-                startItems.first()->type() == DataType::PORT &&
-                endItems.first()->type() == DataType::PORT ) {
+                startItems.first()->type() == DataItemType::PORT &&
+                endItems.first()->type() == DataItemType::PORT ) {
             Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
             Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
 

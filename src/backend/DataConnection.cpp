@@ -39,7 +39,7 @@ DataAbstractItem* DataConnection::dst ( ) {
 }
 
 unsigned int DataConnection::getObjectType() {
-    return DataItemType::DATACONNECTION;
+    return DataItemType::CONNECTION;
 }
 
 void DataConnection::removeChild ( unsigned int index ) {

@@ -23,7 +23,7 @@
 
 #include <QAbstractItemModel>
 #include <QPoint>
-#include "DataType.h"
+#include "DataItemType.h"
 
 class Document;
 class ModuleFactory;
@@ -93,6 +93,8 @@ class Model : public QAbstractItemModel {
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     QModelIndex insertModule(QString type, QPoint pos=QPoint());
     QModelIndex insertConnection(QPersistentModelIndex a, QPersistentModelIndex b);
+    bool removeModule( const QModelIndex & parent );
+    bool removeConnection( const QModelIndex & parent );
     
     QModelIndex dst(QPersistentModelIndex item);
   private:

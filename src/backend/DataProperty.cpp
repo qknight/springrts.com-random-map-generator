@@ -39,7 +39,7 @@ DataProperty::~DataProperty() {
 };
 
 unsigned int DataProperty::getObjectType() {
-    return DataItemType::DATAPROPERTY;
+    return DataItemType::PROPERTY;
 }
 
 void DataProperty::appendChild( DataAbstractItem *child ) {

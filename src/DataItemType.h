@@ -1,15 +1,15 @@
 #ifndef __DATAITEMTYPE__HH__
 #define __DATAITEMTYPE__HH__
 
-/*! this struct is important for the backend data structure */
+/*! this struct is important for the backend and frontend*/
 namespace DataItemType {
   enum DataItemType {
-    DATAROOT,
-    DATAABSTRACTMODULE,
-    DATAPROPERTY,
-    DATAPORT,
-    DATACONNECTION,
-    DATAUNKNOWN
+    ROOT,
+    MODULE,
+    PROPERTY,
+    PORT,
+    CONNECTION,
+    UNKNOWN
   };
 }
 

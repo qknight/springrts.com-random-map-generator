@@ -41,7 +41,7 @@ public:
     void updateData() {};
     int type() const
     {
-        return DataType::PORT;
+        return DataItemType::PORT;
     }
 protected:
     QVariant itemChange ( GraphicsItemChange change, const QVariant & value );

@@ -39,7 +39,7 @@ private:
     QPoint oldPosition;
     int type() const
     {
-        return DataType::MODULE;
+        return DataItemType::MODULE;
     }
 //     void createPorts(Model* model, QPersistentModelIndex item);
 

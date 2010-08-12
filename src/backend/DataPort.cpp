@@ -36,7 +36,7 @@ DataPort::~DataPort() {
 };
 
 unsigned int DataPort::getObjectType() {
-    return DataItemType::DATAPORT;
+    return DataItemType::PORT;
 }
 
 unsigned int DataPort::PortDirection() {
