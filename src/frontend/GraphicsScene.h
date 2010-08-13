@@ -14,6 +14,7 @@
 #include <QKeyEvent>
 #include <QMenu>
 #include <QGraphicsSceneContextMenuEvent>
+
 #include "Model.h"
 #include "Module.h"
 #include "Connection.h"
@@ -24,29 +25,31 @@
 */
 /*! */
 class GraphicsScene : public QGraphicsScene {
-  Q_OBJECT
-  friend class Document;
-  friend class ItemView;
+    Q_OBJECT
+    friend class Document;
+    friend class ItemView;
 
-  public:
+public:
     /*! constructor */
     GraphicsScene( Model *model, QWidget * parent = NULL );
     /*! destructor */
     ~GraphicsScene();
-  protected:
+
+protected:
     QGraphicsItem* moduleInserted( QPersistentModelIndex item );
+    QGraphicsItem* connectionInserted ( QPersistentModelIndex connectionIndex);
     void moduleUpdated( QPersistentModelIndex item );
     bool moduleRemoved( QPersistentModelIndex item );
-    
-    QGraphicsItem* connectionInserted ( QPersistentModelIndex connectionIndex);
-//     QGraphicsItem* portInserted ( QPersistentModelIndex pItem );
+    bool connectionRemoved( QPersistentModelIndex  item  );
+    void setLoadableModuleNames(QVector<QString> loadableModuleNames);
 
-  private:
+private:
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QMenu menu;
     QPoint screenPos;
     QVector<QString> loadableModuleNames;
-    QGraphicsItem* modelToSceenIndex( QPersistentModelIndex index );
+    QGraphicsItem* model2GraphicsItem( QPersistentModelIndex index );
+    QPersistentModelIndex graphicsItem2Model ( QGraphicsItem* graphicsItem );
     /*! this (red) line is needed for adding connections with the MMB (mid-mouse-button) between nodes */
     QGraphicsLineItem *line;
     /*! the GraphicsScene visualizes the data of this model */
@@ -60,20 +63,19 @@ class GraphicsScene : public QGraphicsScene {
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent );
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
-    
-  protected slots:
+
+protected Q_SLOTS:
     void clearScene();
 
-  private Q_SLOTS:
+private Q_SLOTS:
     /*! the current selection of items changes, for example when some nodes or
     connections vanished based on a model request since another view deleted them */
 //     void selectionChanged();
+public Q_SLOTS:
+    void menuSelectionMade(QAction* action);
+    void treeViewWantsItemFocus ( const QModelIndex & ) ;
 
-  Q_SIGNALS:
-    /*! hides this view widget */
-//     void hideView();
-    /*! helper signal, see code */
-//     void toggleRenderHints();
+Q_SIGNALS:
     /*! helper signal, see code */
 //     void zoomOut();
     /*! helper signal, see code */
@@ -84,11 +86,6 @@ class GraphicsScene : public QGraphicsScene {
     void reset();
     void CreateModuleSignal(QString, QPoint);
 
-  protected:
-    void setLoadableModuleNames(QVector<QString> loadableModuleNames);
-public Q_SLOTS:
-    void menuSelectionMade(QAction* action);
-    void treeViewWantsItemFocus ( const QModelIndex & ) ;
 };
 
 #endif

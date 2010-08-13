@@ -1,3 +1,18 @@
+2010-08-13
+ - removing of items from the QGraphicsScene/QGraphicsView is implemented:
+      classes which were change in order to make removeRows work:
+      Model::removeRows(..)       
+      |-DataAbstractItem
+      | |-DataRoot
+      | |-DataAbstractModule
+      | |-DataPort
+      | |-DataProperty
+      | |-DataConnection
+      |-ItemView (relay)         
+      | |-rowsAboutToBeRemoved
+      |-GraphicsScene
+      | |-moduleRemoved       
+      | |-connectionRemoved   
 2010-08-12
  - DataType.h vs DataItemType.h, actually DataType.h lost and was removed
 2010-08-11

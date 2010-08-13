@@ -80,16 +80,6 @@ class Model : public QAbstractItemModel {
     bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 
     /*! this is the public interface, there is an private one for internal use as well!
-    ** This function can be called with [node and node_connection model indexes in arbitrary order]
-    **  - first all nodes get deleted BUT this list isn't altered so there might be connections in
-    **    the list which are already deleted because when a NODE is deleted all incomming/outgoing
-    **    connections are deleted implicitly. however having a list of connections with valid and invalid
-    **    QModelIndex is no problem as only those get deleted which are still deletable.
-    **  - if a NODE is deleted all incomming/outgoing connections are deleted implicitly,
-    **     see: bool removeNode( QPersistentModelIndex node );
-    */
-//     bool removeItems( QList<QPersistentModelIndex> itemList );
-    /*! this is the public interface, there is an private one for internal use as well!
     ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
     QModelIndex insertModule(QString type, QPoint pos=QPoint());
     QModelIndex insertConnection(QPersistentModelIndex a, QPersistentModelIndex b);
@@ -114,7 +104,9 @@ class Model : public QAbstractItemModel {
     ** exactly the given node called 'obj') */
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint(), QString type=QString());
     /*! see the Qt docs about QAbstractItemModel */
-    bool removeRows( int row, int count, const QModelIndex & parent );
+    bool removeRows( QList<  QPersistentModelIndex > items );
+    bool removeRows( QPersistentModelIndex item );
+    QModelIndex data2modelIndex(DataAbstractItem* item);
     
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)

@@ -46,7 +46,7 @@ void DataAbstractModule::setProperty(QString key, QVariant value) {
             }
         }
     }
-    // key was not found, so we create it
+    // key wasn't found, so we create it
     DataProperty* p = new DataProperty(key, value);
     p->setParent(this);
     appendChild(p);
@@ -68,6 +68,7 @@ unsigned int DataAbstractModule::getObjectType() {
 }
 
 void DataAbstractModule::removeChild ( unsigned int index ) {
+//   qDebug() << __PRETTY_FUNCTION__;
     if ( m_childItems.size() < index ) {
         qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
         exit( 1 );

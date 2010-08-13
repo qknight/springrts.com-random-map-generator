@@ -39,8 +39,16 @@ QPainterPath Connection::shape() const {
     return path;
 }
 
+void Connection::suspendDrawing() {
+  myStartItem=NULL;
+  myEndItem = NULL;
+}
+
 void Connection::updatePosition() {
-    QRectF(mapFromItem(myStartItem, 0, 0)-QPointF(120,0),mapFromItem(myEndItem, 0, 0)+QPointF(120,0));
+//   if (myStartItem==NULL || myEndItem == NULL)
+//     return;
+  
+  QRectF(mapFromItem(myStartItem, 0, 0)-QPointF(120,0),mapFromItem(myEndItem, 0, 0)+QPointF(120,0));
 
     /*    QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
         setLine(line);*/
@@ -48,7 +56,9 @@ void Connection::updatePosition() {
 
 void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
 //   qDebug("redraw");
-
+//   if (myStartItem==NULL || myEndItem == NULL)
+//     return;
+  
     //fixes a crash
     if (myStartItem->collidesWithItem(myEndItem))
         return;

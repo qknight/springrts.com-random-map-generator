@@ -24,15 +24,15 @@ DataPort::DataPort(int portType, int portDirection, int portNumber) {
 }
 
 DataPort::~DataPort() {
-//   qDebug() << __PRETTY_FUNCTION__;
-  // remove all connections
-  foreach(DataAbstractItem* item, m_childItems) {
-    removeChild(m_childItems.indexOf(item));
-  }
-  // remove all references
-  foreach(DataAbstractItem* item, m_referencesChildItems) {
-    removeReference(m_referencesChildItems.indexOf(item));
-  }
+//     qDebug() << __PRETTY_FUNCTION__;
+    // remove all connections
+    foreach(DataAbstractItem* item, m_childItems) {
+        removeChild(m_childItems.indexOf(item));
+    }
+    // remove all references
+    foreach(DataAbstractItem* item, m_referencesChildItems) {
+        removeReference(m_referencesChildItems.indexOf(item));
+    }
 };
 
 unsigned int DataPort::getObjectType() {
@@ -52,8 +52,8 @@ unsigned int DataPort::PortNumber() {
 }
 
 void DataPort::appendChild( DataAbstractItem *child ) {
-  DataConnection* c = static_cast<DataConnection*>(child);
-  insertConnection(c);  
+    DataConnection* c = static_cast<DataConnection*>(child);
+    insertConnection(c);
 }
 
 bool DataPort::insertConnection ( DataConnection* c ) {
@@ -74,24 +74,49 @@ unsigned int DataPort::referenceCount ( ) {
 }
 
 void DataPort::removeChild ( unsigned int index ) {
-  if ( m_childItems.size() < index ) {
-    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
-    exit( 1 );
-  }
-  DataAbstractItem* child = m_childItems[index];
-  m_childItems.removeAt( index );
-  delete child;
+//     qDebug() << __PRETTY_FUNCTION__;
+    if ( m_childItems.size() < index ) {
+        qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
+        exit( 1 );
+    }
+
+    DataAbstractItem* child = m_childItems[index];
+
+    // let's not forget to remove also the reference at the other port
+    DataConnection* childConnection = static_cast<DataConnection*> (child);
+    DataPort* dstItem = static_cast<DataPort*> ( childConnection->dst() );
+    int i = dstItem->referenceChildItems().indexOf(childConnection);
+//     qDebug() << dstItem->referenceChildItems().size();
+//     qDebug() << i;
+    if (i == -1) {
+        qDebug() << __PRETTY_FUNCTION__ << "this should not happen";
+        exit(1);
+    }
+    dstItem->removeReference ( i );
+
+    m_childItems.removeAt( index );
+    delete child;
 }
 
 void DataPort::removeReference ( unsigned int index ) {
-  if ( m_referencesChildItems.size() < index ) {
-    qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
-    exit( 1 );
-  }
-  DataAbstractItem* child = m_referencesChildItems[index];
-  m_referencesChildItems.removeAt( index );
+//     qDebug() << __PRETTY_FUNCTION__;
+
+    if ( m_referencesChildItems.size() < index ) {
+        qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
+        exit( 1 );
+    }
+    DataAbstractItem* child = m_referencesChildItems[index];
+    m_referencesChildItems.removeAt( index );
+//     int i = m_referencesChildItems.indexOf(index);
+//     if (i == -1) {
+//         qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
+//         exit( 1 );
+//     }
+//
+//     m_referencesChildItems.removeAt( i );
+//     return;
 }
 
 QList<DataAbstractItem*> DataPort::referenceChildItems() const {
-  return m_referencesChildItems;
+    return m_referencesChildItems;
 }

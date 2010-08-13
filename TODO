@@ -1,6 +1,31 @@
 ========================================================================
   Model related: Adding, selecting, removing of single/multiple items:
 ========================================================================
+Q: if a module is created, Model::removeRows will have to delete 
+    - references first
+    - then outgoing connections
+    - finally the module
+A: the removeRows function must pick these elements and remove them with yet another removeRows call -> recursion
+
+Q: Model::removeRows(..) crashes when removing a module with no connections (and no ports attached), 
+   do i have to remove all ports, properties first?
+A: ports and properties are removed automagically
+
+Q: does a Port have a QPersistentModelIndex?
+A: yes, see GraphicsScene::moduleInserted(..)
+
+- the recent crashes when removing a module which has connections assigned could be fixed another way:
+ - a 'Connection' MUST NOT contain a pointer to the 'Port' class
+ - if a 'Module' is moved (the respective 'Port' is moved as well) the 'Port' notifies the 'Connection' with position updates
+ - instead of removing the connections and references in Model::removeRows, the ~Module could assign each connection
+   an invalid destination, say NULL. if a connection later detects this, it removes itself.
+
+- FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
+           especially with the halding of rootItem and QModelIndex()
+         - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
+
+- check ~Connection()/~Module() .. also ~Port()
+
 - make items removable:
  - general:
   - create shortcuts for that as 'del'-key associated with the active selection
@@ -10,6 +35,13 @@
     - implement removeModule() and removeConnection()
  - single items should be removable
  - a selection (of several different items) should be deletable
+
+
+
+
+
+
+
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
 - implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
 Q: who accesses 'module properties'?
@@ -26,11 +58,13 @@ A: a list of uses:
 - FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
          this could avoid a lot of segfaults when inserting new concepts into the code
 - property may be registered only once, fail with exit(1)!
-- implement sorting of the QTreeView based on the distance from the center of the view
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
 - concept: see assistant, the QTreeView there is basically what i want to clone
 - QTreeView: add tooltips
+- QGraphicsItem->type() is complicated in design!
+  i just want to retrive a QModelIndex i from a GraphicsItem (if there is one) this means checking for all types
+  of known QGraphicsItems as Connection, Port or Module: see GraphicsScene.cpp
 
 
 
@@ -44,6 +78,7 @@ A: a list of uses:
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
+- QStatusBar should receive messages, especially when loops are formed or connection attemps are done wrongly
 - make items selectable with:
  - all items need to be selectable
   - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)

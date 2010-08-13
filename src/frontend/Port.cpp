@@ -22,6 +22,9 @@ Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int p
 }
 
 Port::~Port() {
+//     foreach ( Connection *c, connections ) {
+//         c->suspendDrawing();
+//     }
 //     qDebug() << __PRETTY_FUNCTION__;
 }
 
@@ -50,19 +53,19 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     QBrush b;
     switch (m_portDirection) {
-     case 0:
-       b = QColor ( Qt::green );
-       break;
-      case 1:
-       b = QColor ( Qt::red );
-       break;
-      case 2:
-       b = QColor ( Qt::blue );
-       break;
-      default:
-       b = QColor ( Qt::black );
+    case 0:
+        b = QColor ( Qt::green );
+        break;
+    case 1:
+        b = QColor ( Qt::red );
+        break;
+    case 2:
+        b = QColor ( Qt::blue );
+        break;
+    default:
+        b = QColor ( Qt::black );
     }
-      
+
     painter->setBrush ( b );
     painter->setPen ( p );
     QPainterPath* mypath = new QPainterPath;

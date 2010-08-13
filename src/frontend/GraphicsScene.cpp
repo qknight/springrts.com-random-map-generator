@@ -23,7 +23,8 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
     line=NULL;
 }
 
-GraphicsScene::~GraphicsScene() {}
+GraphicsScene::~GraphicsScene() {
+}
 
 /*! a rightclick on the QGraphicsView will pop up this QMenu */
 void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ) {
@@ -67,7 +68,7 @@ void GraphicsScene::menuSelectionMade ( QAction* action ) {
         qDebug() << "Error: no view is attached to this scene, this should not happen!, exiting";
         exit ( 1 );
     }
-    
+
     QGraphicsView* view = views().first();
     // parse the position and the string created in contextMenuEvent(..)
     QList<QVariant> l = action->data().toList();
@@ -96,8 +97,8 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connect
     QPersistentModelIndex sPortIndex = connectionIndex.parent();
     QPersistentModelIndex dPortIndex = QPersistentModelIndex(model->dst(connectionIndex));
 
-    Port* srcPort = dynamic_cast<Port*> ( modelToSceenIndex ( sPortIndex ) );
-    Port* dstPort = dynamic_cast<Port*> ( modelToSceenIndex ( dPortIndex ) );
+    Port* srcPort = dynamic_cast<Port*> ( model2GraphicsItem ( sPortIndex ) );
+    Port* dstPort = dynamic_cast<Port*> ( model2GraphicsItem ( dPortIndex ) );
 
     if (srcPort == NULL) {
         qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
@@ -118,6 +119,19 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connect
     return connection;
 }
 
+
+bool GraphicsScene::connectionRemoved( QPersistentModelIndex  item  ) {
+    qDebug() << __PRETTY_FUNCTION__;
+    QGraphicsItem* cItem = model2GraphicsItem ( item );
+    if ( cItem == NULL ) {
+        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+        // FIXME after testing this can be changed to return instaead of exit
+        exit ( 1 );
+    }
+    delete cItem;
+    return true;
+}
+
 QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 //   qDebug() << __PRETTY_FUNCTION__;
     Module* module = new Module ( model, item );
@@ -133,7 +147,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
             continue;
 
         // 1. find the QGraphicsItem refered to by item
-        QGraphicsItem* graphicsItem = modelToSceenIndex(item);
+        QGraphicsItem* graphicsItem = model2GraphicsItem(item);
 
         // 2. create a new Port class object and assign it as child to the parent P
         unsigned int portDirection = model->data(child, customRole::PortDirection).toInt();
@@ -172,8 +186,8 @@ void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
 }
 
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
-//   qDebug() << __FUNCTION__;
-    QGraphicsItem* nItem = modelToSceenIndex ( item );
+    qDebug() << __PRETTY_FUNCTION__;
+    QGraphicsItem* nItem = model2GraphicsItem ( item );
     if ( nItem == NULL ) {
         qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
         // FIXME after testing this can be changed to return instaead of exit
@@ -191,9 +205,9 @@ bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
  *          -> just commit complex new items (containing also childs) in one go, using
  *             the Model code, see Model.cpp:insertModule(..) where this is done
  */
-QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) {
+QGraphicsItem* GraphicsScene::model2GraphicsItem ( QPersistentModelIndex index ) {
 //   qDebug() << "Searching for: " << index;
-    //FIXME use GraphcsItemModelExtension cast if possible not 3 times the same code!
+    //FIXME use GraphcsItemModelExtension cast if possible not 3 times the same code! (adding this case will crash the program?!)
     QList<QGraphicsItem *> m_list = items();
 //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
 //   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
@@ -205,22 +219,56 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex ( QPersistentModelIndex index ) 
             }
         }
         if ( m_list[i]->type() == DataItemType::CONNECTION ) {
-            ( ( Connection * ) m_list[i] )->index().column();
             if ( compareIndexes ( ( ( Connection * ) m_list[i] )->index(), index ) ) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "connection found";
                 return m_list[i];
             }
         }
         if ( m_list[i]->type() == DataItemType::PORT ) {
-            ( ( Port * ) m_list[i] )->index().column();
             if ( compareIndexes ( ( ( Port* ) m_list[i] )->index(), index ) ) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "port found";
                 return m_list[i];
             }
         }
     }
-//     qDebug() << __PRETTY_FUNCTION__ << "DataItemType::PROPERTY does not focus anywhere";
     return NULL;
+}
+
+/*! */
+QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphicsItem ) {
+    if ( graphicsItem->type() == DataItemType::MODULE ) {
+        QPersistentModelIndex i = ( ( Module * ) graphicsItem )->index();
+//                 qDebug() << __PRETTY_FUNCTION__ << "module found";
+        return i;
+    }
+    if ( graphicsItem->type() == DataItemType::CONNECTION ) {
+        QPersistentModelIndex i = ( ( Connection * ) graphicsItem )->index();
+//                 qDebug() << __PRETTY_FUNCTION__ << "connection found";
+        return i;
+    }
+    if ( graphicsItem->type() == DataItemType::PORT ) {
+        QPersistentModelIndex i = ( ( Port * ) graphicsItem )->index();
+//                 qDebug() << __PRETTY_FUNCTION__ << "port found";
+        return i;
+    }
+
+    return QPersistentModelIndex();
+}
+
+/*! collect all selected items, filter out items which have a QModelIndex associated
+ ** with them, finaly remove these items using the model */
+void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
+    if (keyEvent->key() == Qt::Key_Delete) {
+//         qDebug() << __PRETTY_FUNCTION__ << " delete key pressed";
+        QList<QGraphicsItem *> items = selectedItems ();
+        QList<QPersistentModelIndex> selectedModelIndexes;
+        for (int i = 0; i < items.size(); ++i) {
+            QPersistentModelIndex persistentIndex = graphicsItem2Model(items[i]);
+            if (persistentIndex.isValid())
+                selectedModelIndexes.push_back(persistentIndex);
+        }
+        model->removeRows(selectedModelIndexes);
+    }
 }
 
 bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
@@ -238,7 +286,7 @@ void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
     // because the QTreeView uses a FilterProxyModel on top of the Model to filter
     // port and connections
     QModelIndex srcIndex = index;
-    QGraphicsItem* item = modelToSceenIndex ( QPersistentModelIndex ( srcIndex ) );
+    QGraphicsItem* item = model2GraphicsItem ( QPersistentModelIndex ( srcIndex ) );
     if (item == NULL)
         return;
     // we do have only one view
@@ -303,12 +351,4 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
     QGraphicsScene::mouseReleaseEvent ( mouseEvent );
 }
 
-void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
-    if (keyEvent->key() == Qt::Key_Delete) {
-        qDebug() << "delete key pressed";
-        //FIXME: implement that
-        // for i in QGraphicsView::activeSelection() do
-        //    remove i;
-    }
-}
 

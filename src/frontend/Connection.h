@@ -31,6 +31,8 @@ public:
         { return myStartItem; }
     Port *endItem() const
         { return myEndItem; }
+    void suspendDrawing();
+
 
 
 public slots:

@@ -90,10 +90,11 @@ QModelIndex Model::parent( const QModelIndex & child ) const {
       an invalid model index, created with the empty QModelIndex() constructor.
     */
     // fall 1: parentitem fuer invalid
-//       qDebug() << "parent ";
+//     qDebug() << __PRETTY_FUNCTION__ << " executing...........";
 //  << QString("%1").arg((unsigned int) child);
 
     if ( !child.isValid() ) {
+//         qDebug() << __PRETTY_FUNCTION__ << "child is invalid";
         return QModelIndex();
     }
 //     qDebug() << "parent2or3";
@@ -102,15 +103,18 @@ QModelIndex Model::parent( const QModelIndex & child ) const {
         static_cast<DataAbstractItem*>( child.internalPointer() );
     DataAbstractItem *parentItem = childItem->parent();
 
-// fall 2: parentitem fuer rootItem
+// fall 2: parentitem for rootItem
 //   if ( parentItem == NULL )
 //     return QModelIndex();
 
-    if ( parentItem == rootItem )
+    if ( parentItem == rootItem ) {
+//         qDebug() << __PRETTY_FUNCTION__ << "valid parent found, it's the rootItem!";
         return QModelIndex();
+    }
 
-// fall 3: parentitem fuer alle anderen
+// fall 3: parentitem for all others
 //     return index(r,c,parent model index);
+//     qDebug() << __PRETTY_FUNCTION__ << "valid parent found";
     return createIndex( parentItem->row(), 0, parentItem );
 }
 
@@ -259,41 +263,79 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
     return 2;
 }
 
-//FIXME CRITICAL: implement removal of MODULEs, PORTs, CONNECTIONs
-bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
-//   qDebug() << "want to remove " << count << " item(s) beginning at row " << row;
-//     DataAbstractItem* abstractitem;
-//     if ( !parent.isValid() ) {
-//         abstractitem = rootItem;
-//     } else {
-//         abstractitem = static_cast<DataAbstractItem*>( parent.internalPointer() );
-//     }
-//
-// //   qDebug() << "The id of the object to delete is id::" << abstractitem->getId();
-//     int from_row = row;
-//     int to_row = row + count - 1;
-// //   qDebug() << "  beginRemoveRows(parent, row_first, row_last);" << from_row << " " <<  to_row;
-//     beginRemoveRows( parent, from_row, to_row );
-//     {
-//         int i = count;
-//         // FIXME deleting could be speeded up by better code design here
-//         while ( i-- )
-//             abstractitem->removeChild( row );
-//     }
-//     endRemoveRows();
-//     return true;
+bool Model::removeRows( QPersistentModelIndex item ) {
+    QList<QPersistentModelIndex> l;
+    l << item;
+    return removeRows(l);
 }
 
-bool Model::removeModule( const QModelIndex & parent ) {
-  return false;
-}
+bool Model::removeRows( QList< QPersistentModelIndex > items ) {
+    qDebug() << __PRETTY_FUNCTION__ << " removing: " << items.size() << " item(s)";
 
-bool Model::removeConnection( const QModelIndex & parent ) {
-  return false;
+    for (int i=0; i < items.size(); ++i) {
+        QPersistentModelIndex pitem = items[i];
+        if (!pitem.isValid()) {
+            qDebug() << __PRETTY_FUNCTION__ << " item is no longer valid, probably already deleted";
+            continue;
+        }
+        DataAbstractItem* item = static_cast<DataAbstractItem*>( pitem.internalPointer() );
+        if (item->getObjectType() == DataItemType::ROOT) {
+            qDebug() << __PRETTY_FUNCTION__ << "removing the ROOT item is not possible";
+            continue;
+        }
+        if (item->getObjectType() == DataItemType::PORT) {
+            qDebug() << __PRETTY_FUNCTION__ << "removing the PORT item is done removing it's parent 'module', never directly";
+            continue;
+        }
+        if (item->getObjectType() == DataItemType::PROPERTY) {
+            qDebug() << __PRETTY_FUNCTION__ << "removing the PROPERTY item is done removing it's parent 'module', never directly";
+            continue;
+        }
+        if (item->getObjectType() == DataItemType::CONNECTION) {
+            // no special preparations needed
+        }
+        if (item->getObjectType() == DataItemType::MODULE) {
+            for (int x=0; x < item->childCount(); ++x) {
+                DataAbstractItem* chi = item->childItems()[x];
+                if (chi->getObjectType() == DataItemType::PORT) {
+//                   qDebug() << "a port!";
+                    DataPort* p = static_cast<DataPort*>(chi);
+                    // 1. remove all outgoing 'connections' as OUT
+                    for (int y=0; y < p->childCount(); ++y) {
+                        qDebug() << "found a connection";
+                        DataConnection* c = static_cast<DataConnection*>(p->childItems()[y]);
+                        removeRows(QPersistentModelIndex( data2modelIndex(c)) );
+                    }
+                    // 2. remove all 'references' (incomming 'connections') as IN or MOD
+                    for (int y=0; y < p->referenceCount(); ++y) {
+                        qDebug() << "found a reference";
+                        DataConnection* c = static_cast<DataConnection*>(p->referenceChildItems()[y]);
+                        removeRows(QPersistentModelIndex( data2modelIndex(c)) );
+                    }
+                }
+            }
+        }
+
+        QModelIndex parent = pitem.parent();
+        int row = pitem.row();
+        DataAbstractItem* abstractitem;
+        if ( !parent.isValid() ) {
+            abstractitem = rootItem;
+        } else {
+            abstractitem = static_cast<DataAbstractItem*>( parent.internalPointer() );
+        }
+        beginRemoveRows( parent, row, row );
+        {
+            //crash on removing a module here. the gui code is alright but the backend code crashes
+            abstractitem->removeChild( row );
+        }
+        endRemoveRows();
+    }
+    return true;
 }
 
 bool Model::hasChildren ( const QModelIndex & parent ) const {
-//   qDebug() << "one is calling me" << __FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     if (!parent.isValid())
         return true;
     DataAbstractItem* item = static_cast<DataAbstractItem*>( parent.internalPointer() );
@@ -589,4 +631,25 @@ QModelIndex Model::dst(QPersistentModelIndex connection) {
     return index(dPortItem->row(),0 , parentModule);
 }
 
+QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
+    qDebug() << __PRETTY_FUNCTION__ ;
+
+    if (item->getObjectType() == DataItemType::ROOT)
+        return QModelIndex();
+    switch (item->getObjectType()) {
+      case DataItemType::MODULE:
+      case DataItemType::PORT:
+      case DataItemType::PROPERTY:
+      case DataItemType::CONNECTION:
+        DataAbstractItem* p = item->parent();
+        if (p == NULL) {
+            qDebug() << __PRETTY_FUNCTION__ << "p is NULL";
+            return QModelIndex();
+        }
+        return index(item->row(), 0, data2modelIndex(p));
+    }
+
+    // if everything fails:
+    return QModelIndex();
+}
 

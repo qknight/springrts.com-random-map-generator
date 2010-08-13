@@ -57,7 +57,7 @@ class DataAbstractItem {
     /*! removes a child from m_childItems */
     virtual void removeChild( unsigned int index ) = 0;
     /*! This function was introduced when I found out that we need to move the reverse connection
-        from one parent to another since we don't want to create a new reverse connection for every
+        from one parent to another, since we don't want to create a new reverse connection for every
         forward connection which changes it's destination.*/
     void setParent(DataAbstractItem *parent);
   protected:
