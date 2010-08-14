@@ -270,7 +270,7 @@ bool Model::removeRows( QPersistentModelIndex item ) {
 }
 
 bool Model::removeRows( QList< QPersistentModelIndex > items ) {
-    qDebug() << __PRETTY_FUNCTION__ << " removing: " << items.size() << " item(s)";
+//     qDebug() << __PRETTY_FUNCTION__ << " removing: " << items.size() << " item(s)";
 
     for (int i=0; i < items.size(); ++i) {
         QPersistentModelIndex pitem = items[i];
@@ -301,15 +301,15 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
 //                   qDebug() << "a port!";
                     DataPort* p = static_cast<DataPort*>(chi);
                     // 1. remove all outgoing 'connections' as OUT
-                    for (int y=0; y < p->childCount(); ++y) {
-                        qDebug() << "found a connection";
-                        DataConnection* c = static_cast<DataConnection*>(p->childItems()[y]);
+                    while(p->childCount()) {
+//                         qDebug() << "found a connection";
+                        DataConnection* c = static_cast<DataConnection*>(p->childItems().first());
                         removeRows(QPersistentModelIndex( data2modelIndex(c)) );
                     }
                     // 2. remove all 'references' (incomming 'connections') as IN or MOD
-                    for (int y=0; y < p->referenceCount(); ++y) {
-                        qDebug() << "found a reference";
-                        DataConnection* c = static_cast<DataConnection*>(p->referenceChildItems()[y]);
+                    while (p->referenceCount()) {
+//                         qDebug() << "found a reference";
+                        DataConnection* c = static_cast<DataConnection*>(p->referenceChildItems().first());
                         removeRows(QPersistentModelIndex( data2modelIndex(c)) );
                     }
                 }
@@ -632,7 +632,7 @@ QModelIndex Model::dst(QPersistentModelIndex connection) {
 }
 
 QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
-    qDebug() << __PRETTY_FUNCTION__ ;
+//     qDebug() << __PRETTY_FUNCTION__ ;
 
     if (item->getObjectType() == DataItemType::ROOT)
         return QModelIndex();

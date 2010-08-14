@@ -1,3 +1,9 @@
+2010-08-14
+ - fixed a bug where removing of a module which has two outgoing connections (from the same output) 
+   will crash the program 
+   -> the problem was in Model::removeRows(..) where a for-loop was iterating over a shrinking container, 
+      code was replaced by 'while(container.size()) {..}' statement
+
 2010-08-13
  - removing of items from the QGraphicsScene/QGraphicsView is implemented:
       classes which were change in order to make removeRows work:

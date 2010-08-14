@@ -40,7 +40,7 @@ unsigned int DataRoot::getObjectType() {
 }
 
 void DataRoot::removeChild( unsigned int index ) {
-  qDebug() << __PRETTY_FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
   if ( m_childItems.size() < index ) {
     qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: child item not found";
     exit( 1 );

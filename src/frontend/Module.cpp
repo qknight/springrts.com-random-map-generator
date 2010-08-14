@@ -28,7 +28,7 @@ Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), Gra
 }
 
 Module::~Module() {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
 }
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {

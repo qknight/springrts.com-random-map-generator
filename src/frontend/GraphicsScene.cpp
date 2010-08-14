@@ -119,9 +119,8 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connect
     return connection;
 }
 
-
 bool GraphicsScene::connectionRemoved( QPersistentModelIndex  item  ) {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     QGraphicsItem* cItem = model2GraphicsItem ( item );
     if ( cItem == NULL ) {
         qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
@@ -186,7 +185,7 @@ void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
 }
 
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     QGraphicsItem* nItem = model2GraphicsItem ( item );
     if ( nItem == NULL ) {
         qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;

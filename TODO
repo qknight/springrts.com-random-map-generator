@@ -1,18 +1,15 @@
 ========================================================================
   Model related: Adding, selecting, removing of single/multiple items:
 ========================================================================
-Q: if a module is created, Model::removeRows will have to delete 
-    - references first
-    - then outgoing connections
-    - finally the module
-A: the removeRows function must pick these elements and remove them with yet another removeRows call -> recursion
+- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
+       however: if the second output usage is removed one can connect the input ports as expected, later the second output
+                can be connected again...?!
+       - this fails silently, create a debug message
 
-Q: Model::removeRows(..) crashes when removing a module with no connections (and no ports attached), 
-   do i have to remove all ports, properties first?
-A: ports and properties are removed automagically
-
-Q: does a Port have a QPersistentModelIndex?
-A: yes, see GraphicsScene::moduleInserted(..)
+- refactor backend: 
+  - it would be good if one only needs to remove a connection. then the ~DataConnection will remove itself from:
+   - the parent (port)
+   - the reference (port)
 
 - the recent crashes when removing a module which has connections assigned could be fixed another way:
  - a 'Connection' MUST NOT contain a pointer to the 'Port' class
@@ -26,15 +23,8 @@ A: yes, see GraphicsScene::moduleInserted(..)
 
 - check ~Connection()/~Module() .. also ~Port()
 
-- make items removable:
- - general:
-  - create shortcuts for that as 'del'-key associated with the active selection
-   - QTreeView:    (not implemented yet)
-   - GraphicsView: skeletion for key input done
-   - Model.cpp
-    - implement removeModule() and removeConnection()
- - single items should be removable
- - a selection (of several different items) should be deletable
+
+
 
 
 
@@ -135,6 +125,10 @@ GraphicsView:
  - (the Connection looks nice already) but is tricky to select as the area is 1px
 - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
 - add icons to the QMenu for categories as well as for single modules
+
+
+
+
 
 
 
