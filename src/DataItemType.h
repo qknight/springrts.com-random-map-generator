@@ -4,7 +4,7 @@
 /*! this struct is important for the backend and frontend*/
 namespace DataItemType {
   enum DataItemType {
-    ROOT,
+    ROOT = 65537,
     MODULE,
     PROPERTY,
     PORT,

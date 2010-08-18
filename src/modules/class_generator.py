@@ -44,19 +44,6 @@ Transformer Turbulence          1 0 1
 Spring Mapgenerator             1 0 0
 """
 
-#myClassName="Perlin"
-#myCategoryName="Generator"
-#myModuleName=myCategoryName + "::" + myClassName 
-#myIFNDEF=myCategoryName.upper() + "_" + myClassName.upper() + "__HH"
-#
-#portIN=1
-#portMOD=1
-#portOUT=3
-
-
-
-
-
 myclass_h="""
 #ifndef $MYIFNDEF
 #define $MYIFNDEF
@@ -81,12 +68,10 @@ public:
 #endif
 """
 
-
+# testing code for the .h creation
 #t = Template(myclass_h)
 #s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myModuleName, MYIFNDEF=myIFNDEF)
 #print s
-
-
 
 myclass_cpp="""
 #include "$MYMODULENAME.h"
@@ -107,13 +92,12 @@ QString $MYCLASS::identify() {
     return ID;
 }
 """
-
-
+# testing code for the .cpp creation
 #t = Template(myclass_cpp)
 #s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myClassName,IN=portIN,MOD=portMOD,OUT=portOUT)
 #print s
 
-
+# this code will create directories, place cpp and h files into these directories
 newlines=modules.split('\n')
 for i in newlines:
  mylist=i.split()
@@ -128,24 +112,23 @@ for i in newlines:
   t = Template(myclass_h)
   s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myModuleName, MYIFNDEF=myIFNDEF)
   #print s
+  
+  # creating the directory for the module, based on it's class
   if not os.path.exists(myCategoryName.lower()):
    os.mkdir(myCategoryName.lower(), 0777)
   print "modules/" + myCategoryName.lower() + "/" + myClassName + ".cpp"
+  
+  # creating the .cpp file
   f = open(myCategoryName.lower() + "/" + myClassName + ".cpp", 'w')
   t = Template(myclass_cpp)
   s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myClassName,IN=portIN,MOD=portMOD,OUT=portOUT)
   f.write(s)
+  
+  # creating the .h file
   f.close()
   f = open(myCategoryName.lower() + "/" + myClassName + ".h", 'w')
   t = Template(myclass_h)
   s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myModuleName, MYIFNDEF=myIFNDEF)
   f.write(s)
   f.close()
-
-
-
-
-
-
-
-
+  

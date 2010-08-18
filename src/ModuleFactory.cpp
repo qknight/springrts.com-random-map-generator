@@ -39,12 +39,12 @@ bool ModuleFactory::UnregisterModule(QString ModuleId) {
     return loadableModules.remove(ModuleId) == 1;
 }
 
-// private
-void ModuleFactory::createModule(QString ModuleID/*, QPoint pos*/) {
-    CreateModule(ModuleID/*, pos*/);
+// protected
+void ModuleFactory::createModule(QString ModuleID) {
+    CreateModule(ModuleID);
 }
 
-// public
+// private
 DataAbstractModule* ModuleFactory::CreateModule(QString ModuleID) {
     CallbackMap::const_iterator i = loadableModules.find(ModuleID);
     if (i != loadableModules.end()) {
@@ -55,7 +55,7 @@ DataAbstractModule* ModuleFactory::CreateModule(QString ModuleID) {
         return z;
     }
     // FIXME this is just for debugging, could be removed later
-    qDebug() << __PRETTY_FUNCTION__ <<" weird error: can't find ModuleID to load a new module";
+    qDebug() << __PRETTY_FUNCTION__ <<" weird error: can't find ModuleID " << ModuleID << " to load a new module";
     return NULL;
 }
 

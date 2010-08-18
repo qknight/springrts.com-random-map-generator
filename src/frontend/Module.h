@@ -28,7 +28,6 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
 public:
     Module(Model* model, QPersistentModelIndex index);
     ~Module();
-//     Port* resolvePort(int portType, int portNumber);
 
 private:
     void createLayout();
@@ -41,10 +40,7 @@ private:
     {
         return DataItemType::MODULE;
     }
-//     void createPorts(Model* model, QPersistentModelIndex item);
 
-
-//     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void updateData();

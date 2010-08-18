@@ -28,25 +28,26 @@ Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), Gra
 }
 
 Module::~Module() {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
 }
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
+    Port* p;
     switch (change) {
-    case QGraphicsItem::ItemPositionChange:
-//         qDebug() << "QGraphicsItem::ItemPositionChange";
-        break;
     case QGraphicsItem::ItemPositionHasChanged:
-//         qDebug() << "QGraphicsItem::ItemPositionHasChanged";
-        oldPosition = value.toPoint();
+        // this is used to sync the module position in the GraphicsView with the model data
         setModelData(oldPosition, customRole::PosRole);
-        break;
-    case QGraphicsItem::ItemSceneChange:
-//         createLayout();
-        m_pos =  modelData ( customRole::PosRole ).toPoint();
-        break;
-    case QGraphicsItem::ItemScenePositionHasChanged:
-//       qDebug() << "QGraphicsItem::ItemScenePositionHasChanged";
+    case QGraphicsItem::ItemPositionChange:
+        foreach ( QGraphicsItem *g, childItems()) {
+            if (g->type() == DataItemType::PORT) {
+                qDebug() << __PRETTY_FUNCTION__ << "port->updateConnections()";
+                p = qgraphicsitem_cast<Port*> ( g );
+                if (p == NULL)
+                    qDebug() << __PRETTY_FUNCTION__ << "the child port is not there anymore, is it?";
+                else
+                    p->updateConnections();
+            }
+        }
         break;
     default:
         break;
@@ -63,8 +64,8 @@ QRectF Module::boundingRect() const {
 void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     if (isSelected()) {
         painter->save();
-        QBrush b(QColor(Qt::red));
-        painter->setBrush(b);
+        QPen p = QPen ( QColor ( "red" ), 4, Qt::DashLine );
+        painter->setPen(p);
         painter->drawRect(x, y, w, h);
         painter->restore();
     }

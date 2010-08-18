@@ -1,27 +1,34 @@
-========================================================================
-  Model related: Adding, selecting, removing of single/multiple items:
-========================================================================
+- it MUST NOT matter if a Connection or a Module is removed first (order of removal when shutting down the program)
+  but it does crash currently: probably because of Port::updateConnection() or Connection::delConnection(this);
+  both calls should only be made if the callee is still existing!
+ -> smart pointers? reference counting?
+- fix ~Model and removeRows(..)
+- what about making ~Connection and ~Module private, so that only the Model GraphicsScene could remove them?! one could
+  then remove the item based on their QModelIndex using Model::removeRows(i);
+- a resource counter using a smart pointer would really be a very nice solution to this problem...
+
+
+
+- profile drawing of items
+ - fix: Connection boundingbox and geomeryabout_to_change... needs implementation
+- fix QGraphicsItems
+ - boundingbox issues
+ - drawing could be nicer
+- remake the selection indicator for the Module 
+ - (the Connection looks nice already) but is tricky to select as the area is 1px
+
+
+
+- UserType = 65536 starts here, not a 0: fix this!
+- fix all FIXME lines in all frontend classes
+- FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
+           especially with the halding of rootItem and QModelIndex()
+         - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
 - bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
        however: if the second output usage is removed one can connect the input ports as expected, later the second output
                 can be connected again...?!
        - this fails silently, create a debug message
-
-- refactor backend: 
-  - it would be good if one only needs to remove a connection. then the ~DataConnection will remove itself from:
-   - the parent (port)
-   - the reference (port)
-
-- the recent crashes when removing a module which has connections assigned could be fixed another way:
- - a 'Connection' MUST NOT contain a pointer to the 'Port' class
- - if a 'Module' is moved (the respective 'Port' is moved as well) the 'Port' notifies the 'Connection' with position updates
- - instead of removing the connections and references in Model::removeRows, the ~Module could assign each connection
-   an invalid destination, say NULL. if a connection later detects this, it removes itself.
-
-- FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
-           especially with the halding of rootItem and QModelIndex()
-         - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
-
-- check ~Connection()/~Module() .. also ~Port()
+       - this bug is in Model::insertConnection(..) for sure
 
 
 
@@ -31,7 +38,11 @@
 
 
 
-
+=================================================================================
+  Model related: Adding, selecting, changing, removing of single/multiple items:
+=================================================================================
+- CTRL+A should select all QGraphicsItems
+- QTreeView is not expanded when loading modules via Document.cpp, is that a problem for later load/save?
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
 - implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
 Q: who accesses 'module properties'?
@@ -68,6 +79,7 @@ A: a list of uses:
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
+- connection snapping, as indication when creating a new connection
 - QStatusBar should receive messages, especially when loops are formed or connection attemps are done wrongly
 - make items selectable with:
  - all items need to be selectable
@@ -118,11 +130,6 @@ GraphicsView:
    and insert it at -width()/2,-height()/2
  - item must be inserted where the contextmenu popped up first, NOT where the cursor selects the actual module
    GraphicsScene.cpp ~ line 40
-- fix QGraphicsItems
- - boundingbox issues
- - drawing could be nicer
-- remake the selection indicator for the Module 
- - (the Connection looks nice already) but is tricky to select as the area is 1px
 - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
 - add icons to the QMenu for categories as well as for single modules
 
@@ -146,10 +153,6 @@ GraphicsView:
   enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
   imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
 
-
-
-
-
 - libNoiseAbstraction (frontend) need to be created
    WARNING: a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
             an exception which we most likely don't handle which will bring down the whole program.
@@ -167,6 +170,7 @@ GraphicsView:
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 
 - integrate xml save/load functionality (add an object serializer to all nodes in the graph)
+  - load+save viewport-position in document
 - fix copyright, linking to the library .... is that possible?
 
 - integrate 3d viewer (adapted/copied from qlobby)
@@ -175,8 +179,7 @@ GraphicsView:
 
 - official release of 'the source as package'
 
-
-new moduels which might be nice:
+- new moduels which might be nice:
  - rain simulation (also known as erosion)
  - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
                 the same image, the same goes for intel vs spark)

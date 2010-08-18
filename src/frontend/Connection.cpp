@@ -2,21 +2,58 @@
 
 #include "Connection.h"
 #include <math.h>
-
-const qreal Pi = 3.14;
+#include <PortTypes.h>
 
 Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort, QGraphicsItem *parent)
         : QGraphicsLineItem(parent), GraphicsItemModelExtension(model, index)
 {
-    myStartItem = sPort;
-    myEndItem = dPort;
+//     qDebug() << __PRETTY_FUNCTION__;
+    m_sPort = sPort;
+    m_dPort = dPort;
+    
+    m_suspended = false;
+    
+    m_dPortDirection = m_dPort->portDirection();
+    m_sPortDirection = m_sPort->portDirection();
+    
+    m_sPort->addConnection(this);
+    m_dPort->addConnection(this);
+
+    updatePosition();
+    
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    setZValue(-20);
+}
+
+void Connection::suspend() {
+  m_suspended = true;
 }
 
 Connection::~Connection() {
-  //     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
+    m_sPort->delConnection(this);
+    m_dPort->delConnection(this);
+}
+
+void Connection::updatePosition() {
+    if (m_suspended)
+      return;
+    
+    QPointF n;
+    if (m_sPort->parentItem() != 0)
+        n = m_sPort->parentItem()->pos();
+    QPointF m;
+    if (m_dPort->parentItem() != 0)
+        m = m_dPort->parentItem()->pos();
+
+    srcParentPosition = n;
+    srcPosition = m_sPort->pos();
+    dstParentPosition = m;
+    dstPosition = m_dPort->pos();
+
+    update();
 }
 
 QRectF Connection::boundingRect() const {
@@ -34,72 +71,41 @@ QRectF Connection::boundingRect() const {
 }
 
 QPainterPath Connection::shape() const {
-    QPainterPath path = QGraphicsLineItem::shape();
-    path.addPolygon(arrowHead);
+    QPainterPathStroker s;
+    s.setWidth ( 10 );
+    QPainterPath p = connectionPath();
+    QPainterPath path = s.createStroke ( p );
     return path;
 }
 
-void Connection::suspendDrawing() {
-  myStartItem=NULL;
-  myEndItem = NULL;
-}
-
-void Connection::updatePosition() {
-//   if (myStartItem==NULL || myEndItem == NULL)
-//     return;
-  
-  QRectF(mapFromItem(myStartItem, 0, 0)-QPointF(120,0),mapFromItem(myEndItem, 0, 0)+QPointF(120,0));
-
-    /*    QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
-        setLine(line);*/
-}
-
-void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
-//   qDebug("redraw");
-//   if (myStartItem==NULL || myEndItem == NULL)
-//     return;
-  
-    //fixes a crash
-    if (myStartItem->collidesWithItem(myEndItem))
-        return;
-
-    QPointF n;
-    if (myStartItem->parentItem() != 0)
-        n = myStartItem->parentItem()->pos();
-    QPointF m;
-    if (myEndItem->parentItem() != 0)
-        m = myEndItem->parentItem()->pos();
-
-    QPointF beginPoint = myEndItem->pos()+m;
-    QPointF endPoint = myStartItem->pos()+n;
-
-    // FIXME: the next two lines are needed since the drawing has a bug (wrong boundingbox ...)
-    //        if that is fixed, the next two lines can be removed
-    QLineF z = QLineF(beginPoint, endPoint);
-    setLine(z);
-
+QPainterPath Connection::connectionPath() const {
+    QPointF beginPoint = dstParentPosition + dstPosition;
+    QPointF endPoint = srcParentPosition + srcPosition;
+    
     int stretch= qAbs(0.6 * -(beginPoint.x()-endPoint.x()));
     QPainterPath myPath(QPoint(beginPoint.x(),beginPoint.y()));
     QPointF xPoint;
 
-    // either draw input or output ports (where lines go in horizontally)
-    // or draw modputs (where outputs are drawn downwards)
-    //FIXME fixed port direction is bad
-    if (myEndItem->portDirection() != 1)
+    // draw modput connections (drawn downwards)
+    if (m_dPortDirection != PortDirection::MOD)
         xPoint = beginPoint-QPoint(stretch,0);
+    // draw input or output connection (horizontally orientation)
     else
         xPoint = beginPoint-QPoint(0,-stretch);
     myPath.cubicTo(xPoint,
                    endPoint+QPoint(stretch,0),
                    QPoint(endPoint.x(),endPoint.y()));
-                   
-    painter->drawPath(myPath);
-    
-    // if the connection is selected
+    return myPath;
+}
+
+void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+    QPen p = QPen ( QColor ( "red" ), 4, Qt::DashLine );
+    painter->drawPath ( connectionPath() );
     if ( isSelected() ) {
-        painter->setPen ( QPen ( QColor ( "red" ), 4, Qt::DashLine ) );
-        painter->drawPath ( myPath );
+        painter->setPen ( p );
     }
+
+    painter->drawPath ( connectionPath() );
 }
 
 void Connection::updateData() {

@@ -136,6 +136,8 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
     Module* module = new Module ( model, item );
     addItem ( module );
 
+    // FIXME: can this code be placed into Module.cpp::Module()?
+    //        probably NO since it uses GraphicsScene::model2GraphicsItem(..)
     int child_count = model->rowCount(item);
     int in=0, mod=0, out=0;
     for (int i = 0; i < child_count; ++i) {

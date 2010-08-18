@@ -1,3 +1,17 @@
+2010-08-17
+ - WARNING: when quitting the program it will crash if at least one connection exists
+ - selection of Modules do look better now
+ - selecting a Connection is now possible (was very tricky before to click the right pixel) as the connection has 
+   a wider range where a selection can be triggered
+ - fixed some code where 0,1,2.. was used instead of PortDirection::OUT or similar
+ - removing a Module via Model::removeRows(..) is specified as:
+   - first: remove all outgoing connections (Connection)
+   - second: remove all references (Connection)
+   - finally: remove the Module (Module)
+ - removing a Connection via the Model::removeRows(..) is specified as: 
+   - when ~Connection is called, Connection c must remove the updatereference at both attached Ports, then remove it
+ - Connection do register on both Port(s), so that Port::updateConnection() will trigger Connection::update()
+
 2010-08-14
  - fixed a bug where removing of a module which has two outgoing connections (from the same output) 
    will crash the program 
@@ -7,7 +21,7 @@
 2010-08-13
  - removing of items from the QGraphicsScene/QGraphicsView is implemented:
       classes which were change in order to make removeRows work:
-      Model::removeRows(..)       
+      Model::removeRows(..)
       |-DataAbstractItem
       | |-DataRoot
       | |-DataAbstractModule

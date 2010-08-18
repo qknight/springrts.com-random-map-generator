@@ -42,8 +42,9 @@ Model::Model() {
 }
 
 Model::~Model() {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     // we assume that if this function is called, no views are attached anymore
+//     removeRows(index(0,0, QModelIndex()));
     delete static_cast<DataRoot*> (rootItem);
 }
 
@@ -280,7 +281,13 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
         }
         DataAbstractItem* item = static_cast<DataAbstractItem*>( pitem.internalPointer() );
         if (item->getObjectType() == DataItemType::ROOT) {
-            qDebug() << __PRETTY_FUNCTION__ << "removing the ROOT item is not possible";
+            qDebug() << __PRETTY_FUNCTION__ << "removing the ROOT item";
+            while (item->childCount()) {
+//                         qDebug() << "found a connection";
+                DataAbstractItem* z = item->childItems().first();
+                DataAbstractModule* m = static_cast<DataAbstractModule*>(z);
+                removeRows(QPersistentModelIndex( data2modelIndex(m)) );
+            }
             continue;
         }
         if (item->getObjectType() == DataItemType::PORT) {
@@ -301,7 +308,7 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
 //                   qDebug() << "a port!";
                     DataPort* p = static_cast<DataPort*>(chi);
                     // 1. remove all outgoing 'connections' as OUT
-                    while(p->childCount()) {
+                    while (p->childCount()) {
 //                         qDebug() << "found a connection";
                         DataConnection* c = static_cast<DataConnection*>(p->childItems().first());
                         removeRows(QPersistentModelIndex( data2modelIndex(c)) );
@@ -637,10 +644,10 @@ QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
     if (item->getObjectType() == DataItemType::ROOT)
         return QModelIndex();
     switch (item->getObjectType()) {
-      case DataItemType::MODULE:
-      case DataItemType::PORT:
-      case DataItemType::PROPERTY:
-      case DataItemType::CONNECTION:
+    case DataItemType::MODULE:
+    case DataItemType::PORT:
+    case DataItemType::PROPERTY:
+    case DataItemType::CONNECTION:
         DataAbstractItem* p = item->parent();
         if (p == NULL) {
             qDebug() << __PRETTY_FUNCTION__ << "p is NULL";
