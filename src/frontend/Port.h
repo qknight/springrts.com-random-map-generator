@@ -33,8 +33,8 @@ public:
                QWidget *widget);
     QRectF boundingRect() const;
     
-    void addConnection(Connection* c);
-    void delConnection(Connection* c);
+    void addReference(Connection* c);
+    void delReference(Connection* c);
     // -> see DataItemType.h
     int portType();
     int portNumber();

@@ -1,13 +1,47 @@
-- it MUST NOT matter if a Connection or a Module is removed first (order of removal when shutting down the program)
-  but it does crash currently: probably because of Port::updateConnection() or Connection::delConnection(this);
-  both calls should only be made if the callee is still existing!
- -> smart pointers? reference counting?
-- fix ~Model and removeRows(..)
-- what about making ~Connection and ~Module private, so that only the Model GraphicsScene could remove them?! one could
-  then remove the item based on their QModelIndex using Model::removeRows(i);
-- a resource counter using a smart pointer would really be a very nice solution to this problem...
+===========================================================================
+   why QGraphicsItem(s) do need direct access to each other sometimes
+===========================================================================
+   the x,y position of a module is stored in the module property (backend) and is important for the QGraphicsScene/QGraphicsView basically.
+   when talking about Qt MVC the Model translates backend items into frontend items. one backend item may have several frontend items.
+
+   however, when moving a module using a drag'n'drop operation in the QGraphicsView the connections are redrawn immediately. this helps
+   to create a good looking arrangement of items as the drawing happens as fast as possible - realtime. it is important to note that the model
+   is not used while moving the item and therefore the graphical representation (frontend) and the acctual module (backend) are out of
+   sync. this changes when the drag'n'drop operation is finished using the 'QGraphicsItem::ItemPositionHasChanged'-signal which will 
+   write the new x,y coordinate to the backend immediately.
+   
+   altough it seems wise to do so, at least regarding the performance increase, it can result in pitfalls as it partially breaks the
+   MVC pattern, which basically says: a graphical representation (a frontend item as a module or connection) may not read data from 
+   another source than the model. since updating the connection depends on the position change information of a module (both frontend items)
+   we break that rule by using another frontend item (the module) to be accessed by a connection and vice versa.
+
+   the problem now is: how to solve the frontend dependancies without adding too much code and making the process of further code changes
+   more error phrone.
+
+   there are a few different ways:
+   - slow: always use scene->items().contains(myItem) before acutally using that 'myItem'. this check would only check if that particular
+     frontend item exists, before using it.
+
+   - all frontend items could implement an 'reference counter' using smart pointers. the object exists until the last reference is removed
+
+   - frontend items do register or unregister their references manually:
+     this can be very complex and error phrone [CURRENTLY IMPLEMENTED]
+
+   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
+
+   problem viewed from the (frontend) module side:
+     onModuleMove: foreach(module-port(s)-connection(s), Connection* c) c->updatePosition();
+
+    I if a connection is removed, it has to inform the port to not request update(); anymore
+   II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
+     
 
 
+
+
+- fix: ~Model and removeRows(..)
+  
+- use QGraphicsPathItem
 
 - profile drawing of items
  - fix: Connection boundingbox and geomeryabout_to_change... needs implementation
@@ -17,7 +51,7 @@
 - remake the selection indicator for the Module 
  - (the Connection looks nice already) but is tricky to select as the area is 1px
 
-
+- remove QAbstractItemView class but keep the interface
 
 - UserType = 65536 starts here, not a 0: fix this!
 - fix all FIXME lines in all frontend classes

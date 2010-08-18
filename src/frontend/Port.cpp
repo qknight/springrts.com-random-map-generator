@@ -23,6 +23,9 @@ Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int p
 
 Port::~Port() {
     qDebug() << __PRETTY_FUNCTION__;
+    foreach ( Connection *c, connections ) {
+        c->suspend(this);
+    }
 // a Port MUST NOT contain childItems (connections) when being removed, Model::removeRows(..) should have removed already
   if (childItems().size()) {
     qDebug() << __PRETTY_FUNCTION__ << " CRITICAL ERROR: ~Port() removed, while connections are still existing";

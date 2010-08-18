@@ -1,3 +1,7 @@
+2010-08-18
+ - fixed the crash issue. see the first paragraph in TODO which discusses the issue
+   at least it does not crash anymore
+
 2010-08-17
  - WARNING: when quitting the program it will crash if at least one connection exists
  - selection of Modules do look better now

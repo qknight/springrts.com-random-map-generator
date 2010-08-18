@@ -11,13 +11,14 @@ Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, P
     m_sPort = sPort;
     m_dPort = dPort;
     
-    m_suspended = false;
+    m_suspendsrcPort = false;
+    m_suspenddstPort = false;
     
     m_dPortDirection = m_dPort->portDirection();
     m_sPortDirection = m_sPort->portDirection();
     
-    m_sPort->addConnection(this);
-    m_dPort->addConnection(this);
+    m_sPort->addReference(this);
+    m_dPort->addReference(this);
 
     updatePosition();
     
@@ -27,19 +28,26 @@ Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, P
     setZValue(-20);
 }
 
-void Connection::suspend() {
-  m_suspended = true;
+void Connection::suspend(Port* p) {
+  if (p == m_sPort)
+   m_suspendsrcPort = true;
+  if (p == m_dPort)
+    m_suspenddstPort = true;
 }
 
 Connection::~Connection() {
     qDebug() << __PRETTY_FUNCTION__;
-    m_sPort->delConnection(this);
-    m_dPort->delConnection(this);
+    if (!m_suspendsrcPort)
+      m_sPort->delReference(this);
+    if (!m_suspenddstPort)
+      m_dPort->delReference(this);
 }
 
 void Connection::updatePosition() {
-    if (m_suspended)
+    if (m_suspendsrcPort || m_suspenddstPort)
       return;
+
+    prepareGeometryChange ();
     
     QPointF n;
     if (m_sPort->parentItem() != 0)

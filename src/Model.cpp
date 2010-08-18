@@ -282,12 +282,12 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
         DataAbstractItem* item = static_cast<DataAbstractItem*>( pitem.internalPointer() );
         if (item->getObjectType() == DataItemType::ROOT) {
             qDebug() << __PRETTY_FUNCTION__ << "removing the ROOT item";
-            while (item->childCount()) {
-//                         qDebug() << "found a connection";
-                DataAbstractItem* z = item->childItems().first();
-                DataAbstractModule* m = static_cast<DataAbstractModule*>(z);
-                removeRows(QPersistentModelIndex( data2modelIndex(m)) );
-            }
+//             while (item->childCount()) {
+// //                         qDebug() << "found a connection";
+//                 DataAbstractItem* z = item->childItems().first();
+//                 DataAbstractModule* m = static_cast<DataAbstractModule*>(z);
+//                 removeRows(QPersistentModelIndex( data2modelIndex(m)) );
+//             }
             continue;
         }
         if (item->getObjectType() == DataItemType::PORT) {

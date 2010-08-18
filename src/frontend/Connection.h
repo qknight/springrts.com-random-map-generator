@@ -27,7 +27,7 @@ public:
         myColor = color;
     }
     void updatePosition();
-    void suspend();
+    void suspend(Port* p);
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0);
@@ -44,7 +44,8 @@ private:
     QPointF dstPosition;
     int m_dPortDirection;
     int m_sPortDirection;
-    bool m_suspended;
+    bool m_suspendsrcPort;
+    bool m_suspenddstPort;
 };
 
 #endif
