@@ -1,3 +1,36 @@
+- QTreeView does not show anything!
+
+- fix: ~Model and removeRows(..) for rootItem
+  
+- use QGraphicsPathItem
+
+- profile drawing of items
+ - fix: Connection boundingbox and geomeryabout_to_change... needs implementation
+- fix QGraphicsItems
+ - boundingbox issues
+ - drawing could be nicer
+
+- remove QAbstractItemView class but keep the interface
+
+- fix all FIXME lines in all frontend classes
+- FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
+           especially with the halding of rootItem and QModelIndex()
+         - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
+- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
+       however: if the second output usage is removed one can connect the input ports as expected, later the second output
+                can be connected again...?!
+       - this fails silently, create a debug message
+       - this bug is in Model::insertConnection(..) for sure
+
+
+
+
+
+
+
+
+
+
 ===========================================================================
    why QGraphicsItem(s) do need direct access to each other sometimes
 ===========================================================================
@@ -35,37 +68,6 @@
     I if a connection is removed, it has to inform the port to not request update(); anymore
    II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
      
-
-
-
-
-- fix: ~Model and removeRows(..) for rootItem
-  
-- use QGraphicsPathItem
-
-- profile drawing of items
- - fix: Connection boundingbox and geomeryabout_to_change... needs implementation
-- fix QGraphicsItems
- - boundingbox issues
- - drawing could be nicer
-
-- remove QAbstractItemView class but keep the interface
-
-- fix all FIXME lines in all frontend classes
-- FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
-           especially with the halding of rootItem and QModelIndex()
-         - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
-- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
-       however: if the second output usage is removed one can connect the input ports as expected, later the second output
-                can be connected again...?!
-       - this fails silently, create a debug message
-       - this bug is in Model::insertConnection(..) for sure
-
-
-
-
-
-
 
 
 

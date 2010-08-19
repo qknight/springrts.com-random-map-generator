@@ -1,4 +1,8 @@
 2010-08-19
+ - fixed a drawing issue, where a connection wasn't drawn to the propper center of the parent item. this has something to do with:
+    case QGraphicsItem::ItemPositionHasChanged:
+    case QGraphicsItem::ItemPositionChange:
+   in QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
  - WARNING: the QTreeView does not show anything: regression?!
  - when moving an Module (in QGraphicsView) the new position is stored in the Model but not yet read back (only in the constructor)
    that means when save/load is implemented the modules will be back on the correct position but if the position is altered using

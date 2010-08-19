@@ -35,7 +35,7 @@ Module::~Module() {
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
     Port* p;
     switch (change) {
-//     case QGraphicsItem::ItemPositionHasChanged:
+    case QGraphicsItem::ItemPositionHasChanged:
     case QGraphicsItem::ItemPositionChange:
         foreach ( QGraphicsItem *g, childItems()) {
             if (g->type() == DataItemType::PORT) {
