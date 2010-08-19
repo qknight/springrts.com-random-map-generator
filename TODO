@@ -1,8 +1,3 @@
-- QTreeView does not show anything!
-  see FilterProxyModel changes.
-  this bug didn't show up before as DataItemType::ROOT was actually 0. but now it is not anymore!
-- use QGraphicsPathItem
-
 - fix: ~Model and removeRows(..) for rootItem
 
 - profile drawing of items
@@ -14,6 +9,12 @@
 - remove QAbstractItemView class but keep the interface
 
 - fix all FIXME lines in all frontend classes
+
+
+- QTreeView does not show anything!
+  see FilterProxyModel changes.
+  this bug didn't show up before as DataItemType::ROOT was actually 0. but now it is not anymore!
+  what special role did have a invalid QModelIndex have in a model?!
 - FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
            especially with the halding of rootItem and QModelIndex()
          - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
@@ -22,6 +23,11 @@
                 can be connected again...?!
        - this fails silently, create a debug message
        - this bug is in Model::insertConnection(..) for sure
+       to reproduce:
+       insert perlin p1; selector s1, selector s2; connect s1.out1 to s2.in1 and s1.out1 to s2.in2, then try to connect p1 to 
+              s1.in1 and s2.put1 as well, will not work. will work if no double use of s1.out1 is made!
+       FIX is: first find similar connections as (s1.out1 - s2.in1) AND (s1.out1 - s2.in2), and then only process one of these
+       IMPORTANT: add a qDebug() statement why it does fail
 
 - creat an indication of PortType
 

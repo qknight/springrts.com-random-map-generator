@@ -5,7 +5,7 @@
 #include <PortTypes.h>
 
 Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort, QGraphicsItem *parent)
-        : QGraphicsLineItem(parent), GraphicsItemModelExtension(model, index)
+        : QGraphicsPathItem(parent), GraphicsItemModelExtension(model, index)
 {
 //     qDebug() << __PRETTY_FUNCTION__;
     m_sPort = sPort;
@@ -47,8 +47,6 @@ void Connection::updatePosition() {
     if (m_suspendsrcPort || m_suspenddstPort)
       return;
 
-    prepareGeometryChange ();
-    
     QPointF n;
     if (m_sPort->parentItem() != 0)
         n = m_sPort->parentItem()->pos();
@@ -61,26 +59,13 @@ void Connection::updatePosition() {
     dstParentPosition = m;
     dstPosition = m_dPort->pos();
 
-    update();
+    setPath(connectionPath());
 }
 
-QRectF Connection::boundingRect() const {
-    //FIXME must be done right
-//     qreal extra = (pen().width() + 20) / 2.0;
-
-    /*    return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
-                                          line().p2().y() - line().p1().y()))
-            .normalized()
-            .adjusted(-extra, -extra, extra, extra);*/
-    /*    myStartItem;
-        myEndItem;*/
-//   qDebug("TODO boundingRect, Connection");
-    return QRectF(-2000,-2000,4000,4000);
-}
-
+/*! increases the clickable range for item selection, when clicking near the line in a QGraphicsView */
 QPainterPath Connection::shape() const {
     QPainterPathStroker s;
-    s.setWidth ( 10 );
+    s.setWidth ( 20 );
     QPainterPath p = connectionPath();
     QPainterPath path = s.createStroke ( p );
     return path;

@@ -1,7 +1,7 @@
 #ifndef CONNECTION__HH
 #define CONNECTION__HH
 
-#include <QGraphicsLineItem>
+#include <QGraphicsPathItem>
 #include "Port.h"
 #include "GraphicsItemModelExtension.h"
 
@@ -10,7 +10,7 @@ class QGraphicsLineItem;
 class QRectF;
 class QPainterPath;
 
-class Connection : public QGraphicsLineItem, public GraphicsItemModelExtension {
+class Connection : public QGraphicsPathItem, public GraphicsItemModelExtension {
 public:
     Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort,
                QGraphicsItem *parent = 0);
@@ -20,7 +20,6 @@ public:
     {
         return DataItemType::CONNECTION;
     }
-    QRectF boundingRect() const;
     QPainterPath shape() const;
     void setColor(const QColor &color)
     {
@@ -37,7 +36,6 @@ private:
     Port *m_sPort;
     Port *m_dPort;
     QColor myColor;
-    QPolygonF arrowHead;
     QPointF srcParentPosition;
     QPointF srcPosition;
     QPointF dstParentPosition;
