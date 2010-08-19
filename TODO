@@ -1,8 +1,9 @@
 - QTreeView does not show anything!
+  see FilterProxyModel changes.
+  this bug didn't show up before as DataItemType::ROOT was actually 0. but now it is not anymore!
+- use QGraphicsPathItem
 
 - fix: ~Model and removeRows(..) for rootItem
-  
-- use QGraphicsPathItem
 
 - profile drawing of items
  - fix: Connection boundingbox and geomeryabout_to_change... needs implementation
@@ -22,8 +23,7 @@
        - this fails silently, create a debug message
        - this bug is in Model::insertConnection(..) for sure
 
-
-
+- creat an indication of PortType
 
 
 
@@ -76,25 +76,19 @@
 =================================================================================
 - CTRL+A should select all QGraphicsItems
 - QTreeView is not expanded when loading modules via Document.cpp, is that a problem for later load/save?
+- concept: see assistant, the QTreeView there is basically what i want to clone
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
 - implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
-Q: who accesses 'module properties'?
-A: a list of uses:
-  - write property (the same as: initial creation of a property)
-    - Module.cpp::updatePosition(..) when an item is moved from x,y to x',y'
-    - Model.cpp::insertModule(..)
-    - the modules export their properties as: Perlin would create 'frequency' and 'octave count'
-    - QTreeView (this is an editor)
-  - read property
-    - ItemView.cpp to find the x,y position to place the QGraphicsItem
-    - QTreeView (this is an editor)
 - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
 - FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
          this could avoid a lot of segfaults when inserting new concepts into the code
+
 - property may be registered only once, fail with exit(1)!
+- properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
+
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
-- concept: see assistant, the QTreeView there is basically what i want to clone
+
 - QTreeView: add tooltips
 - QGraphicsItem->type() is complicated in design!
   i just want to retrive a QModelIndex i from a GraphicsItem (if there is one) this means checking for all types
@@ -115,9 +109,6 @@ A: a list of uses:
 - connection snapping, as indication when creating a new connection
 - QStatusBar should receive messages, especially when loops are formed or connection attemps are done wrongly
 - make items selectable with:
- - all items need to be selectable
-  - adapt the connection selection from the automate project (with the wide bounding box, to make selection easier)
-   - add a transparent 70% white fat paint below a connection
  - boundingbox selection
   - set bounding box selection using a modifier key, say ctrl
 - clicking an item in the right list should focus the view of the graphicsscene over the respective item

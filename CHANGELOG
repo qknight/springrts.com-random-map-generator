@@ -1,4 +1,5 @@
 2010-08-19
+ - partial fix on the QTreeView issue, needs further fixing
  - fixed a drawing issue, where a connection wasn't drawn to the propper center of the parent item. this has something to do with:
     case QGraphicsItem::ItemPositionHasChanged:
     case QGraphicsItem::ItemPositionChange:

@@ -650,9 +650,9 @@ QModelIndex Model::dst(QPersistentModelIndex connection) {
 
 QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
 //     qDebug() << __PRETTY_FUNCTION__ ;
-
     if (item->getObjectType() == DataItemType::ROOT)
         return QModelIndex();
+    
     switch (item->getObjectType()) {
     case DataItemType::MODULE:
     case DataItemType::PORT:
@@ -660,7 +660,7 @@ QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
     case DataItemType::CONNECTION:
         DataAbstractItem* p = item->parent();
         if (p == NULL) {
-            qDebug() << __PRETTY_FUNCTION__ << "p is NULL";
+            qDebug() << __PRETTY_FUNCTION__ << "p is NULL, this is unusual";
             return QModelIndex();
         }
         return index(item->row(), 0, data2modelIndex(p));

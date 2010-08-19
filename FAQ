@@ -1,3 +1,15 @@
+Q: who accesses 'module properties'?
+A: a list of uses:
+  - write property (the same as: initial creation of a property)
+    - Module.cpp::updatePosition(..) when an item is moved from x,y to x',y'
+    - Model.cpp::insertModule(..)
+    - the modules export their properties as: Perlin would create 'frequency' and 'octave count'
+    - QTreeView (this is an editor)
+  - read property
+    - ItemView.cpp to find the x,y position to place the QGraphicsItem
+    - QTreeView (this is an editor)
+
+
 ---- workflow analysis: how to generate a map ----
 this is a guideline which helps me to define the problem i try to solve:
 
