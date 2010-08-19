@@ -35,14 +35,14 @@ DataAbstractModule::~DataAbstractModule() {
     }
 }
 
-void DataAbstractModule::setProperty(QString key, QVariant value) {
+DataProperty* DataAbstractModule::setProperty(QString key, QVariant value) {
     //search if key is already there and modify it
     for (int i = 0; i < childCount(); ++i) {
         if (childItems()[i]->getObjectType() == DataItemType::PROPERTY) {
             DataProperty* p = static_cast<DataProperty*>( childItems()[i] );
             if (p->key() == key) {
                 p->setValue(value);
-                return;
+                return p;
             }
         }
     }
@@ -50,6 +50,7 @@ void DataAbstractModule::setProperty(QString key, QVariant value) {
     DataProperty* p = new DataProperty(key, value);
     p->setParent(this);
     appendChild(p);
+    return p;
 }
 
 QVariant DataAbstractModule::property(QString key) {

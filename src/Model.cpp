@@ -42,7 +42,7 @@ Model::Model() {
 }
 
 Model::~Model() {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     // we assume that if this function is called, no views are attached anymore
 //     removeRows(index(0,0, QModelIndex()));
     delete static_cast<DataRoot*> (rootItem);
@@ -200,12 +200,14 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     if ( role == customRole::PosRole )
         if ( n->getObjectType() == DataItemType::MODULE ) {
             DataAbstractModule* m = dynamic_cast<DataAbstractModule*>(n);
+//             qDebug() << __PRETTY_FUNCTION__ << m->property("Position");
             return m->property("Position");
         }
     return QVariant();
 }
 
 bool Model::setData( const QModelIndex & index, const QVariant & value, int role ) {
+//     qDebug() << __PRETTY_FUNCTION__;
     if (!index.isValid())
         return false;
 
@@ -215,6 +217,14 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
         DataProperty* p = static_cast<DataProperty*>(item);
         p->setValue(value);
         emit dataChanged(index,index);
+        return true;
+    }
+    if (item->getObjectType() == DataItemType::MODULE && role == customRole::PosRole) {
+//         qDebug() << __PRETTY_FUNCTION__ << "customRole::PosRole " << value.toPoint();
+        DataAbstractModule* m = static_cast<DataAbstractModule*>(item);
+        DataProperty* p = m->setProperty("Position", value);
+        QModelIndex in = data2modelIndex(p);
+        emit dataChanged(in, in);
         return true;
     }
 

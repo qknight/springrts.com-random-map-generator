@@ -39,7 +39,7 @@
 
 
 
-- fix: ~Model and removeRows(..)
+- fix: ~Model and removeRows(..) for rootItem
   
 - use QGraphicsPathItem
 
@@ -48,12 +48,9 @@
 - fix QGraphicsItems
  - boundingbox issues
  - drawing could be nicer
-- remake the selection indicator for the Module 
- - (the Connection looks nice already) but is tricky to select as the area is 1px
 
 - remove QAbstractItemView class but keep the interface
 
-- UserType = 65536 starts here, not a 0: fix this!
 - fix all FIXME lines in all frontend classes
 - FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
            especially with the halding of rootItem and QModelIndex()

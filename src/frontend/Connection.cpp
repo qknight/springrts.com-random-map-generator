@@ -36,7 +36,7 @@ void Connection::suspend(Port* p) {
 }
 
 Connection::~Connection() {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     if (!m_suspendsrcPort)
       m_sPort->delReference(this);
     if (!m_suspenddstPort)

@@ -1,3 +1,4 @@
+
 //
 // C++ Implementation: Module
 //
@@ -28,19 +29,17 @@ Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), Gra
 }
 
 Module::~Module() {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
 }
 
 QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
     Port* p;
     switch (change) {
-    case QGraphicsItem::ItemPositionHasChanged:
-        // this is used to sync the module position in the GraphicsView with the model data
-        setModelData(oldPosition, customRole::PosRole);
+//     case QGraphicsItem::ItemPositionHasChanged:
     case QGraphicsItem::ItemPositionChange:
         foreach ( QGraphicsItem *g, childItems()) {
             if (g->type() == DataItemType::PORT) {
-                qDebug() << __PRETTY_FUNCTION__ << "port->updateConnections()";
+//                 qDebug() << __PRETTY_FUNCTION__ << "port->updateConnections()";
                 p = qgraphicsitem_cast<Port*> ( g );
                 if (p == NULL)
                     qDebug() << __PRETTY_FUNCTION__ << "the child port is not there anymore, is it?";
@@ -53,6 +52,18 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
         break;
     }
     return value;
+}
+
+void Module::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event ) {
+//   qDebug() << __PRETTY_FUNCTION__;
+    QPoint modelPosition = modelData(customRole::PosRole).toPoint();
+    if (modelPosition != pos()) {
+//         qDebug() << __PRETTY_FUNCTION__ << "position has changed!";
+        setModelData(pos(), customRole::PosRole);
+    } else {
+//       qDebug() << __PRETTY_FUNCTION__ << "position has NOT changed!";
+    }
+    QGraphicsItem::mouseReleaseEvent(event);
 }
 
 QRectF Module::boundingRect() const {
@@ -73,19 +84,13 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 }
 
 void Module::updateData() {
+//     qDebug() << __PRETTY_FUNCTION__;
     m_label = modelData( Qt::DisplayRole ).toString();
-
-    // a QGraphicsView may be used to move the Module. It is important to know if the move request was made
-    // by the
-    //  - QGraphicsView (which then was visualized already) or by the
-    //  - QTreeView (in this case we move the item)
-    // if not done this way this would create a loop
-    qDebug() << "FIXME: this text should show up every time a Module has moved by (dx,dy) in either cases. See if the ItemView does updateData(..) for every changed QModelIndex";
-    QPoint newPosition = modelData ( customRole::PosRole ).toPoint();
-    if (newPosition != oldPosition)
-        m_pos =  newPosition;
-
-    setPos ( m_pos );
+    QPoint modelPosition = modelData ( customRole::PosRole ).toPoint();
+//     qDebug() << __PRETTY_FUNCTION__ << modelPosition;
+    if (modelPosition != pos()) {
+        setPos( modelPosition );
+    }
 }
 
 void Module::createLayout() {

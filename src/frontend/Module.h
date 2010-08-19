@@ -28,29 +28,24 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
 public:
     Module(Model* model, QPersistentModelIndex index);
     ~Module();
-
+    void updateData();
+    
 private:
     void createLayout();
     QVector<Port*> ports;
     Model* model;
     QString m_label;
-    QPoint m_pos;
-    QPoint oldPosition;
-    int type() const
-    {
+    int type() const {
         return DataItemType::MODULE;
     }
-
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void updateData();
+    QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
+    void mouseReleaseEvent ( QGraphicsSceneMouseEvent * event );
     int w;
     int h;
     int x;
     int y;
-
-protected:
-    QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
 };
 
 #endif

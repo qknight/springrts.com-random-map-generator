@@ -1,4 +1,12 @@
+2010-08-19
+ - WARNING: the QTreeView does not show anything: regression?!
+ - when moving an Module (in QGraphicsView) the new position is stored in the Model but not yet read back (only in the constructor)
+   that means when save/load is implemented the modules will be back on the correct position but if the position is altered using
+   the QTreeView the update won't affect the QGraphicsView until a save/load cycle is done
+
 2010-08-18
+ - DataItemType now starts at 65536 which should make it compatible to be used with QGraphicsItem->type(), did work before
+   but was against the specification which could result in undefined behaviour.
  - fixed the crash issue. see the first paragraph in TODO which discusses the issue
    at least it does not crash anymore
 

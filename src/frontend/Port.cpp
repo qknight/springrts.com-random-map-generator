@@ -22,7 +22,7 @@ Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int p
 }
 
 Port::~Port() {
-    qDebug() << __PRETTY_FUNCTION__;
+//     qDebug() << __PRETTY_FUNCTION__;
     foreach ( Connection *c, connections ) {
         c->suspend(this);
     }
@@ -34,7 +34,7 @@ Port::~Port() {
 }
 
 void Port::updateConnections() {
-      qDebug() << __PRETTY_FUNCTION__;
+//       qDebug() << __PRETTY_FUNCTION__;
     foreach ( Connection *c, connections ) {
         c->updatePosition();
     }
@@ -45,8 +45,7 @@ void Port::addReference(Connection* c) {
 }
 
 void Port::delReference(Connection* c) {
-  qDebug() << __PRETTY_FUNCTION__;
-  qDebug() << connections.size();
+//   qDebug() << __PRETTY_FUNCTION__ << connections.size();
   int i = connections.removeAll(c);
 
   if (i <= 0)

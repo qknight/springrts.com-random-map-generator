@@ -41,7 +41,7 @@ public:
     int ports ( int type );
     
     QVariant property(QString key);
-    void setProperty(QString key, QVariant value);
+    DataProperty* setProperty(QString key, QVariant value);
     
 protected:
     /*! WARNING: never delete objects as for instance childItems in the structure here

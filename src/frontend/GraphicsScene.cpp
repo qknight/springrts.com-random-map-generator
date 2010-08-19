@@ -183,7 +183,14 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 
 
 void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
-    qDebug() <<__PRETTY_FUNCTION__ << " FIXME";
+    QGraphicsItem* mItem = model2GraphicsItem ( item );
+    if ( mItem == NULL ) {
+        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+        // FIXME after testing this can be changed to return instaead of exit
+        exit ( 1 );
+    }
+    Module* mod = qgraphicsitem_cast<Module *> ( mItem );
+    mod->updateData();
 }
 
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
