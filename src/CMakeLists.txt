@@ -97,6 +97,10 @@ SET( srmg_UIs
   ui/GraphicsView.ui
 )
 
+SET( srmg_RESOURCES
+  resources/resources.qrc
+)
+
 INCLUDE(${QT_USE_FILE})
 
 INCLUDE_DIRECTORIES(
@@ -126,9 +130,11 @@ INCLUDE_DIRECTORIES(
 QT4_WRAP_UI(srmg_SOURCES ${srmg_UIs})
 
 # macro QT4_WRAP_CPP(outfiles inputfile ... )
-QT4_WRAP_CPP (srmg_SOURCES ${srmg_MOC_HEADERS}) 
+QT4_WRAP_CPP (srmg_SOURCES ${srmg_MOC_HEADERS})
 
-ADD_EXECUTABLE(srmg ${srmg_SOURCES} )
+QT4_ADD_RESOURCES(srmg_SOURCES ${srmg_RESOURCES})
+
+ADD_EXECUTABLE(srmg ${srmg_SOURCES} ${srmg_RESOURCES})
 
 # -lnoise if for the external library
 # TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} "-lnoise" )

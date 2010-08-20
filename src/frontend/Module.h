@@ -14,6 +14,7 @@
 
 #include <QGraphicsItem>
 #include <QPersistentModelIndex>
+#include <QGraphicsPixmapItem>
 #include <QPainter>
 #include <QDebug>
 
@@ -31,6 +32,8 @@ public:
     void updateData();
     
 private:
+    //FIXME later remove the next line and the QGraphicsPixmapItem include
+    QGraphicsPixmapItem* icon;
     void createLayout();
     QVector<Port*> ports;
     Model* model;

@@ -29,44 +29,44 @@ GraphicsView::GraphicsView(QWidget * parent) : QGraphicsView(parent) {
 GraphicsView::~GraphicsView()
 {
 }
-void GraphicsView::mousePressEvent ( QMouseEvent * event ) {
-    if (event->button() == Qt::MidButton) {
-        x=event->x();
-        y=event->y();
-        onmove=true;
-    }
-    QGraphicsView::mousePressEvent(event);
-}
-
-void GraphicsView::mouseReleaseEvent ( QMouseEvent * event ) {
-    onmove=false;
-    QGraphicsView::mouseReleaseEvent(event);
-}
-
-void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
-    if (onmove == true) {
-        int xdiff = x - event->x();
-        int ydiff = y - event->y();
-
-        // x and y store the old values so we can compute the difference
-        x = event->x();
-        y = event->y();
-
-        QRectF v = sceneRect();
-        v.moveTo(v.x()+xdiff, v.y()+ydiff);
-        setSceneRect(v);
-// 	centerOn(v.x()+xdiff,v.y()+ydiff);
-// 	qDebug() << "you are looking at x/y = " << v.x() << " " << v.y();
-    }
-    QGraphicsView::mouseMoveEvent(event);
-
-}
-
+// void GraphicsView::mousePressEvent ( QMouseEvent * event ) {
+//     if (event->button() == Qt::MidButton) {
+//         x=event->x();
+//         y=event->y();
+//         onmove=true;
+//     }
+//     QGraphicsView::mousePressEvent(event);
+// }
+// 
+// void GraphicsView::mouseReleaseEvent ( QMouseEvent * event ) {
+//     onmove=false;
+//     QGraphicsView::mouseReleaseEvent(event);
+// }
+// 
+// void GraphicsView::mouseMoveEvent ( QMouseEvent * event ) {
+//     if (onmove == true) {
+//         int xdiff = x - event->x();
+//         int ydiff = y - event->y();
+// 
+//         // x and y store the old values so we can compute the difference
+//         x = event->x();
+//         y = event->y();
+// 
+//         QRectF v = sceneRect();
+//         v.moveTo(v.x()+xdiff, v.y()+ydiff);
+//         setSceneRect(v);
+// // 	centerOn(v.x()+xdiff,v.y()+ydiff);
+// // 	qDebug() << "you are looking at x/y = " << v.x() << " " << v.y();
+//     }
+//     QGraphicsView::mouseMoveEvent(event);
+// 
+// }
+/*
 void GraphicsView::resizeEvent(QResizeEvent* event) {
   QRectF v = sceneRect();
 //   qDebug() << v;
   setSceneRect(v.x(),v.y(),v.width(),v.height());
-}
+}*/
 
 
 

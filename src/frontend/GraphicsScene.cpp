@@ -171,7 +171,7 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
             port->moveBy(50+20*(mod++),130);
             break;
         case PortDirection::OUT:
-            port->moveBy(110,20+(out++)*40);
+            port->moveBy(130,20+(out++)*40);
             break;
         default:
             qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "no case matched";

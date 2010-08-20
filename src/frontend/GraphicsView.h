@@ -31,10 +31,10 @@ class GraphicsView : public QGraphicsView {
     bool onmove;
     int x;
     int y;
-    void mousePressEvent ( QMouseEvent * event );
-    void mouseMoveEvent( QMouseEvent * event );
-    void mouseReleaseEvent( QMouseEvent * event );
-    void resizeEvent(QResizeEvent* event);
+//     void mousePressEvent ( QMouseEvent * event );
+//     void mouseMoveEvent( QMouseEvent * event );
+//     void mouseReleaseEvent( QMouseEvent * event );
+//     void resizeEvent(QResizeEvent* event);
 };
 
 #endif // GRAPHICSVIEW_H

@@ -1,3 +1,7 @@
+2010-08-20
+ - inserted a dummy picture for the module module
+ - added a resource file, adapted the src/CMakeLists.txt to use it
+
 2010-08-19
  - Connection uses QGraphicsPathItem instead of QGraphicsLineItem
  - partial fix on the QTreeView issue, needs further fixing: see TODO

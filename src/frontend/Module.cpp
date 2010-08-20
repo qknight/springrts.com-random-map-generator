@@ -21,8 +21,11 @@ Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), Gra
     setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemSendsGeometryChanges);
     QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
     labelItem->moveBy(-15,-25);
-
-    w=100;
+    
+    //FIXME later remove the next line and the QGraphicsPixmapItem include
+    icon = new QGraphicsPixmapItem(QPixmap(":perlin.png"), this);
+    
+    w=120;
     h=120;
     x=0;
     y=0;
@@ -55,13 +58,13 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
 }
 
 void Module::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event ) {
-//   qDebug() << __PRETTY_FUNCTION__;
+  qDebug() << __PRETTY_FUNCTION__;
     QPoint modelPosition = modelData(customRole::PosRole).toPoint();
     if (modelPosition != pos()) {
-//         qDebug() << __PRETTY_FUNCTION__ << "position has changed!";
+        qDebug() << __PRETTY_FUNCTION__ << "position has changed! from" << modelPosition << " to " << pos();
         setModelData(pos(), customRole::PosRole);
     } else {
-//       qDebug() << __PRETTY_FUNCTION__ << "position has NOT changed!";
+      qDebug() << __PRETTY_FUNCTION__ << "position has NOT changed!";
     }
     QGraphicsItem::mouseReleaseEvent(event);
 }
