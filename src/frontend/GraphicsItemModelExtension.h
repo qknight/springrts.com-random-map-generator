@@ -50,7 +50,6 @@ class GraphicsItemModelExtension {
     void virtual updateData() = 0;
     int virtual type() const = 0;
     QPersistentModelIndex m_index;
-
 };
 
 #endif // GRAPHICSITEMMODELEXTENSION_H

@@ -87,6 +87,13 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
     this->loadableModuleNames=loadableModuleNames;
 }
 
+
+
+
+
+
+
+
 /*!
  * adds a graphical representation (see Connection.cpp/.h) spanning from
  * Port a to Port b (see Port.cpp/.h)
@@ -100,16 +107,13 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connect
     Port* srcPort = dynamic_cast<Port*> ( model2GraphicsItem ( sPortIndex ) );
     Port* dstPort = dynamic_cast<Port*> ( model2GraphicsItem ( dPortIndex ) );
 
-    if (srcPort == NULL) {
-        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
-        exit(1);
-    }
-    if (dstPort == NULL) {
-        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
-        exit(1);
-    }
-    if (srcPort == dstPort) {
-        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
+    if (srcPort == NULL || dstPort == NULL || srcPort == dstPort) {
+        if (srcPort == NULL)
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
+        if (dstPort == NULL)
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
+        if (srcPort == dstPort)
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
         exit(1);
     }
 
@@ -119,25 +123,13 @@ QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connect
     return connection;
 }
 
-bool GraphicsScene::connectionRemoved( QPersistentModelIndex  item  ) {
-//     qDebug() << __PRETTY_FUNCTION__;
-    QGraphicsItem* cItem = model2GraphicsItem ( item );
-    if ( cItem == NULL ) {
-        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
-        // FIXME after testing this can be changed to return instaead of exit
-        exit ( 1 );
-    }
-    delete cItem;
-    return true;
-}
-
 QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
 //   qDebug() << __PRETTY_FUNCTION__;
     Module* module = new Module ( model, item );
     addItem ( module );
 
     // FIXME: can this code be placed into Module.cpp::Module()?
-    //        probably NO since it uses GraphicsScene::model2GraphicsItem(..)
+    //        -> probably NO since it uses GraphicsScene::model2GraphicsItem(..)
     int child_count = model->rowCount(item);
     int in=0, mod=0, out=0;
     for (int i = 0; i < child_count; ++i) {
@@ -181,16 +173,16 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
     return NULL;
 }
 
-
-void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
-    QGraphicsItem* mItem = model2GraphicsItem ( item );
-    if ( mItem == NULL ) {
+bool GraphicsScene::connectionRemoved( QPersistentModelIndex  item  ) {
+//     qDebug() << __PRETTY_FUNCTION__;
+    QGraphicsItem* cItem = model2GraphicsItem ( item );
+    if ( cItem == NULL ) {
         qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
         // FIXME after testing this can be changed to return instaead of exit
         exit ( 1 );
     }
-    Module* mod = qgraphicsitem_cast<Module *> ( mItem );
-    mod->updateData();
+    delete cItem;
+    return true;
 }
 
 bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
@@ -204,6 +196,29 @@ bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
     delete nItem;
     return true;
 }
+
+void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
+    QGraphicsItem* mItem = model2GraphicsItem ( item );
+    if ( mItem == NULL ) {
+        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+        // FIXME after testing this can be changed to return instaead of exit
+        exit ( 1 );
+    }
+    Module* mod = qgraphicsitem_cast<Module *> ( mItem );
+    mod->updateData();
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*!
  * look at all items in the GraphicsScene and try to find the _one_ with the index in it
@@ -259,9 +274,16 @@ QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphic
 //                 qDebug() << __PRETTY_FUNCTION__ << "port found";
         return i;
     }
-
     return QPersistentModelIndex();
 }
+
+
+
+
+
+
+
+
 
 /*! collect all selected items, filter out items which have a QModelIndex associated
  ** with them, finaly remove these items using the model */

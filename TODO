@@ -1,8 +1,57 @@
-REFACTORING:
+superior goals:
+- the merge QGraphicsScene with QAbstractItemView's interface, then remove QAbstractItemView
+- remove branching of rowsInserted(..) to moduleInserted(..) and connectionInserted(..) and find a generic interface
+- remove branching of  rowsRemoved(..)  to moduleRemoved(..) and  connectionRemoved(..) and find a generic interface
+- remove branching of  rowsChanged(..)  to moduleUpdated(..) and  connectionUpdated(..) and find a generic interface
+
 - extend GraphicsItemModelExtension by GraphicsScene::model2GraphicsItem(..)
 - move GraphicsScene::moduleInserted(..) code which creates the port layout into Module.cpp
+- refactore both model2GraphicsItem and graphicsItem2Model
 
-- remove QAbstractItemView class but keep the interface
+- my custom QGraphicItems (as Connection/Module) must be refactored to make the new call as trivial as possible
+
+- qgraphicsItem_cast<>();
+
+- QGraphicsItems should be more or less designed to be a delegate
+
+QGraphicsItem->type() gibt einfach AbstractQGraphicsModuleBackend() dings zurueck, dann geht:
+ - updateData();
+ - int customType();
+ und mit customType kann man dann z.b. eine 'Connection' oder ein 'Module' object draus machen
+oder wenn man folgendes hat:
+ myCrazyModule* m = new myCrazyModule(gleiches wie bei Module); mit class myCrazyModule : public Module;
+ myNormalModule* nm = new myNormalModule(gleiches wie bei Module); mit class myNormalModule : public Module;
+dann kann man das wie ein Module verwenden und hat aber doch ein anderes QGraphicsItem im backend:
+weil man ja den customType() fuer den qgraphicsitem_cast verwenden kann
+
+the two constructor calls:
+ - Connection* connection = new Connection ( model, connectionIndex, srcPort, dstPort);
+ - Module* module = new Module ( model, item );
+will be extended to:
+ - Connection* connection = new Connection ( model, scene, index );
+ - Module* module = new Module ( model, scene, index );
+
+and both functions:
+ - QGraphicsItem* GraphicsScene::model2GraphicsItem ( QPersistentModelIndex index ) {
+ - QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphicsItem ) {
+will have to find a new home since they have to be accessable in both:
+ - the abstractGraphicsItem class (and)
+ - the GraphicsScene class
+
+
+
+
+
+
+
+
+
+REFACTORING:
+
+- concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
+
+- cubic_to may be hardware accelerated if i enable opengl in src/CMakeLists.txt as well as for the QGraphicsScene/*View
+
 
 - fixme: when selecting an module, and while hoovering&moving it: delete it using 'del'-key. 
          the next item will instantly port to 'x,y=0,0', when moving it, using a drag'n'drop operation
@@ -30,21 +79,64 @@ REFACTORING:
 
 
 
-andre@familiesomers.nl
-13:17 <AndreS_> Hi
-13:18 <AndreS_> I have read through both of your blogs by now...
-13:18 <AndreS_> (on using a QGV as a view for a QAIM)
-13:19 <AndreS_> What is still unclear for me, is how you model the idea of connections from your QAIM.
-13:19 <AndreS_> Also, I think your approach lacks a bit of flexibility.
-13:19 <AndreS_> Let me explain that later point:
-13:21 <AndreS_> For one: as far as I see, there is no way to use different types of GrahicsItems to represent different types of nodes.
-13:22 <AndreS_> You can obviously not use the same approach as QAIV uses (delegates), as there is only one delegate that does the drawing for a lot of items. Since your 
+13:17 <peer> Hi
+13:19 <peer> What is still unclear for me, is how you model the idea of connections from your QAIM.
+this is quite complex:
+a connection is a child of a node, and a node is a child of the root so we have 3 different types. all share a abstract base class.
+a connection is basically a pointer to another node. and the other node does also own a reference (which is not stored as a connection), so
+the reference is invisible to the model. 
+ - but when deleting either node we can see that there is either a reference or a connection. in both cases we have to do something about it.
+
+the GraphicsView visualizes that connection and the model helps to find the connections destination QModelIndex with dst(..); this way
+we can construct a Connection object knowing both parents.
+
+if you have further question, please ask. note also that the QGraphicsItem(s) do break MVC as they tend to query data not using the model but:
+ - a node updates a connection if it is moved
+ - a connection notifies a node that it is gone, when it is deleted (might not be true for the automate project but for the springrts rng mapper)
+
+bootstrapping and removing of such objects tends to be quite complex and error phrone as one has to keep in mind that objects in the gui might
+not exist yet when launching a new gui. example: a node is generated, then the connection: but dst(..) finds a QPersistentModelIndex which does
+not yet have a QGraphicsItem associated. (this is not fixed currently - in both projects)
+if i recall correctly then:
+ - automate project tries to insert all nodes, then all connections. this helps to keep object dependancies in the gui consistent
+ - springrts.com rng mapper does not have such handling yet
+
+13:19 <peer> Also, I think your approach lacks a bit of flexibility.
+13:19 <peer> Let me explain that later point:
+13:21 <peer> For one: as far as I see, there is no way to use different types of GrahicsItems to represent different types of nodes.
+13:22 <peer> You can obviously not use the same approach as QAIV uses (delegates), as there is only one delegate that does the drawing for a lot of items. Since your 
                 items are interactive objects on your graphics view, that is not going to work.
-13:23 <AndreS_> But: why not use the same approach as there is for the *editors* for item views: use a factory approach. That lets you specify what type of GraphicsItem 
+13:23 <peer> But: why not use the same approach as there is for the *editors* for item views: use a factory approach. That lets you specify what type of GraphicsItem 
                 should be used to represent what type of node in your model.
-13:24 <AndreS_> Furthermore, I find it a bit limiting that the layout is defined by properties the items in the model.
-13:25 <AndreS_> Sure, that is one way to do it, but why not make that more flexible? Why not use a separate layout manager class that provides this layout in some, 
+yes can actually do that without much trouble:
+in the gui part, just create a base class and then according to a type information create the object of your choice. in my cases i didn't need to yet.
+but if you want i can give you further hints, where to modify which code. in general this is:
+ItemView.cpp::rowsInserted(..)
+ if (data(index, myTypeRole) == freakyModule)
+    return create(freakyModule);
+ if (data(index, myTypeRole) == normalModule)
+    return create(normalModule)
+this can obviously extended by a factory
+
+
+13:24 <peer> Furthermore, I find it a bit limiting that the layout is defined by properties the items in the model.
+13:25 <peer> Sure, that is one way to do it, but why not make that more flexible? Why not use a separate layout manager class that provides this layout in some, 
                 undefined, way? The default one may just use coordinates stored in your items, but it would not be very flexible to assume items always have them...
+the layout can be adapted by a central instance. you can do so using two different approaches:
+ 1. if a new node is created then place it below the cursor (this is the default when inserting with the mouse)
+    but if a new item is inserted using the TreeView one has to find a good position for that item, which can be done by the backend
+
+ 2. there could be a button which will layout the items using a library as graphviz. the Model::layoutChange signal is the candidate there
+    as it does not require a view to remove all items but instead only changes their position. (in contrast to modelReset())
+
+please keep in mind that:
+ - qt views actually 'want' view independant coordinates of objects, this helps to have individual view(s) of the items
+ - my concept was different: i wanted a base layout for all items. 
+   -> one opens a new view the same position are used. 
+   -> BUT i wanted to be able to modify the item individually per view later on
+   -> my code IS not consistent as load/save was never implemented and therefore i got two states of object positions:
+     - the position in the backend stored/retrieved via the property/setProperty functions from QObject
+     - the altered positions in the QGraphicsView, these were never written back to the model once touched
 
 
 
@@ -191,7 +283,12 @@ GraphicsView:
     I if a connection is removed, it has to inform the port to not request update(); anymore
    II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
 
-
+   -> therefore:
+     - graphical representations must be designed in a way that they can work even when not all dependacies are meat:
+       -> creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
+          starts the drawing. 
+       -> same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
+          connection simply suspends accessing the module which is now not accessable anymore
 
 
 

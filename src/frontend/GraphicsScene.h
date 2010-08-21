@@ -85,7 +85,6 @@ Q_SIGNALS:
     /*! when a new view pops up this reset() is called to query items from the model */
     void reset();
     void CreateModuleSignal(QString, QPoint);
-
 };
 
 #endif
