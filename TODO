@@ -1,3 +1,9 @@
+issues:
+ - i could use QGraphicsItem->data() for customType() as well... think about that
+ - selection of connections does not work well?
+
+
+
 superior goals:
 - the merge QGraphicsScene with QAbstractItemView's interface, then remove QAbstractItemView
 - remove branching of rowsInserted(..) to moduleInserted(..) and connectionInserted(..) and find a generic interface
@@ -15,8 +21,9 @@ superior goals:
 - QGraphicsItems should be more or less designed to be a delegate
 
 QGraphicsItem->type() gibt einfach AbstractQGraphicsModuleBackend() dings zurueck, dann geht:
- - updateData();
+ - void updateData();
  - int customType();
+ - QPersistentModelIndex index();
  und mit customType kann man dann z.b. eine 'Connection' oder ein 'Module' object draus machen
 oder wenn man folgendes hat:
  myCrazyModule* m = new myCrazyModule(gleiches wie bei Module); mit class myCrazyModule : public Module;
@@ -38,7 +45,7 @@ will have to find a new home since they have to be accessable in both:
  - the abstractGraphicsItem class (and)
  - the GraphicsScene class
 
-
+registers automaically at objectPool, so that QPersistentModelIndex 2 QGraphicsItem can be computed quite fast
 
 
 
@@ -192,6 +199,8 @@ please keep in mind that:
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
+- drawing of the connection path: if x1 and x2 from the different coordinates are the same and y1 and y2 differ much then the
+  path looks somehow broken. it should have a nice arc or bow like shape
 - CTRL+A should select all QGraphicsItems
 - creating a connection currently is done clicking a port with a drag'n'drop operation:
   this should be changed: clicking once will change the mousecursor to a port draw operation cursor, next the line will always follow from

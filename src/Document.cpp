@@ -41,11 +41,11 @@ Document::Document() {
     //          - after the xml save/load function is implemented
     //          - additionally: this interface is not guaranteed to be stable
     QModelIndex m1 = model->insertModule("Generator::Billow",    QPoint(-200,-100));
-    QModelIndex m2 = model->insertModule("Generator::Perlin",    QPoint(-200,100));
-    QModelIndex m3 = model->insertModule("Generator::Perlin",    QPoint( 0,250));
-    QModelIndex m4 = model->insertModule("Selector::Select",     QPoint(100,0));
-    QModelIndex m5 = model->insertModule("Utils::Image" ,        QPoint( 350,50));
-    QModelIndex m6 = model->insertModule("Spring::Mapgenerator" ,QPoint( 300,250));
+//     QModelIndex m2 = model->insertModule("Generator::Perlin",    QPoint(-200,100));
+//     QModelIndex m3 = model->insertModule("Generator::Perlin",    QPoint( 0,250));
+//     QModelIndex m4 = model->insertModule("Selector::Select",     QPoint(100,0));
+//     QModelIndex m5 = model->insertModule("Utils::Image" ,        QPoint( 350,50));
+//     QModelIndex m6 = model->insertModule("Spring::Mapgenerator" ,QPoint( 300,250));
 
 //     QModelIndex m1_output1 = m1.child(model->rowCount(m1)-1,0);
 //     QModelIndex m2_output1 = m2.child(model->rowCount(m2)-1,0);
@@ -63,8 +63,8 @@ Document::Document() {
 //     model->insertConnection(m3_output1, m4_modput1);
 //     model->insertConnection(m4_output1, m5_input1);
 
-    scene->addLine(-100,0,100,0);
-    scene->addLine(0,-100,0,100);
+//     scene->addLine(-100,0,100,0);
+//     scene->addLine(0,-100,0,100);
 }
 
 Document::~Document() {

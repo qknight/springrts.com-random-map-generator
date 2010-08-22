@@ -101,6 +101,6 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     painter->drawPath ( connectionPath() );
 }
 
-void Connection::updateData() {
+void Connection::dataChanged() {
     //nothing to do here, since port(s) do not have a specific role except being connectable
 }

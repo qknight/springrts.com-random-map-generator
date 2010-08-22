@@ -43,8 +43,11 @@ public:
     void updateConnections();
 
     int orientation;
-    void updateData() {};
-    int type() const
+    void dataChanged() {};
+    int type() const {
+        return GraphicsItemModelExtension::type();
+    }
+    int customType() const
          { return DataItemType::PORT; }
 private:
     int m_portType;

@@ -1,3 +1,10 @@
+2010-08-22
+ - ISSUE: selection of 'Connections' is - again - tricky? somehow the shape() is not used?!
+ - DataItemType was extended by EXTENDEDGRAPHICSITEM
+ - Module.h, Connection.h, Port.h was extended using a generic type() return EXTENDEDGRAPHICSITEM 
+   as well as a specialized type (was was used for type() before)
+ - GraphicsScene was adapted to distinguish between EXTENDEDGRAPHICSITEM and specialized type
+
 2010-08-20
  - inserted a dummy picture for the module module
  - added a resource file, adapted the src/CMakeLists.txt to use it

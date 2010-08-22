@@ -9,6 +9,7 @@ namespace DataItemType {
     PROPERTY,
     PORT,
     CONNECTION,
+    EXTENDEDGRAPHICSITEM, // used for the QGraphicsScene
     UNKNOWN
   };
 }

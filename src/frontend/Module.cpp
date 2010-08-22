@@ -16,7 +16,7 @@
 #include <DataAbstractModule.h>
 
 Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), GraphicsItemModelExtension(model, index) {
-    updateData();
+    dataChanged();
     this->model=model;
     setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemSendsGeometryChanges);
     QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
@@ -41,13 +41,17 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
     case QGraphicsItem::ItemPositionHasChanged:
     case QGraphicsItem::ItemPositionChange:
         foreach ( QGraphicsItem *g, childItems()) {
-            if (g->type() == DataItemType::PORT) {
+          //FIXME PORT is no longer valid, needs another cast
+            if (g->type() == DataItemType::EXTENDEDGRAPHICSITEM) {
+              GraphicsItemModelExtension* eitem = dynamic_cast<GraphicsItemModelExtension*>(g);
+              if (eitem->customType() == DataItemType::PORT) {
 //                 qDebug() << __PRETTY_FUNCTION__ << "port->updateConnections()";
                 p = qgraphicsitem_cast<Port*> ( g );
                 if (p == NULL)
                     qDebug() << __PRETTY_FUNCTION__ << "the child port is not there anymore, is it?";
                 else
                     p->updateConnections();
+              }
             }
         }
         break;
@@ -86,7 +90,7 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->drawRect(x, y, w, h);
 }
 
-void Module::updateData() {
+void Module::dataChanged() {
 //     qDebug() << __PRETTY_FUNCTION__;
     m_label = modelData( Qt::DisplayRole ).toString();
     QPoint modelPosition = modelData ( customRole::PosRole ).toPoint();

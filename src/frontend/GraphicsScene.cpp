@@ -142,6 +142,11 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
         // 1. find the QGraphicsItem refered to by item
         QGraphicsItem* graphicsItem = model2GraphicsItem(item);
 
+        if (graphicsItem == NULL) {
+            qDebug() << __PRETTY_FUNCTION__ << "CRITICAL ERROR: item not found!? wth?!";
+            continue;
+        }
+
         // 2. create a new Port class object and assign it as child to the parent P
         unsigned int portDirection = model->data(child, customRole::PortDirection).toInt();
         unsigned int portType = model->data(child, customRole::PortType).toInt();
@@ -205,7 +210,7 @@ void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
         exit ( 1 );
     }
     Module* mod = qgraphicsitem_cast<Module *> ( mItem );
-    mod->updateData();
+    mod->dataChanged();
 }
 
 
@@ -229,54 +234,43 @@ void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
  *             the Model code, see Model.cpp:insertModule(..) where this is done
  */
 QGraphicsItem* GraphicsScene::model2GraphicsItem ( QPersistentModelIndex index ) {
-//   qDebug() << "Searching for: " << index;
-    //FIXME use GraphcsItemModelExtension cast if possible not 3 times the same code! (adding this case will crash the program?!)
     QList<QGraphicsItem *> m_list = items();
-//   qDebug() << "=== searching in: " << m_list.size() << " items ====";
-//   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
+//     qDebug() << __PRETTY_FUNCTION__ << "=== searching in: " << m_list.size() << " items ====";
+//     qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
     for ( int i = 0; i < m_list.size(); ++i ) {
-        if ( m_list[i]->type() == DataItemType::MODULE ) {
-            if ( compareIndexes ( ( ( Module * ) m_list[i] )->index(), index ) ) {
-//                 qDebug() << __PRETTY_FUNCTION__ << "module found";
-                return m_list[i];
-            }
-        }
-        if ( m_list[i]->type() == DataItemType::CONNECTION ) {
-            if ( compareIndexes ( ( ( Connection * ) m_list[i] )->index(), index ) ) {
-//                 qDebug() << __PRETTY_FUNCTION__ << "connection found";
-                return m_list[i];
-            }
-        }
-        if ( m_list[i]->type() == DataItemType::PORT ) {
-            if ( compareIndexes ( ( ( Port* ) m_list[i] )->index(), index ) ) {
-//                 qDebug() << __PRETTY_FUNCTION__ << "port found";
+//         qDebug() << m_list[i]->type()/* << " " << DataItemType::EXTENDEDGRAPHICSITEM*/;
+        if ( m_list[i]->type() == DataItemType::EXTENDEDGRAPHICSITEM) {
+//             qDebug() << __PRETTY_FUNCTION__ << "found a DataItemType::EXTENDEDGRAPHICSITEM";
+            GraphicsItemModelExtension* item = dynamic_cast<GraphicsItemModelExtension *> (m_list[i]);
+            if ( compareIndexes ( item->index(), index ) ) {
+//                 qDebug() << __PRETTY_FUNCTION__ << "item found";
                 return m_list[i];
             }
         }
     }
+//     qDebug() << __PRETTY_FUNCTION__ << "item NOT found";
     return NULL;
 }
 
-/*! */
+/*! TODO */
 QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphicsItem ) {
-    if ( graphicsItem->type() == DataItemType::MODULE ) {
-        QPersistentModelIndex i = ( ( Module * ) graphicsItem )->index();
-//                 qDebug() << __PRETTY_FUNCTION__ << "module found";
-        return i;
-    }
-    if ( graphicsItem->type() == DataItemType::CONNECTION ) {
-        QPersistentModelIndex i = ( ( Connection * ) graphicsItem )->index();
-//                 qDebug() << __PRETTY_FUNCTION__ << "connection found";
-        return i;
-    }
-    if ( graphicsItem->type() == DataItemType::PORT ) {
-        QPersistentModelIndex i = ( ( Port * ) graphicsItem )->index();
-//                 qDebug() << __PRETTY_FUNCTION__ << "port found";
+    if ( graphicsItem->type() == DataItemType::EXTENDEDGRAPHICSITEM ) {
+        GraphicsItemModelExtension* item = dynamic_cast<GraphicsItemModelExtension*>(graphicsItem);
+        QPersistentModelIndex i = item->index();
+//         qDebug() << __PRETTY_FUNCTION__ << "module found";
         return i;
     }
     return QPersistentModelIndex();
 }
 
+/*! TODO */
+bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
+    if ( a.row() != b.row() )
+        return false;
+    if ( a.internalPointer() != b.internalPointer() )
+        return false;
+    return true;
+}
 
 
 
@@ -301,14 +295,6 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     }
 }
 
-bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
-    if ( a.row() != b.row() )
-        return false;
-    if ( a.internalPointer() != b.internalPointer() )
-        return false;
-    return true;
-}
-
 void GraphicsScene::clearScene() {}
 
 void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
@@ -331,17 +317,24 @@ void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
 void GraphicsScene::mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 //     qDebug() << __PRETTY_FUNCTION__;
     if ( mouseEvent->button() == Qt::LeftButton )
-        if ( ( items ( mouseEvent->scenePos() ) ).count() )
-            if ( ( items ( mouseEvent->scenePos() ) ).first()->type() == DataItemType::PORT ) {
-//                 qDebug() << __PRETTY_FUNCTION__ << "CLICK";
-                QGraphicsScene::mousePressEvent ( mouseEvent );
-                line = new QGraphicsLineItem ( QLineF ( mouseEvent->scenePos(),
-                                                        mouseEvent->scenePos() ) );
-                line->setPen ( QPen ( QColor ( "RED" ), 2 ) );
-                line->setZValue ( 2000 );
-                addItem ( line );
+        if ( ( items ( mouseEvent->scenePos() ) ).count() ) {
+            // picks the first item in the clicked area
+            QGraphicsItem* item = items ( mouseEvent->scenePos() ).first();
+            if ( item->type() == DataItemType::EXTENDEDGRAPHICSITEM ) {
+                GraphicsItemModelExtension* mitem = dynamic_cast<GraphicsItemModelExtension*>(item);
+                // check if it is a PORT
+                if (mitem->customType() == DataItemType::PORT) {
+//                     qDebug() << __PRETTY_FUNCTION__ << "CLICK";
+                    QGraphicsScene::mousePressEvent ( mouseEvent );
+                    line = new QGraphicsLineItem ( QLineF ( mouseEvent->scenePos(),
+                                                            mouseEvent->scenePos() ) );
+                    line->setPen ( QPen ( QColor ( "RED" ), 2 ) );
+                    line->setZValue ( 2000 );
+                    addItem ( line );
+                }
                 return;
             }
+        }
     QGraphicsScene::mousePressEvent ( mouseEvent );
 }
 
@@ -368,14 +361,18 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
         removeItem ( line );
         delete line;
         line = 0;
-
-        if ( startItems.count() > 0 && endItems.count() > 0 &&
-                startItems.first()->type() == DataItemType::PORT &&
-                endItems.first()->type() == DataItemType::PORT ) {
-            Port *startItem = qgraphicsitem_cast<Port *> ( startItems.first() );
-            Port *endItem   = qgraphicsitem_cast<Port *> ( endItems.first() );
-
-            model->insertConnection ( startItem->index(), endItem->index() );
+        QGraphicsItem* sItem = startItems.first();
+        QGraphicsItem* eItem = endItems.first();
+        if ( startItems.count() && endItems.count() &&
+                sItem->type() == DataItemType::EXTENDEDGRAPHICSITEM &&
+                eItem->type() == DataItemType::EXTENDEDGRAPHICSITEM ) {
+            GraphicsItemModelExtension* esItem = dynamic_cast<GraphicsItemModelExtension*>(sItem);
+            GraphicsItemModelExtension* eeItem = dynamic_cast<GraphicsItemModelExtension*>(eItem);
+            if (esItem->customType() == DataItemType::PORT && eeItem->customType() == DataItemType::PORT) {
+                Port *startItem = qgraphicsitem_cast<Port *> ( sItem );
+                Port *endItem   = qgraphicsitem_cast<Port *> ( eItem );
+                model->insertConnection ( startItem->index(), endItem->index() );
+            }
         }
     }
     QGraphicsScene::mouseReleaseEvent ( mouseEvent );

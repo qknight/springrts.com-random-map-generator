@@ -36,19 +36,31 @@ class GraphicsItemModelExtension {
   friend class GraphicsScene;
   public:
     GraphicsItemModelExtension(Model* model, QPersistentModelIndex index);
+    /*! type() is used for the QGraphicsScene:
+    **  - dataChanged() -> for fast access of objects when the Model changes data 
+    **  - index() -> QPersistentModelIndex needs to be queried from such an item 
+    **  the main important thing type() is used for is that a inheriting QGraphicsItem is a 
+    **  frontend representation of a QAbstractItemModel 
+    **  WARNING: do not overwrite this type, use customType() instead */
+    const int type() const
+    {
+        return DataItemType::EXTENDEDGRAPHICSITEM;
+    }
+    /*! while type() only helps to find out that this item is related to a QPersistentModelIndex 
+    **  customType() can be used to find out to which object exactly */
+    int virtual customType() const = 0;
   protected:
     QPersistentModelIndex index();
     /*! a wrapper function for all items in the scene, so that they can call data() directly */
     QVariant modelData(  int role ) const;
     /*! a wrapper function for all items in the scene, so that they can call setData() directly */
     bool setModelData( const QVariant & value, int role = Qt::EditRole );
+    void virtual dataChanged() = 0;
   private:
     Model* model;
     /*! this function is called by the model to update the item and therefore must be implemented,
      *  it is also called from the constructor of an QGraphicsItem inheriting class to initialize
      *  the item right before the first paint() call */
-    void virtual updateData() = 0;
-    int virtual type() const = 0;
     QPersistentModelIndex m_index;
 };
 

@@ -15,8 +15,11 @@ public:
     Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort,
                QGraphicsItem *parent = 0);
     ~Connection();
-    void updateData();
-    int type() const
+    void dataChanged();
+    int type() const {
+        return GraphicsItemModelExtension::type();
+    }
+    int customType() const
     {
         return DataItemType::CONNECTION;
     }

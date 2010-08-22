@@ -29,7 +29,7 @@ class Module : public QGraphicsItem, public GraphicsItemModelExtension {
 public:
     Module(Model* model, QPersistentModelIndex index);
     ~Module();
-    void updateData();
+    void dataChanged();
     
 private:
     //FIXME later remove the next line and the QGraphicsPixmapItem include
@@ -39,6 +39,9 @@ private:
     Model* model;
     QString m_label;
     int type() const {
+        return GraphicsItemModelExtension::type();
+    }
+    int customType() const {
         return DataItemType::MODULE;
     }
     QRectF boundingRect() const;
