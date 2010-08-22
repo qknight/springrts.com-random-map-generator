@@ -20,6 +20,17 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
     this->model = model;
     connect ( &menu,SIGNAL ( triggered ( QAction* ) ),
               this, SLOT ( menuSelectionMade ( QAction* ) ) );
+              
+    // as this GraphicsScene is now somehow a QAbstractItemView, we need to connect the functionality
+    connect( model, SIGNAL(modelReset ()),
+             this, SLOT(reset()));
+    connect( model, SIGNAL(rowsInserted ( const QModelIndex & , int , int  )),
+             this, SLOT(rowsInserted ( const QModelIndex & , int , int  )));
+    connect( model, SIGNAL(rowsAboutToBeRemoved ( const QModelIndex & , int , int  )),
+             this, SLOT(rowsAboutToBeRemoved ( const QModelIndex & , int , int  )));
+    connect( model, SIGNAL(dataChanged ( const QModelIndex & , const QModelIndex &  )),
+             this, SLOT(dataChanged ( const QModelIndex & , const QModelIndex &  )));             
+              
     line=NULL;
 }
 
@@ -53,7 +64,7 @@ void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextM
             // this is the unique identifier used to create the module
             QString identifier = QString("%1::%2").arg(category).arg(moduleName);
             d << identifier;
-            // this is the position where the QMenu was created and where we put the module
+            // this is the position where the QMenu was created and where we phut the module
             d << contextMenuEvent->screenPos();
             action->setData(d);
         }
@@ -93,6 +104,104 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
 
 
 
+
+
+
+
+void GraphicsScene::reset() {
+    qDebug() << __PRETTY_FUNCTION__;
+}
+
+void GraphicsScene::rowsInserted( const QModelIndex & parent, int start, int end ) {
+//     qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
+    for ( int i = start; i <= end; ++i ) {
+        QModelIndex item = model->index( i, 0, parent );
+        switch (model->data( item, customRole::TypeRole ).toInt()) {
+        case DataItemType::MODULE:
+//             qDebug() << __FUNCTION__ << " DataItemType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
+            moduleInserted( QPersistentModelIndex( item ) );
+            break;
+        case DataItemType::CONNECTION:
+//             qDebug() << __FUNCTION__ << " DataItemType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
+            connectionInserted( QPersistentModelIndex( item ));
+            break;
+        case DataItemType::PROPERTY:
+            qDebug() << __PRETTY_FUNCTION__ << " DataProperty inserted: we ignore this currently!";
+            break;
+        default:
+            //FIXME why does that happen?!
+            qDebug() << __PRETTY_FUNCTION__ << " UNKNOWN?! " << model->data( item, customRole::TypeRole ).toInt();
+        }
+    }
+}
+
+/*! this view only visualizes modules, ports and connections (properties only indirectional) 
+**  ports are directly created when a module is inserted (not otherwise) */
+void GraphicsScene::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end ) {
+//   qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
+    for ( int i = start; i <= end; ++i ) {
+        QModelIndex item = model->index( i, 0, parent );
+        if ( model->data( item, customRole::TypeRole ).toInt() == DataItemType::MODULE )
+            moduleRemoved( QPersistentModelIndex( item ) );
+        else if ( model->data( item, customRole::TypeRole ).toInt() == DataItemType::CONNECTION )
+            connectionRemoved( QPersistentModelIndex( item ) );
+    }
+}
+
+void GraphicsScene::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
+//   qDebug() << __FUNCTION__;
+    QModelIndex tmpIndex = topLeft;
+    do {
+//     qDebug() << "dataChanged is now called()";
+        switch (model->data( tmpIndex, customRole::TypeRole ).toInt()) {
+        case DataItemType::MODULE:
+            moduleUpdated( QPersistentModelIndex( tmpIndex ) );
+            break;
+        case DataItemType::CONNECTION:
+            //not implemented, but we probably don't need that
+            break;
+        case DataItemType::PROPERTY:
+            qDebug() << __PRETTY_FUNCTION__ << " FIXME: not implemented yet for PROPERTY";
+            break;
+        default:
+            qDebug() << __PRETTY_FUNCTION__ << " didn't understand what i should be doing";
+            exit(0);
+        }
+        if (tmpIndex == bottomRight)
+            break;
+        tmpIndex = traverseTroughIndexes( tmpIndex );
+    } while ( tmpIndex.isValid() );
+}
+
+/*!
+** This algorithm traverses trough the QModelIndex hierarchy
+**  topleft -- itemA -- connection1
+**             \---- -- connection2       given the topLeft item it returns itemA
+**          -- itemB                      given itemA it returns connection1
+**             \---- -- connection1       given connection1 it returns itemB
+**          -- itemC                      ...
+**          -- itemD (bottomRight)        and so on
+**             \---- -- connection1
+**             \---- -- connection2     <- given this last item, it returns QModelIndex()
+*/
+QModelIndex GraphicsScene::traverseTroughIndexes( QModelIndex index ) {
+//   qDebug() << "  " << index.row() << " ";
+    // 1. dive deep into the structure until we found the bottom (not bottomRight)
+    QModelIndex childIndex = model->index(0,0,index);
+//   qDebug() << "step a";
+    if (childIndex.isValid())
+        return childIndex;
+
+    // 2. now traverse all elements in the lowest hierarchy
+    QModelIndex tmpIndex = model->index(index.row()+1,0,model->parent(index));//index.sibling(index.row()+1,0);
+//   qDebug() << "step b";
+    if (tmpIndex.isValid())
+        return tmpIndex;
+
+    // 3. if no more childs are found, return QModelIndex()
+//   qDebug() << "step c";
+    return QModelIndex();
+}
 
 /*!
  * adds a graphical representation (see Connection.cpp/.h) spanning from
@@ -263,7 +372,7 @@ QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphic
     return QPersistentModelIndex();
 }
 
-/*! TODO */
+/*! this implementation ignores column positions */
 bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
     if ( a.row() != b.row() )
         return false;
@@ -294,8 +403,6 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
         model->removeRows(selectedModelIndexes);
     }
 }
-
-void GraphicsScene::clearScene() {}
 
 void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
     // we need to translate the index from the FilterProxyModel into the Model

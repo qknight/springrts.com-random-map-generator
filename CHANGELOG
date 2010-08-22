@@ -1,4 +1,5 @@
 2010-08-22
+ - removed ItemView.cpp/ItemView.h and the class. the former implementation was moved to GraphicsScene
  - ISSUE: selection of 'Connections' is - again - tricky? somehow the shape() is not used?!
  - DataItemType was extended by EXTENDEDGRAPHICSITEM
  - Module.h, Connection.h, Port.h was extended using a generic type() return EXTENDEDGRAPHICSITEM 

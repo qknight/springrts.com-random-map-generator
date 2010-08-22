@@ -20,7 +20,6 @@
 #include "Document.h"
 #include "Model.h"
 #include "GraphicsScene.h"
-#include "ItemView.h"
 
 Document::Document() {
     model = new Model;
@@ -30,7 +29,6 @@ Document::Document() {
     filter->setSourceModel(model);
     
     scene = new GraphicsScene(model);
-    itemView = new ItemView(scene, model);
 
     scene->setLoadableModuleNames(model->LoadableModuleNames());
     connect(scene, SIGNAL(CreateModuleSignal(QString,QPoint)),
@@ -68,7 +66,6 @@ Document::Document() {
 }
 
 Document::~Document() {
-    delete itemView;
     delete scene;
     delete filter;
     delete model;

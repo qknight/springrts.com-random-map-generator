@@ -11,6 +11,8 @@ superior goals:
 - remove branching of  rowsChanged(..)  to moduleUpdated(..) and  connectionUpdated(..) and find a generic interface
 
 - extend GraphicsItemModelExtension by GraphicsScene::model2GraphicsItem(..)
+- the GraphicsScene needs this extension as well because clicked items should be filtered (shown only) in the QTreeView
+
 - move GraphicsScene::moduleInserted(..) code which creates the port layout into Module.cpp
 - refactore both model2GraphicsItem and graphicsItem2Model
 
@@ -46,6 +48,12 @@ will have to find a new home since they have to be accessable in both:
  - the GraphicsScene class
 
 registers automaically at objectPool, so that QPersistentModelIndex 2 QGraphicsItem can be computed quite fast
+
+
+create a blog entry and discuss the O(?) problems as:
+ - how many items can be inserted?
+ - how fast is model 2 screen index and vice versa
+ - overhead by removing/inserting of new items
 
 
 
@@ -183,9 +191,6 @@ please keep in mind that:
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
 - QTreeView: add tooltips
-- QGraphicsItem->type() is complicated in design!
-  i just want to retrive a QModelIndex i from a GraphicsItem (if there is one) this means checking for all types
-  of known QGraphicsItems as Connection, Port or Module: see GraphicsScene.cpp
 
 
 

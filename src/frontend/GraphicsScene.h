@@ -65,7 +65,19 @@ private:
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
 
 protected Q_SLOTS:
-    void clearScene();
+    /*! helper function to implement a reset call for a custom view */
+    void reset();
+    /*! helper function to implement a layoutChanged call for a custom view */
+    /*! callback which is called by the model on item insertion operations */
+    void rowsInserted( const QModelIndex & parent, int start, int end );
+    /*! callback which is called by the model on item removal operations */
+    void rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end );
+    /*! callback which is called by the model on item change operations */
+    void dataChanged( const QModelIndex & , const QModelIndex & );
+    /*! helper function to get all items between two items in a hierarchy
+     ** we have to check all items between topLeft and bottomRight
+     ** let's update all QModelIndex'es in between */
+    QModelIndex traverseTroughIndexes( QModelIndex index );
 
 private Q_SLOTS:
     /*! the current selection of items changes, for example when some nodes or
@@ -83,7 +95,6 @@ Q_SIGNALS:
     /*! helper signal, see code */
 //     void zoomFit();
     /*! when a new view pops up this reset() is called to query items from the model */
-    void reset();
     void CreateModuleSignal(QString, QPoint);
 };
 

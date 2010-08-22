@@ -27,7 +27,6 @@
 #include "FilterProxyModel.h"
 
 class GraphicsScene;
-class ItemView;
 class Model;
 
 class Document : QObject {
@@ -39,7 +38,6 @@ class Document : QObject {
   protected:
     Model* model;
     GraphicsScene* scene;
-    ItemView* itemView;
     FilterProxyModel* filter;
 
   protected Q_SLOTS:
