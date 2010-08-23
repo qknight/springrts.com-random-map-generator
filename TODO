@@ -1,14 +1,5 @@
-issues:
- - i could use QGraphicsItem->data() for customType() as well... think about that
- - selection of connections does not work well?
-
-
-
-superior goals:
-- the merge QGraphicsScene with QAbstractItemView's interface, then remove QAbstractItemView
-- remove branching of rowsInserted(..) to moduleInserted(..) and connectionInserted(..) and find a generic interface
-- remove branching of  rowsRemoved(..)  to moduleRemoved(..) and  connectionRemoved(..) and find a generic interface
-- remove branching of  rowsChanged(..)  to moduleUpdated(..) and  connectionUpdated(..) and find a generic interface
+REFACTORING:
+- remove branching of   moduleInserted(..) and connectionInserted(..) and find a generic interface
 
 - extend GraphicsItemModelExtension by GraphicsScene::model2GraphicsItem(..)
 - the GraphicsScene needs this extension as well because clicked items should be filtered (shown only) in the QTreeView
@@ -17,8 +8,6 @@ superior goals:
 - refactore both model2GraphicsItem and graphicsItem2Model
 
 - my custom QGraphicItems (as Connection/Module) must be refactored to make the new call as trivial as possible
-
-- qgraphicsItem_cast<>();
 
 - QGraphicsItems should be more or less designed to be a delegate
 
@@ -50,6 +39,53 @@ will have to find a new home since they have to be accessable in both:
 registers automaically at objectPool, so that QPersistentModelIndex 2 QGraphicsItem can be computed quite fast
 
 
+===========================================================================
+   why QGraphicsItem(s) do need direct access to each other sometimes
+===========================================================================
+   the x,y position of a module is stored in the module property (backend) and is important for the QGraphicsScene/QGraphicsView basically.
+   when talking about Qt MVC the Model translates backend items into frontend items. one backend item may have several frontend items.
+
+   however, when moving a module using a drag'n'drop operation in the QGraphicsView the connections are redrawn immediately. this helps
+   to create a good looking arrangement of items as the drawing happens as fast as possible - realtime. it is important to note that the model
+   is not used while moving the item and therefore the graphical representation (frontend) and the acctual module (backend) are out of
+   sync. this changes when the drag'n'drop operation is finished using the 'QGraphicsItem::ItemPositionHasChanged'-signal which will 
+   write the new x,y coordinate to the backend immediately.
+   
+   altough it seems wise to do so, at least regarding the performance increase, it can result in pitfalls as it partially breaks the
+   MVC pattern, which basically says: a graphical representation (a frontend item as a module or connection) may not read data from 
+   another source than the model. since updating the connection depends on the position change information of a module (both frontend items)
+   we break that rule by using another frontend item (the module) to be accessed by a connection and vice versa.
+
+   the problem now is: how to solve the frontend dependancies without adding too much code and making the process of further code changes
+   more error phrone.
+
+   there are a few different ways:
+   - slow: always use scene->items().contains(myItem) before acutally using that 'myItem'. this check would only check if that particular
+     frontend item exists, before using it.
+
+   - all frontend items could implement an 'reference counter' using smart pointers. the object exists until the last reference is removed
+
+   - frontend items do register or unregister their references manually:
+     this can be very complex and error phrone [CURRENTLY IMPLEMENTED]
+
+   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
+
+   problem viewed from the (frontend) module side:
+     onModuleMove: foreach(module-port(s)-connection(s), Connection* c) c->updatePosition();
+
+    I if a connection is removed, it has to inform the port to not request update(); anymore
+   II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
+
+   -> therefore:
+     - graphical representations must be designed in a way that they can work even when not all dependacies are meat:
+       -> creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
+          starts the drawing. 
+       -> same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
+          connection simply suspends accessing the module which is now not accessable anymore
+
+
+
+
 create a blog entry and discuss the O(?) problems as:
  - how many items can be inserted?
  - how fast is model 2 screen index and vice versa
@@ -61,33 +97,16 @@ create a blog entry and discuss the O(?) problems as:
 
 
 
-REFACTORING:
-
-- concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
-
-- cubic_to may be hardware accelerated if i enable opengl in src/CMakeLists.txt as well as for the QGraphicsScene/*View
 
 
-- fixme: when selecting an module, and while hoovering&moving it: delete it using 'del'-key. 
-         the next item will instantly port to 'x,y=0,0', when moving it, using a drag'n'drop operation
-         issue might be: when the item is removed, there is still some pos() thing going on and when the next item is moved it is
-                         moved to the previous item's position, which is QVariant().toPoint(), so 0,0
 
-- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
-       however: if the second output usage is removed one can connect the input ports as expected, later the second output
-                can be connected again...?!
-       - this fails silently, create a debug message
-       - this bug is in Model::insertConnection(..) for sure
-       to reproduce:
-       insert perlin p1; selector s1, selector s2; connect s1.out1 to s2.in1 and s1.out1 to s2.in2, then try to connect p1 to 
-              s1.in1 and s2.put1 as well, will not work. will work if no double use of s1.out1 is made!
-       FIX is: first find similar connections as (s1.out1 - s2.in1) AND (s1.out1 - s2.in2), and then only process one of these
-       IMPORTANT: add a qDebug() statement why it does fail
 
-- bug: virtual void DataPort::removeChild(unsigned int) this should not happen
 
-- FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
-         this could avoid a lot of segfaults when inserting new concepts into the code
+
+
+
+
+
 
 
 
@@ -164,7 +183,31 @@ please keep in mind that:
 
 
      
+- selection of connections does not work well?
 
+- cubic_to may be hardware accelerated if i enable opengl in src/CMakeLists.txt as well as for the QGraphicsScene/*View
+
+
+- fixme: when selecting an module, and while hoovering&moving it: delete it using 'del'-key. 
+         the next item will instantly port to 'x,y=0,0', when moving it, using a drag'n'drop operation
+         issue might be: when the item is removed, there is still some pos() thing going on and when the next item is moved it is
+                         moved to the previous item's position, which is QVariant().toPoint(), so 0,0
+
+- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
+       however: if the second output usage is removed one can connect the input ports as expected, later the second output
+                can be connected again...?!
+       - this fails silently, create a debug message
+       - this bug is in Model::insertConnection(..) for sure
+       to reproduce:
+       insert perlin p1; selector s1, selector s2; connect s1.out1 to s2.in1 and s1.out1 to s2.in2, then try to connect p1 to 
+              s1.in1 and s2.put1 as well, will not work. will work if no double use of s1.out1 is made!
+       FIX is: first find similar connections as (s1.out1 - s2.in1) AND (s1.out1 - s2.in2), and then only process one of these
+       IMPORTANT: add a qDebug() statement why it does fail
+
+- bug: virtual void DataPort::removeChild(unsigned int) this should not happen
+
+- FIXME: in functions as insertModule: add a check to the parameters (done there, but i need to check other similar functions)
+         this could avoid a lot of segfaults when inserting new concepts into the code
 
 
 =================================================================================
@@ -260,50 +303,6 @@ GraphicsView:
 
 
 
-===========================================================================
-   why QGraphicsItem(s) do need direct access to each other sometimes
-===========================================================================
-   the x,y position of a module is stored in the module property (backend) and is important for the QGraphicsScene/QGraphicsView basically.
-   when talking about Qt MVC the Model translates backend items into frontend items. one backend item may have several frontend items.
-
-   however, when moving a module using a drag'n'drop operation in the QGraphicsView the connections are redrawn immediately. this helps
-   to create a good looking arrangement of items as the drawing happens as fast as possible - realtime. it is important to note that the model
-   is not used while moving the item and therefore the graphical representation (frontend) and the acctual module (backend) are out of
-   sync. this changes when the drag'n'drop operation is finished using the 'QGraphicsItem::ItemPositionHasChanged'-signal which will 
-   write the new x,y coordinate to the backend immediately.
-   
-   altough it seems wise to do so, at least regarding the performance increase, it can result in pitfalls as it partially breaks the
-   MVC pattern, which basically says: a graphical representation (a frontend item as a module or connection) may not read data from 
-   another source than the model. since updating the connection depends on the position change information of a module (both frontend items)
-   we break that rule by using another frontend item (the module) to be accessed by a connection and vice versa.
-
-   the problem now is: how to solve the frontend dependancies without adding too much code and making the process of further code changes
-   more error phrone.
-
-   there are a few different ways:
-   - slow: always use scene->items().contains(myItem) before acutally using that 'myItem'. this check would only check if that particular
-     frontend item exists, before using it.
-
-   - all frontend items could implement an 'reference counter' using smart pointers. the object exists until the last reference is removed
-
-   - frontend items do register or unregister their references manually:
-     this can be very complex and error phrone [CURRENTLY IMPLEMENTED]
-
-   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
-
-   problem viewed from the (frontend) module side:
-     onModuleMove: foreach(module-port(s)-connection(s), Connection* c) c->updatePosition();
-
-    I if a connection is removed, it has to inform the port to not request update(); anymore
-   II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
-
-   -> therefore:
-     - graphical representations must be designed in a way that they can work even when not all dependacies are meat:
-       -> creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
-          starts the drawing. 
-       -> same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
-          connection simply suspends accessing the module which is now not accessable anymore
-
 
 
 
@@ -317,6 +316,7 @@ GraphicsView:
 ========================================================================
   General concepts to consider:
 ========================================================================
+- concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
 - Design choice:
   using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
   enable context sensitive coloring. this would be funny as one could create different effects on the same height. 

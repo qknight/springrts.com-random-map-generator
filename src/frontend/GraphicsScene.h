@@ -38,9 +38,6 @@ public:
 protected:
     QGraphicsItem* moduleInserted( QPersistentModelIndex item );
     QGraphicsItem* connectionInserted ( QPersistentModelIndex connectionIndex);
-    void moduleUpdated( QPersistentModelIndex item );
-    bool moduleRemoved( QPersistentModelIndex item );
-    bool connectionRemoved( QPersistentModelIndex  item  );
     void setLoadableModuleNames(QVector<QString> loadableModuleNames);
 
 private:

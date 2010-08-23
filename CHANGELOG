@@ -1,3 +1,6 @@
+2010-08-23
+ - removed branching of rowsRemoved(..) to moduleRemoved(..) and connectionRemoved(..). a generic interface handles that now.
+
 2010-08-22
  - removed ItemView.cpp/ItemView.h and the class. the former implementation was moved to GraphicsScene
  - ISSUE: selection of 'Connections' is - again - tricky? somehow the shape() is not used?!

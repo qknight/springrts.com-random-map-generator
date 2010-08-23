@@ -20,7 +20,7 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
     this->model = model;
     connect ( &menu,SIGNAL ( triggered ( QAction* ) ),
               this, SLOT ( menuSelectionMade ( QAction* ) ) );
-              
+
     // as this GraphicsScene is now somehow a QAbstractItemView, we need to connect the functionality
     connect( model, SIGNAL(modelReset ()),
              this, SLOT(reset()));
@@ -29,8 +29,8 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
     connect( model, SIGNAL(rowsAboutToBeRemoved ( const QModelIndex & , int , int  )),
              this, SLOT(rowsAboutToBeRemoved ( const QModelIndex & , int , int  )));
     connect( model, SIGNAL(dataChanged ( const QModelIndex & , const QModelIndex &  )),
-             this, SLOT(dataChanged ( const QModelIndex & , const QModelIndex &  )));             
-              
+             this, SLOT(dataChanged ( const QModelIndex & , const QModelIndex &  )));
+
     line=NULL;
 }
 
@@ -109,7 +109,8 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
 
 
 void GraphicsScene::reset() {
-    qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__ << "FIXME: implement me";
+    exit(1);
 }
 
 void GraphicsScene::rowsInserted( const QModelIndex & parent, int start, int end ) {
@@ -118,11 +119,11 @@ void GraphicsScene::rowsInserted( const QModelIndex & parent, int start, int end
         QModelIndex item = model->index( i, 0, parent );
         switch (model->data( item, customRole::TypeRole ).toInt()) {
         case DataItemType::MODULE:
-//             qDebug() << __FUNCTION__ << " DataItemType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
+//             qDebug() << __PRETTY_FUNCTION__ << " DataItemType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
             moduleInserted( QPersistentModelIndex( item ) );
             break;
         case DataItemType::CONNECTION:
-//             qDebug() << __FUNCTION__ << " DataItemType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
+//             qDebug() << __PRETTY_FUNCTION__ << " DataItemType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
             connectionInserted( QPersistentModelIndex( item ));
             break;
         case DataItemType::PROPERTY:
@@ -135,16 +136,23 @@ void GraphicsScene::rowsInserted( const QModelIndex & parent, int start, int end
     }
 }
 
-/*! this view only visualizes modules, ports and connections (properties only indirectional) 
+/*! this view only visualizes modules, ports and connections (properties only indirectional)
 **  ports are directly created when a module is inserted (not otherwise) */
 void GraphicsScene::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end ) {
-//   qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
+//     qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
     for ( int i = start; i <= end; ++i ) {
         QModelIndex item = model->index( i, 0, parent );
-        if ( model->data( item, customRole::TypeRole ).toInt() == DataItemType::MODULE )
-            moduleRemoved( QPersistentModelIndex( item ) );
-        else if ( model->data( item, customRole::TypeRole ).toInt() == DataItemType::CONNECTION )
-            connectionRemoved( QPersistentModelIndex( item ) );
+        switch (model->data( item, customRole::TypeRole ).toInt()) {
+          case DataItemType::MODULE:
+          case DataItemType::CONNECTION:
+            QGraphicsItem* cItem = model2GraphicsItem ( item );
+            if ( cItem == NULL ) {
+                qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+                // FIXME after testing this can be changed to return instaead of exit
+                exit ( 1 );
+            }
+            delete cItem;
+        }
     }
 }
 
@@ -152,54 +160,56 @@ void GraphicsScene::dataChanged( const QModelIndex & topLeft, const QModelIndex 
 //   qDebug() << __FUNCTION__;
     QModelIndex tmpIndex = topLeft;
     do {
-//     qDebug() << "dataChanged is now called()";
-        switch (model->data( tmpIndex, customRole::TypeRole ).toInt()) {
-        case DataItemType::MODULE:
-            moduleUpdated( QPersistentModelIndex( tmpIndex ) );
-            break;
-        case DataItemType::CONNECTION:
-            //not implemented, but we probably don't need that
-            break;
-        case DataItemType::PROPERTY:
+        // a PROPERTY is a special case as it has no direct gui representation
+        if (model->data( tmpIndex, customRole::TypeRole ).toInt() == DataItemType::PROPERTY) {
+            //FIXME model->data(..) for customRole::propertyKey and customRole::propertyRole is needed
+//             qDebug() << __PRETTY_FUNCTION__ << ;
             qDebug() << __PRETTY_FUNCTION__ << " FIXME: not implemented yet for PROPERTY";
-            break;
-        default:
-            qDebug() << __PRETTY_FUNCTION__ << " didn't understand what i should be doing";
-            exit(0);
+        } else {
+            QGraphicsItem* item = model2GraphicsItem ( tmpIndex );
+            if ( item == NULL ) {
+                qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: item was NULL";
+                // FIXME after testing this can be changed to continue instaead of exit
+                continue;
+            }
+            if (item->type() == DataItemType::EXTENDEDGRAPHICSITEM) {
+                GraphicsItemModelExtension* i = dynamic_cast<GraphicsItemModelExtension *> ( item );
+                i->dataChanged();
+            }
         }
         if (tmpIndex == bottomRight)
-            break;
+            return;
         tmpIndex = traverseTroughIndexes( tmpIndex );
     } while ( tmpIndex.isValid() );
 }
 
 /*!
 ** This algorithm traverses trough the QModelIndex hierarchy
-**  topleft -- itemA -- connection1
-**             \---- -- connection2       given the topLeft item it returns itemA
-**          -- itemB                      given itemA it returns connection1
-**             \---- -- connection1       given connection1 it returns itemB
-**          -- itemC                      ...
-**          -- itemD (bottomRight)        and so on
+**  topleft -- itemA                      given the topLeft item it returns itemA
+**             \---- -- connection1       given itemA it returns connection1
+**          -- itemB                      given connection1 it returns itemB
+**             \---- -- connection1       ...
+**          -- itemC
+**          -- itemD (bottomRight)
 **             \---- -- connection1
 **             \---- -- connection2     <- given this last item, it returns QModelIndex()
 */
 QModelIndex GraphicsScene::traverseTroughIndexes( QModelIndex index ) {
-//   qDebug() << "  " << index.row() << " ";
+    qDebug() << "  " << index.row() << " ";
     // 1. dive deep into the structure until we found the bottom (not bottomRight)
     QModelIndex childIndex = model->index(0,0,index);
-//   qDebug() << "step a";
+//     qDebug() << "step a";
     if (childIndex.isValid())
         return childIndex;
 
     // 2. now traverse all elements in the lowest hierarchy
     QModelIndex tmpIndex = model->index(index.row()+1,0,model->parent(index));//index.sibling(index.row()+1,0);
-//   qDebug() << "step b";
+//     qDebug() << "step b";
     if (tmpIndex.isValid())
         return tmpIndex;
 
     // 3. if no more childs are found, return QModelIndex()
-//   qDebug() << "step c";
+//     qDebug() << "step c";
     return QModelIndex();
 }
 
@@ -285,41 +295,6 @@ QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
         }
     }
     return NULL;
-}
-
-bool GraphicsScene::connectionRemoved( QPersistentModelIndex  item  ) {
-//     qDebug() << __PRETTY_FUNCTION__;
-    QGraphicsItem* cItem = model2GraphicsItem ( item );
-    if ( cItem == NULL ) {
-        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
-        // FIXME after testing this can be changed to return instaead of exit
-        exit ( 1 );
-    }
-    delete cItem;
-    return true;
-}
-
-bool GraphicsScene::moduleRemoved ( QPersistentModelIndex item ) {
-//     qDebug() << __PRETTY_FUNCTION__;
-    QGraphicsItem* nItem = model2GraphicsItem ( item );
-    if ( nItem == NULL ) {
-        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
-        // FIXME after testing this can be changed to return instaead of exit
-        exit ( 1 );
-    }
-    delete nItem;
-    return true;
-}
-
-void GraphicsScene::moduleUpdated(QPersistentModelIndex item) {
-    QGraphicsItem* mItem = model2GraphicsItem ( item );
-    if ( mItem == NULL ) {
-        qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
-        // FIXME after testing this can be changed to return instaead of exit
-        exit ( 1 );
-    }
-    Module* mod = qgraphicsitem_cast<Module *> ( mItem );
-    mod->dataChanged();
 }
 
 
