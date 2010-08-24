@@ -220,6 +220,17 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
         }
         model->removeRows(selectedModelIndexes);
     }
+    //FIXME zoom in
+    //FIXME zoom out
+    
+    //select all selectable items on the scene using 'ctrl+a' modifiers
+    if ((keyEvent->key() == Qt::Key_A) &&( keyEvent->modifiers() == Qt::ControlModifier )) {
+//         qDebug() << "Selects all items in the scene";
+        QPainterPath path;
+        path.addRect ( sceneRect() );
+        setSelectionArea ( path );
+    }
+
 }
 
 void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
@@ -276,7 +287,6 @@ void GraphicsScene::mouseMoveEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 //     qDebug() << __PRETTY_FUNCTION__;
     if ( line != 0 ) {
-
         QList<QGraphicsItem *> startItems = items ( line->line().p1() );
         if ( startItems.count() && startItems.first() == line )
             startItems.removeFirst();

@@ -1,4 +1,5 @@
 2010-08-24
+ - CTRL+A selects all QGraphicsItems in the scene now
  - fixed a BUG where the program crashed if a new connection was drawn from a Port to nowhere, see GraphicsScene::mouseReleaseEvent(..)
  - class ObjectPool extends the GraphicsScene to give View objects as 'Connection', 'Module' or 'Port' access to translate
    QGraphicsItems into QPersistentModelIndex'es and vice versa without having to use the 'scene' pointer as done before
