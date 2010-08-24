@@ -12,8 +12,7 @@ class QPainterPath;
 
 class Connection : public QGraphicsPathItem, public GraphicsItemModelExtension {
 public:
-    Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort,
-               QGraphicsItem *parent = 0);
+    Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool, QGraphicsItem *parent = 0);
     ~Connection();
     void dataChanged();
     int type() const {

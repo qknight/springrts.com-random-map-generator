@@ -40,6 +40,7 @@ SET( srmg_SOURCES
   # libnoise module frontends -> QGraphicsScene items
   frontend/GraphicsScene.cpp
   frontend/GraphicsView.cpp
+  frontend/ObjectPool.cpp
   frontend/Module.cpp
   frontend/Port.cpp
   frontend/Connection.cpp

@@ -1,33 +1,15 @@
 REFACTORING:
-- remove branching of   moduleInserted(..) and connectionInserted(..) and find a generic interface
+
+- check the specification for QAbstractItemModel: 
+ - what must be implemented, is reset and layout changes mandatory?
+ - does a Model have to know that a view is attached?
 
 - extend GraphicsItemModelExtension by GraphicsScene::model2GraphicsItem(..)
 - the GraphicsScene needs this extension as well because clicked items should be filtered (shown only) in the QTreeView
 
-- move GraphicsScene::moduleInserted(..) code which creates the port layout into Module.cpp
 - refactore both model2GraphicsItem and graphicsItem2Model
 
-- my custom QGraphicItems (as Connection/Module) must be refactored to make the new call as trivial as possible
-
 - QGraphicsItems should be more or less designed to be a delegate
-
-QGraphicsItem->type() gibt einfach AbstractQGraphicsModuleBackend() dings zurueck, dann geht:
- - void updateData();
- - int customType();
- - QPersistentModelIndex index();
- und mit customType kann man dann z.b. eine 'Connection' oder ein 'Module' object draus machen
-oder wenn man folgendes hat:
- myCrazyModule* m = new myCrazyModule(gleiches wie bei Module); mit class myCrazyModule : public Module;
- myNormalModule* nm = new myNormalModule(gleiches wie bei Module); mit class myNormalModule : public Module;
-dann kann man das wie ein Module verwenden und hat aber doch ein anderes QGraphicsItem im backend:
-weil man ja den customType() fuer den qgraphicsitem_cast verwenden kann
-
-the two constructor calls:
- - Connection* connection = new Connection ( model, connectionIndex, srcPort, dstPort);
- - Module* module = new Module ( model, item );
-will be extended to:
- - Connection* connection = new Connection ( model, scene, index );
- - Module* module = new Module ( model, scene, index );
 
 and both functions:
  - QGraphicsItem* GraphicsScene::model2GraphicsItem ( QPersistentModelIndex index ) {
@@ -35,9 +17,6 @@ and both functions:
 will have to find a new home since they have to be accessable in both:
  - the abstractGraphicsItem class (and)
  - the GraphicsScene class
-
-registers automaically at objectPool, so that QPersistentModelIndex 2 QGraphicsItem can be computed quite fast
-
 
 ===========================================================================
    why QGraphicsItem(s) do need direct access to each other sometimes
@@ -82,36 +61,6 @@ registers automaically at objectPool, so that QPersistentModelIndex 2 QGraphicsI
           starts the drawing. 
        -> same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
           connection simply suspends accessing the module which is now not accessable anymore
-
-
-
-
-create a blog entry and discuss the O(?) problems as:
- - how many items can be inserted?
- - how fast is model 2 screen index and vice versa
- - overhead by removing/inserting of new items
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 13:17 <peer> Hi
 13:19 <peer> What is still unclear for me, is how you model the idea of connections from your QAIM.
@@ -172,6 +121,11 @@ please keep in mind that:
      - the position in the backend stored/retrieved via the property/setProperty functions from QObject
      - the altered positions in the QGraphicsView, these were never written back to the model once touched
 
+create a blog entry and discuss the O(?) problems as:
+ - have a look at FAQ, move this discussion there?!
+ - how many items can be inserted?
+ - how fast is model 2 screen index and vice versa
+ - overhead by removing/inserting of new items
 
 
 
@@ -182,6 +136,10 @@ please keep in mind that:
 
 
 
+
+
+
+- BUG: program crashes if a new connection is drawn from a Port to nowhere
      
 - selection of connections does not work well?
 
@@ -223,13 +181,16 @@ please keep in mind that:
            especially with the halding of rootItem and QModelIndex()
          - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
-- implement ItemView::dataChanged(..) -> GraphicsScene::moduleUpdated(..)
 - QTreeView is not expanded when loading modules via Document.cpp, is that a problem for later load/save?
 - concept: see assistant, the QTreeView there is basically what i want to clone
-- QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
+  - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
+  - see 'Delegate Classes' in assistant, then create delegates for the module properties, rethink the 'delegate' role of the
+    QGraphicsItems which 'act' as delegates for my GraphicsView...
 
-- property may be registered only once, fail with exit(1)!
-- properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
+- properties:
+ - properties need an interface to be accessed via the model
+ - property may be registered only once, fail with exit(1)!
+ - properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
 
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
@@ -247,8 +208,9 @@ please keep in mind that:
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
-- drawing of the connection path: if x1 and x2 from the different coordinates are the same and y1 and y2 differ much then the
-  path looks somehow broken. it should have a nice arc or bow like shape
+- Connection drawing could be nicer
+ - drawing of the connection path: if x1 and x2 from the different coordinates are the same and y1 and y2 differ much then the
+   path looks somehow broken. it should have a nice arc or bow like shape
 - CTRL+A should select all QGraphicsItems
 - creating a connection currently is done clicking a port with a drag'n'drop operation:
   this should be changed: clicking once will change the mousecursor to a port draw operation cursor, next the line will always follow from
@@ -279,7 +241,6 @@ please keep in mind that:
   + if no item is selected anymore, show all items in the QTreeView
 - think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
 - fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
-                  -> it does however work if there are no DataProperties...?!
 - fix this:
 MainWidget.cpp:
     //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
@@ -316,6 +277,7 @@ GraphicsView:
 ========================================================================
   General concepts to consider:
 ========================================================================
+- documentation: include a qwebkit browser with some html documentation about the modules
 - concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
 - Design choice:
   using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
@@ -340,9 +302,9 @@ GraphicsView:
 
 - integrate xml save/load functionality (add an object serializer to all nodes in the graph)
   - load+save viewport-position in document
-- fix copyright, linking to the library .... is that possible?
+- fix copyright, linking to the gpl? library .... is that possible?
 
-- integrate 3d viewer (adapted/copied from qlobby)
+- integrate 3d viewer (adapted/copied from qtlobby)
 
 - include libnoise into this CMakeLists.txt (build it as well and use that)
 

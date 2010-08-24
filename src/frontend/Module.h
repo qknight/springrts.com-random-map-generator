@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "GraphicsItemModelExtension.h"
+#include "ObjectPool.h"
 
 class Port;
 
@@ -27,7 +28,7 @@ class Port;
  */
 class Module : public QGraphicsItem, public GraphicsItemModelExtension {
 public:
-    Module(Model* model, QPersistentModelIndex index);
+    Module(Model* model, QPersistentModelIndex index, ObjectPool* pool);
     ~Module();
     void dataChanged();
     
@@ -36,7 +37,6 @@ private:
     QGraphicsPixmapItem* icon;
     void createLayout();
     QVector<Port*> ports;
-    Model* model;
     QString m_label;
     int type() const {
         return GraphicsItemModelExtension::type();

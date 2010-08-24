@@ -21,10 +21,9 @@
 #define GRAPHICSITEMMODELEXTENSION_H
 
 #include <QPersistentModelIndex>
-#include <QGraphicsScene>
+#include "ObjectPool.h"
 #include "DataItemType.h"
-
-class Model;
+#include "Model.h"
 
 /*!
  * this class is used to extend normal QGraphicsItem deriving classes since
@@ -34,8 +33,9 @@ class Model;
  */
 class GraphicsItemModelExtension {
   friend class GraphicsScene;
+  friend class ObjectPool;
   public:
-    GraphicsItemModelExtension(Model* model, QPersistentModelIndex index);
+    GraphicsItemModelExtension(Model* model, QPersistentModelIndex index, ObjectPool* pool);
     /*! type() is used for the QGraphicsScene:
     **  - dataChanged() -> for fast access of objects when the Model changes data 
     **  - index() -> QPersistentModelIndex needs to be queried from such an item 
@@ -49,6 +49,7 @@ class GraphicsItemModelExtension {
     /*! while type() only helps to find out that this item is related to a QPersistentModelIndex 
     **  customType() can be used to find out to which object exactly */
     int virtual customType() const = 0;
+    ObjectPool* pool;
   protected:
     QPersistentModelIndex index();
     /*! a wrapper function for all items in the scene, so that they can call data() directly */

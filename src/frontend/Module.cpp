@@ -15,9 +15,50 @@
 #include "Port.h"
 #include <DataAbstractModule.h>
 
-Module::Module(Model* model, QPersistentModelIndex index) : QGraphicsItem(), GraphicsItemModelExtension(model, index) {
+Module::Module(Model* model, QPersistentModelIndex index, ObjectPool* pool) : QGraphicsItem(), GraphicsItemModelExtension(model, index, pool) {
+    int child_count = model->rowCount(index);
+    int in=0, mod=0, out=0;
+    for (int i = 0; i < child_count; ++i) {
+        QPersistentModelIndex child = model->index(i, 0, index);
+
+        // 0. is it a property? if so we skip right here!
+        if (model->data(child, customRole::TypeRole) == DataItemType::PROPERTY)
+            continue;
+
+        // 1. find the QGraphicsItem refered to by item
+        QGraphicsItem* graphicsItem = this;
+
+        if (graphicsItem == NULL) {
+            qDebug() << __PRETTY_FUNCTION__ << "CRITICAL ERROR: item not found!? wth?!";
+            continue;
+        }
+
+        // 2. create a new Port class object and assign it as child to the parent P
+        unsigned int portDirection = model->data(child, customRole::PortDirection).toInt();
+        unsigned int portType = model->data(child, customRole::PortType).toInt();
+//         unsigned int portNumber = model->data(child, customRole::PortNumber).toInt();
+        Port* port = new Port(model, child, portDirection, portType, i, pool, graphicsItem);
+        port->setParentItem ( graphicsItem );
+
+        // WARNING: this implementation expects the ports to be ordered by portNumber
+        switch (portDirection) {
+        case PortDirection::IN:
+            port->moveBy(-10,20+(in++)*40);
+            break;
+        case PortDirection::MOD:
+            port->moveBy(50+20*(mod++),130);
+            break;
+        case PortDirection::OUT:
+            port->moveBy(130,20+(out++)*40);
+            break;
+        default:
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "no case matched";
+            break;
+        }
+    }
+
     dataChanged();
-    this->model=model;
+    
     setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemSendsGeometryChanges);
     QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
     labelItem->moveBy(-15,-25);
@@ -41,7 +82,6 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
     case QGraphicsItem::ItemPositionHasChanged:
     case QGraphicsItem::ItemPositionChange:
         foreach ( QGraphicsItem *g, childItems()) {
-          //FIXME PORT is no longer valid, needs another cast
             if (g->type() == DataItemType::EXTENDEDGRAPHICSITEM) {
               GraphicsItemModelExtension* eitem = dynamic_cast<GraphicsItemModelExtension*>(g);
               if (eitem->customType() == DataItemType::PORT) {
@@ -62,13 +102,13 @@ QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value 
 }
 
 void Module::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event ) {
-  qDebug() << __PRETTY_FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
     QPoint modelPosition = modelData(customRole::PosRole).toPoint();
     if (modelPosition != pos()) {
-        qDebug() << __PRETTY_FUNCTION__ << "position has changed! from" << modelPosition << " to " << pos();
+//         qDebug() << __PRETTY_FUNCTION__ << "position has changed! from" << modelPosition << " to " << pos();
         setModelData(pos(), customRole::PosRole);
     } else {
-      qDebug() << __PRETTY_FUNCTION__ << "position has NOT changed!";
+//       qDebug() << __PRETTY_FUNCTION__ << "position has NOT changed!";
     }
     QGraphicsItem::mouseReleaseEvent(event);
 }

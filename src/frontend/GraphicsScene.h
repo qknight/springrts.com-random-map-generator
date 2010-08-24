@@ -16,6 +16,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 
 #include "Model.h"
+#include "ObjectPool.h"
 #include "Module.h"
 #include "Connection.h"
 #include "PortTypes.h"
@@ -27,7 +28,6 @@
 class GraphicsScene : public QGraphicsScene {
     Q_OBJECT
     friend class Document;
-    friend class ItemView;
 
 public:
     /*! constructor */
@@ -36,17 +36,14 @@ public:
     ~GraphicsScene();
 
 protected:
-    QGraphicsItem* moduleInserted( QPersistentModelIndex item );
-    QGraphicsItem* connectionInserted ( QPersistentModelIndex connectionIndex);
     void setLoadableModuleNames(QVector<QString> loadableModuleNames);
 
 private:
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
     QMenu menu;
     QPoint screenPos;
+    ObjectPool* pool;
     QVector<QString> loadableModuleNames;
-    QGraphicsItem* model2GraphicsItem( QPersistentModelIndex index );
-    QPersistentModelIndex graphicsItem2Model ( QGraphicsItem* graphicsItem );
     /*! this (red) line is needed for adding connections with the MMB (mid-mouse-button) between nodes */
     QGraphicsLineItem *line;
     /*! the GraphicsScene visualizes the data of this model */
@@ -59,7 +56,6 @@ private:
     void mouseMoveEvent( QGraphicsSceneMouseEvent *mouseEvent  );
     /*! we handle all mouse events here, this is only interrupted when an item got focus */
     void mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent );
-    bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
 
 protected Q_SLOTS:
     /*! helper function to implement a reset call for a custom view */

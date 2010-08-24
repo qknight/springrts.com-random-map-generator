@@ -13,8 +13,8 @@
 #include "Connection.h"
 #include <PortTypes.h>
 
-Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int portType, int portNumber, QGraphicsItem* parent ) :
-        QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index ) {
+Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int portType, int portNumber, ObjectPool* pool, QGraphicsItem* parent ) :
+        QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index, pool ) {
 //     qDebug() << __PRETTY_FUNCTION__;
     m_portType=portType;
     m_portNumber=portNumber;

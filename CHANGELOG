@@ -1,4 +1,15 @@
+2010-08-24
+ - class ObjectPool extends the GraphicsScene to give View objects as 'Connection', 'Module' or 'Port' access to translate
+   QGraphicsItems into QPersistentModelIndex'es and vice versa without having to use the 'scene' pointer as done before
+ - reduced code in GraphicsScene as this 3 functions were moved to class ObjectPool:
+  - QGraphicsItem* model2GraphicsItem( QPersistentModelIndex index );
+  - QPersistentModelIndex graphicsItem2Model ( QGraphicsItem* graphicsItem );
+  - bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
+ - made rowsInserted more simple to read
+ - ObjectPool can be extended or profiled for other purposes but helps to seperate jobs to different classes
+
 2010-08-23
+ - removed branching of moduleInserted(..) and connectionInserted(..). a generic interface handles that now.
  - removed branching of rowsRemoved(..) to moduleRemoved(..) and connectionRemoved(..). a generic interface handles that now.
 
 2010-08-22

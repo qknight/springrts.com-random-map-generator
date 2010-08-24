@@ -4,12 +4,35 @@
 #include <math.h>
 #include <PortTypes.h>
 
-Connection::Connection(Model* model, QPersistentModelIndex index, Port *sPort, Port *dPort, QGraphicsItem *parent)
-        : QGraphicsPathItem(parent), GraphicsItemModelExtension(model, index)
+/*!
+ * adds a graphical representation (see Connection.cpp/.h) spanning from
+ * Port a to Port b (see Port.cpp/.h)
+ * this function is called by the QAbstractItemModel after a connection has been inserted
+ */
+Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool, QGraphicsItem* parent)
+        : QGraphicsPathItem(parent), GraphicsItemModelExtension(model, index, pool)
 {
 //     qDebug() << __PRETTY_FUNCTION__;
-    m_sPort = sPort;
-    m_dPort = dPort;
+
+    // 0. dst QPersistentModelIndex (that is to be queried via the model)
+    QPersistentModelIndex sPortIndex = index.parent();
+    QPersistentModelIndex dPortIndex = QPersistentModelIndex(model->dst(index));
+
+    Port* srcPort = dynamic_cast<Port*> ( pool->model2GraphicsItem ( sPortIndex ) );
+    Port* dstPort = dynamic_cast<Port*> ( pool->model2GraphicsItem ( dPortIndex ) );
+
+    if (srcPort == NULL || dstPort == NULL || srcPort == dstPort) {
+        if (srcPort == NULL)
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
+        if (dstPort == NULL)
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
+        if (srcPort == dstPort)
+            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
+        exit(1);
+    }
+
+    m_sPort = srcPort;
+    m_dPort = dstPort;
     
     m_suspendsrcPort = false;
     m_suspenddstPort = false;

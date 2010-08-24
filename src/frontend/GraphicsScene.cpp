@@ -18,6 +18,7 @@
 
 GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene() {
     this->model = model;
+    pool = new ObjectPool(this);
     connect ( &menu,SIGNAL ( triggered ( QAction* ) ),
               this, SLOT ( menuSelectionMade ( QAction* ) ) );
 
@@ -30,11 +31,11 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
              this, SLOT(rowsAboutToBeRemoved ( const QModelIndex & , int , int  )));
     connect( model, SIGNAL(dataChanged ( const QModelIndex & , const QModelIndex &  )),
              this, SLOT(dataChanged ( const QModelIndex & , const QModelIndex &  )));
-
     line=NULL;
 }
 
 GraphicsScene::~GraphicsScene() {
+    delete pool;
 }
 
 /*! a rightclick on the QGraphicsView will pop up this QMenu */
@@ -98,16 +99,6 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
     this->loadableModuleNames=loadableModuleNames;
 }
 
-
-
-
-
-
-
-
-
-
-
 void GraphicsScene::reset() {
     qDebug() << __PRETTY_FUNCTION__ << "FIXME: implement me";
     exit(1);
@@ -120,11 +111,13 @@ void GraphicsScene::rowsInserted( const QModelIndex & parent, int start, int end
         switch (model->data( item, customRole::TypeRole ).toInt()) {
         case DataItemType::MODULE:
 //             qDebug() << __PRETTY_FUNCTION__ << " DataItemType::MODULE " << model->data( item, customRole::TypeRole ).toInt();
-            moduleInserted( QPersistentModelIndex( item ) );
+            addItem ( new Module ( model, item, pool ) );
             break;
         case DataItemType::CONNECTION:
 //             qDebug() << __PRETTY_FUNCTION__ << " DataItemType::CONNECTION " << model->data( item, customRole::TypeRole ).toInt();
-            connectionInserted( QPersistentModelIndex( item ));
+            //     Connection* connection = new Connection ( model, connectionIndex, srcPort, dstPort);
+            addItem ( new Connection ( model, item, pool ) );
+//     qDebug() << __PRETTY_FUNCTION__ << "added a connection sucessfully";
             break;
         case DataItemType::PROPERTY:
             qDebug() << __PRETTY_FUNCTION__ << " DataProperty inserted: we ignore this currently!";
@@ -143,9 +136,9 @@ void GraphicsScene::rowsAboutToBeRemoved( const QModelIndex & parent, int start,
     for ( int i = start; i <= end; ++i ) {
         QModelIndex item = model->index( i, 0, parent );
         switch (model->data( item, customRole::TypeRole ).toInt()) {
-          case DataItemType::MODULE:
-          case DataItemType::CONNECTION:
-            QGraphicsItem* cItem = model2GraphicsItem ( item );
+        case DataItemType::MODULE:
+        case DataItemType::CONNECTION:
+            QGraphicsItem* cItem = pool->model2GraphicsItem ( item );
             if ( cItem == NULL ) {
                 qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
                 // FIXME after testing this can be changed to return instaead of exit
@@ -166,7 +159,7 @@ void GraphicsScene::dataChanged( const QModelIndex & topLeft, const QModelIndex 
 //             qDebug() << __PRETTY_FUNCTION__ << ;
             qDebug() << __PRETTY_FUNCTION__ << " FIXME: not implemented yet for PROPERTY";
         } else {
-            QGraphicsItem* item = model2GraphicsItem ( tmpIndex );
+            QGraphicsItem* item = pool->model2GraphicsItem ( tmpIndex );
             if ( item == NULL ) {
                 qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: item was NULL";
                 // FIXME after testing this can be changed to continue instaead of exit
@@ -213,156 +206,6 @@ QModelIndex GraphicsScene::traverseTroughIndexes( QModelIndex index ) {
     return QModelIndex();
 }
 
-/*!
- * adds a graphical representation (see Connection.cpp/.h) spanning from
- * Port a to Port b (see Port.cpp/.h)
- * this function is called by the QAbstractItemModel after a connection has been inserted
- */
-QGraphicsItem* GraphicsScene::connectionInserted ( QPersistentModelIndex connectionIndex ) {
-    // 0. dst QPersistentModelIndex (that is to be queried via the model)
-    QPersistentModelIndex sPortIndex = connectionIndex.parent();
-    QPersistentModelIndex dPortIndex = QPersistentModelIndex(model->dst(connectionIndex));
-
-    Port* srcPort = dynamic_cast<Port*> ( model2GraphicsItem ( sPortIndex ) );
-    Port* dstPort = dynamic_cast<Port*> ( model2GraphicsItem ( dPortIndex ) );
-
-    if (srcPort == NULL || dstPort == NULL || srcPort == dstPort) {
-        if (srcPort == NULL)
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
-        if (dstPort == NULL)
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
-        if (srcPort == dstPort)
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
-        exit(1);
-    }
-
-    Connection* connection = new Connection ( model, connectionIndex, srcPort, dstPort);
-    addItem ( connection );
-//     qDebug() << __PRETTY_FUNCTION__ << "added a connection sucessfully";
-    return connection;
-}
-
-QGraphicsItem* GraphicsScene::moduleInserted ( QPersistentModelIndex item ) {
-//   qDebug() << __PRETTY_FUNCTION__;
-    Module* module = new Module ( model, item );
-    addItem ( module );
-
-    // FIXME: can this code be placed into Module.cpp::Module()?
-    //        -> probably NO since it uses GraphicsScene::model2GraphicsItem(..)
-    int child_count = model->rowCount(item);
-    int in=0, mod=0, out=0;
-    for (int i = 0; i < child_count; ++i) {
-        QPersistentModelIndex child = model->index(i, 0, item);
-
-        // 0. is it a property? if so we skip right here!
-        if (model->data(child, customRole::TypeRole) == DataItemType::PROPERTY)
-            continue;
-
-        // 1. find the QGraphicsItem refered to by item
-        QGraphicsItem* graphicsItem = model2GraphicsItem(item);
-
-        if (graphicsItem == NULL) {
-            qDebug() << __PRETTY_FUNCTION__ << "CRITICAL ERROR: item not found!? wth?!";
-            continue;
-        }
-
-        // 2. create a new Port class object and assign it as child to the parent P
-        unsigned int portDirection = model->data(child, customRole::PortDirection).toInt();
-        unsigned int portType = model->data(child, customRole::PortType).toInt();
-//         unsigned int portNumber = model->data(child, customRole::PortNumber).toInt();
-        Port* port = new Port(model, child, portDirection, portType, i, graphicsItem);
-        port->setParentItem ( graphicsItem );
-
-        // now we do the layout of the items
-        // FIXME 'this' is probably not the best case to do it (it would be better to do it in the Module context)
-        //       since it makes absolute sense to make the graphical Module the layout master
-        // FIXME we ignore portType currently
-        // FIXME this implementation expects the ports to be ordered by portNumber
-
-        switch (portDirection) {
-        case PortDirection::IN:
-            port->moveBy(-10,20+(in++)*40);
-            break;
-        case PortDirection::MOD:
-            port->moveBy(50+20*(mod++),130);
-            break;
-        case PortDirection::OUT:
-            port->moveBy(130,20+(out++)*40);
-            break;
-        default:
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "no case matched";
-            break;
-        }
-    }
-    return NULL;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*!
- * look at all items in the GraphicsScene and try to find the _one_ with the index in it
- * WARNING: be careful with using the constructor of an QGraphicsItem to allocate child items
- *          as ports (when using a module), since the required item might not have been inserted
- *          into the scene() yet.
- *          -> just commit complex new items (containing also childs) in one go, using
- *             the Model code, see Model.cpp:insertModule(..) where this is done
- */
-QGraphicsItem* GraphicsScene::model2GraphicsItem ( QPersistentModelIndex index ) {
-    QList<QGraphicsItem *> m_list = items();
-//     qDebug() << __PRETTY_FUNCTION__ << "=== searching in: " << m_list.size() << " items ====";
-//     qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
-    for ( int i = 0; i < m_list.size(); ++i ) {
-//         qDebug() << m_list[i]->type()/* << " " << DataItemType::EXTENDEDGRAPHICSITEM*/;
-        if ( m_list[i]->type() == DataItemType::EXTENDEDGRAPHICSITEM) {
-//             qDebug() << __PRETTY_FUNCTION__ << "found a DataItemType::EXTENDEDGRAPHICSITEM";
-            GraphicsItemModelExtension* item = dynamic_cast<GraphicsItemModelExtension *> (m_list[i]);
-            if ( compareIndexes ( item->index(), index ) ) {
-//                 qDebug() << __PRETTY_FUNCTION__ << "item found";
-                return m_list[i];
-            }
-        }
-    }
-//     qDebug() << __PRETTY_FUNCTION__ << "item NOT found";
-    return NULL;
-}
-
-/*! TODO */
-QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphicsItem ) {
-    if ( graphicsItem->type() == DataItemType::EXTENDEDGRAPHICSITEM ) {
-        GraphicsItemModelExtension* item = dynamic_cast<GraphicsItemModelExtension*>(graphicsItem);
-        QPersistentModelIndex i = item->index();
-//         qDebug() << __PRETTY_FUNCTION__ << "module found";
-        return i;
-    }
-    return QPersistentModelIndex();
-}
-
-/*! this implementation ignores column positions */
-bool GraphicsScene::compareIndexes ( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
-    if ( a.row() != b.row() )
-        return false;
-    if ( a.internalPointer() != b.internalPointer() )
-        return false;
-    return true;
-}
-
-
-
-
-
-
-
-
 /*! collect all selected items, filter out items which have a QModelIndex associated
  ** with them, finaly remove these items using the model */
 void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
@@ -371,7 +214,7 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
         QList<QGraphicsItem *> items = selectedItems ();
         QList<QPersistentModelIndex> selectedModelIndexes;
         for (int i = 0; i < items.size(); ++i) {
-            QPersistentModelIndex persistentIndex = graphicsItem2Model(items[i]);
+            QPersistentModelIndex persistentIndex = pool->graphicsItem2Model(items[i]);
             if (persistentIndex.isValid())
                 selectedModelIndexes.push_back(persistentIndex);
         }
@@ -384,7 +227,7 @@ void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {
     // because the QTreeView uses a FilterProxyModel on top of the Model to filter
     // port and connections
     QModelIndex srcIndex = index;
-    QGraphicsItem* item = model2GraphicsItem ( QPersistentModelIndex ( srcIndex ) );
+    QGraphicsItem* item = pool->model2GraphicsItem ( QPersistentModelIndex ( srcIndex ) );
     if (item == NULL)
         return;
     // we do have only one view
@@ -437,12 +280,13 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
         if ( startItems.count() && startItems.first() == line )
             startItems.removeFirst();
         QList<QGraphicsItem *> endItems = items ( line->line().p2() );
-        if ( endItems.count() && endItems.first() == line )
+        if ( endItems.count() >= 2 && endItems.first() == line )
             endItems.removeFirst();
 
         removeItem ( line );
         delete line;
         line = 0;
+        
         QGraphicsItem* sItem = startItems.first();
         QGraphicsItem* eItem = endItems.first();
         if ( startItems.count() && endItems.count() &&

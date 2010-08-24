@@ -53,19 +53,18 @@ namespace customRole {
 /*! this is one of the core parts of this work and this code is very important in regards of syncing
 **  the different views (as TreeView/GraphicsView)
 **  the use of forward declarations are great since it helps to hide the data structure internals
-**  and a view MUST NOT know anything about that -> all data must be queried/written using the model
-*/
+**  and a view MUST NOT know anything about that -> all data must be queried/written using the model */
 class Model : public QAbstractItemModel {
-    friend class GraphicsItemModelExtension;
+//     friend class GraphicsItemModelExtension;
     friend class Document;
     friend class GraphicsScene;
-    friend class ItemView;
 
   protected:
     /*! rootItem is the root of the data structure, living in this Model class */
     Model();
     /*! if this is called, we assume that no more view is attached */
     ~Model();
+    public:
     /*! see the Qt docs about QAbstractItemModel */
     QModelIndex index( int row, int column, const QModelIndex & parent ) const;
     /*! see the Qt docs about QAbstractItemModel */
@@ -78,15 +77,14 @@ class Model : public QAbstractItemModel {
     QVariant data( const QModelIndex &, int role ) const;
     /*! see the Qt docs about QAbstractItemModel */
     bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
-
-    /*! this is the public interface, there is an private one for internal use as well!
-    ** this inserts a module of type 'QString type' at position pos, pos is importatnt for the QGraphicsScene*/
-    QModelIndex insertModule(QString type, QPoint pos=QPoint());
-    QModelIndex insertConnection(QPersistentModelIndex a, QPersistentModelIndex b);
-    bool removeModule( const QModelIndex & parent );
-    bool removeConnection( const QModelIndex & parent );
-    
+    /*! given a connection index, this function returns the QModelIndex of the destination port */
     QModelIndex dst(QPersistentModelIndex item);
+    
+  protected:
+    /*! inserts a new Module based on it's type on either 0,0 or at QPoint */
+    QModelIndex insertModule(QString type, QPoint pos=QPoint());
+    /*! inserts a connection between two ports */
+    QModelIndex insertConnection(QPersistentModelIndex a, QPersistentModelIndex b);
   private:
     /*! the root item is set by the constructor once and can't be changed and must not be deleted */
     DataAbstractItem* rootItem;
