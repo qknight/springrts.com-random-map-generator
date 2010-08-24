@@ -276,28 +276,29 @@ void GraphicsScene::mouseMoveEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
 //     qDebug() << __PRETTY_FUNCTION__;
     if ( line != 0 ) {
+
         QList<QGraphicsItem *> startItems = items ( line->line().p1() );
         if ( startItems.count() && startItems.first() == line )
             startItems.removeFirst();
         QList<QGraphicsItem *> endItems = items ( line->line().p2() );
-        if ( endItems.count() >= 2 && endItems.first() == line )
+        if ( endItems.count() && endItems.first() == line )
             endItems.removeFirst();
-
         removeItem ( line );
         delete line;
         line = 0;
-        
-        QGraphicsItem* sItem = startItems.first();
-        QGraphicsItem* eItem = endItems.first();
-        if ( startItems.count() && endItems.count() &&
-                sItem->type() == DataItemType::EXTENDEDGRAPHICSITEM &&
-                eItem->type() == DataItemType::EXTENDEDGRAPHICSITEM ) {
-            GraphicsItemModelExtension* esItem = dynamic_cast<GraphicsItemModelExtension*>(sItem);
-            GraphicsItemModelExtension* eeItem = dynamic_cast<GraphicsItemModelExtension*>(eItem);
-            if (esItem->customType() == DataItemType::PORT && eeItem->customType() == DataItemType::PORT) {
-                Port *startItem = qgraphicsitem_cast<Port *> ( sItem );
-                Port *endItem   = qgraphicsitem_cast<Port *> ( eItem );
-                model->insertConnection ( startItem->index(), endItem->index() );
+        if ( endItems.count() && startItems.count()) {
+            QGraphicsItem* sItem = startItems.first();
+            QGraphicsItem* eItem = endItems.first();
+            if ( startItems.count() && endItems.count() &&
+                    sItem->type() == DataItemType::EXTENDEDGRAPHICSITEM &&
+                    eItem->type() == DataItemType::EXTENDEDGRAPHICSITEM ) {
+                GraphicsItemModelExtension* esItem = dynamic_cast<GraphicsItemModelExtension*>(sItem);
+                GraphicsItemModelExtension* eeItem = dynamic_cast<GraphicsItemModelExtension*>(eItem);
+                if (esItem->customType() == DataItemType::PORT && eeItem->customType() == DataItemType::PORT) {
+                    Port *startItem = qgraphicsitem_cast<Port *> ( sItem );
+                    Port *endItem   = qgraphicsitem_cast<Port *> ( eItem );
+                    model->insertConnection ( startItem->index(), endItem->index() );
+                }
             }
         }
     }

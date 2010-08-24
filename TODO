@@ -1,22 +1,7 @@
 REFACTORING:
-
 - check the specification for QAbstractItemModel: 
  - what must be implemented, is reset and layout changes mandatory?
  - does a Model have to know that a view is attached?
-
-- extend GraphicsItemModelExtension by GraphicsScene::model2GraphicsItem(..)
-- the GraphicsScene needs this extension as well because clicked items should be filtered (shown only) in the QTreeView
-
-- refactore both model2GraphicsItem and graphicsItem2Model
-
-- QGraphicsItems should be more or less designed to be a delegate
-
-and both functions:
- - QGraphicsItem* GraphicsScene::model2GraphicsItem ( QPersistentModelIndex index ) {
- - QPersistentModelIndex GraphicsScene::graphicsItem2Model ( QGraphicsItem* graphicsItem ) {
-will have to find a new home since they have to be accessable in both:
- - the abstractGraphicsItem class (and)
- - the GraphicsScene class
 
 ===========================================================================
    why QGraphicsItem(s) do need direct access to each other sometimes
@@ -57,9 +42,11 @@ will have to find a new home since they have to be accessable in both:
 
    -> therefore:
      - graphical representations must be designed in a way that they can work even when not all dependacies are meat:
-       -> creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
-          starts the drawing. 
-       -> same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
+       -> inserting a module: [NOT IMPLEMENTED]
+          creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
+          starts the drawing. see class 'Connection' for issues
+       -> deleting a module: [IMPLEMENTED]
+          same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
           connection simply suspends accessing the module which is now not accessable anymore
 
 13:17 <peer> Hi
@@ -139,7 +126,6 @@ create a blog entry and discuss the O(?) problems as:
 
 
 
-- BUG: program crashes if a new connection is drawn from a Port to nowhere
      
 - selection of connections does not work well?
 

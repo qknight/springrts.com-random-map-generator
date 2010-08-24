@@ -5,7 +5,11 @@
 #include "ObjectPool.h"
 #include "GraphicsScene.h"
 
-/*! helper class for the GraphicsScene to translate QGraphicsItems into QPersistentModelIndex(es) and vice versa */
+/*! helper class for the GraphicsScene to translate QGraphicsItems into QPersistentModelIndex(es) and vice versa 
+**  this code might be profiled to increase lookup times but as i:
+**   - don't use it that often (and)
+**   - don't have too many items (20-40 at best)
+**  i stay with this implementation */
 ObjectPool::ObjectPool(GraphicsScene* scene) {
     m_scene = scene;
 }

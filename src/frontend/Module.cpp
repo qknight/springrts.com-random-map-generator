@@ -21,24 +21,16 @@ Module::Module(Model* model, QPersistentModelIndex index, ObjectPool* pool) : QG
     for (int i = 0; i < child_count; ++i) {
         QPersistentModelIndex child = model->index(i, 0, index);
 
-        // 0. is it a property? if so we skip right here!
+        // 1. is it a property? if so we skip right here!
         if (model->data(child, customRole::TypeRole) == DataItemType::PROPERTY)
             continue;
-
-        // 1. find the QGraphicsItem refered to by item
-        QGraphicsItem* graphicsItem = this;
-
-        if (graphicsItem == NULL) {
-            qDebug() << __PRETTY_FUNCTION__ << "CRITICAL ERROR: item not found!? wth?!";
-            continue;
-        }
 
         // 2. create a new Port class object and assign it as child to the parent P
         unsigned int portDirection = model->data(child, customRole::PortDirection).toInt();
         unsigned int portType = model->data(child, customRole::PortType).toInt();
 //         unsigned int portNumber = model->data(child, customRole::PortNumber).toInt();
-        Port* port = new Port(model, child, portDirection, portType, i, pool, graphicsItem);
-        port->setParentItem ( graphicsItem );
+        Port* port = new Port(model, child, portDirection, portType, i, pool, this);
+        port->setParentItem ( this );
 
         // WARNING: this implementation expects the ports to be ordered by portNumber
         switch (portDirection) {
