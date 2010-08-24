@@ -230,7 +230,6 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
         path.addRect ( sceneRect() );
         setSelectionArea ( path );
     }
-
 }
 
 void GraphicsScene::treeViewWantsItemFocus ( const QModelIndex & index ) {

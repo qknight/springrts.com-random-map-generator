@@ -38,6 +38,10 @@ void MainWidget::changeActiveDocument ( Document* doc ) {
               this, SLOT ( selectionChanged() ) );
     connect (doc->filter, SIGNAL(rowsInserted ( const QModelIndex & , int , int  )),
              this, SLOT(rowsInsertedNotification ( const QModelIndex & , int , int )));
+             
+    // for new modules we can use the rowsInserted signal but if the view is populated
+    // using either Document.cpp or save/load then we need to call this 
+    treeView->expandAll();
 }
 
 /*! when new items are inserted to the treeView, we expand all items */

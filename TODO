@@ -128,7 +128,15 @@ create a blog entry and discuss the O(?) problems as:
 
 
      
-
+- see 'Delegate Classes' in assistant, then create delegates for the module properties, rethink the 'delegate' role of the
+  QGraphicsItems which 'act' as delegates for my GraphicsView...
+- if a property changes(a child), the parent (module) should get updated in the GraphicsScene
+   SEE: void GraphicsScene::dataChanged(const QModelIndex&, const QModelIndex&)  FIXME: not implemented yet for PROPERTY 
+- properties:
+ - properties need an interface to be accessed via the model
+ - property may be registered only once, fail with exit(1)!
+ - properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
+- if setData did not work, because the validator discarded the value for any reason, the QStatusBar should be used to display why
 
 
 
@@ -139,7 +147,6 @@ create a blog entry and discuss the O(?) problems as:
 =================================================================================
   Model related: Adding, selecting, changing, removing of single/multiple items:
 =================================================================================
-- bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up at some configurations. not sure why?!
 - fix: ~Model and removeRows(..) for rootItem
 - QTreeView did not show anything lately:
   see FilterProxyModel changes.
@@ -147,21 +154,12 @@ create a blog entry and discuss the O(?) problems as:
   so i've added some code when having an invalid QModelIndex it simply retuns true...? and now it's working again...
   what special role did have a invalid QModelIndex have in a model?!
 - FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
-           especially with the halding of rootItem and QModelIndex()
+           especially with the handling of rootItem and QModelIndex()
          - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
+- bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up at some configurations. not sure why?!
 
-- if a property changes(a child), the parent (module) should get updated in the GraphicsScene
-   SEE: void GraphicsScene::dataChanged(const QModelIndex&, const QModelIndex&)  FIXME: not implemented yet for PROPERTY 
-- QTreeView is not expanded when loading modules via Document.cpp, is that a problem for later load/save?
 - concept: see assistant, the QTreeView there is basically what i want to clone
   - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
-  - see 'Delegate Classes' in assistant, then create delegates for the module properties, rethink the 'delegate' role of the
-    QGraphicsItems which 'act' as delegates for my GraphicsView...
-
-- properties:
- - properties need an interface to be accessed via the model
- - property may be registered only once, fail with exit(1)!
- - properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
 
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
@@ -228,7 +226,7 @@ create a blog entry and discuss the O(?) problems as:
 - think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
 - fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
 - fix this:
-MainWidget.cpp:
+  MainWidget.cpp:
     //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
     treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
  -> but i want that be retrieved by data(..) but span is not used yet!
@@ -236,13 +234,13 @@ MainWidget.cpp:
 GraphicsView:
  - zoomin/zoomout (mwheel or +/-) and zoomfit (gui button)
  - move selected items should 'move the view' if moved towards the border of the view (or beyond)
-- connection snapping, as indication when creating a new connection
-- modput needs some redesigning, see modules which use more than one modput: transformer::displace
-- scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
-  they should indicated the document width()/height() and making it work might be by using
-  POSSIBLE FIX: centerOn(..) or scroll(..)
-- when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
-- add icons to the QMenu for categories as well as for single modules
+ - connection snapping, as indication when creating a new connection
+ - modput needs some redesigning, see modules which use more than one modput: transformer::displace
+ - scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
+   they should indicated the document width()/height() and making it work might be by using
+   POSSIBLE FIX: centerOn(..) or scroll(..)
+ - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
+ - add icons to the QMenu for categories as well as for single modules
 
 
 
