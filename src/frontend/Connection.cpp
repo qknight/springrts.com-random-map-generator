@@ -48,7 +48,7 @@ Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* po
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    setZValue(-20);
+    setZValue(-5);
 }
 
 void Connection::suspend(Port* p) {
@@ -88,7 +88,7 @@ void Connection::updatePosition() {
 /*! increases the clickable range for item selection, when clicking near the line in a QGraphicsView */
 QPainterPath Connection::shape() const {
     QPainterPathStroker s;
-    s.setWidth ( 20 );
+    s.setWidth ( 30 );
     QPainterPath p = connectionPath();
     QPainterPath path = s.createStroke ( p );
     return path;
@@ -116,6 +116,7 @@ QPainterPath Connection::connectionPath() const {
 
 void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
     QPen p = QPen ( QColor ( "red" ), 4, Qt::DashLine );
+    
     painter->drawPath ( connectionPath() );
     if ( isSelected() ) {
         painter->setPen ( p );

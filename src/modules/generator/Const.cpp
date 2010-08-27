@@ -7,7 +7,7 @@
 M_REGISTER(Const);
 
 Const::Const() : DataAbstractModule(0,0,1) {
-  setProperty("FIXME", 112);
+  setProperty("ConstValue", 112);
 }
 
 Const::~Const() {

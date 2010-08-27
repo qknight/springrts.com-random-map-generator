@@ -6,7 +6,6 @@
 #include "GraphicsItemModelExtension.h"
 
 class QGraphicsLineItem;
-// class QGraphicsScene;
 class QRectF;
 class QPainterPath;
 

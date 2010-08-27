@@ -1,3 +1,196 @@
+===========================================================================
+  DELEGATES, optimizing the QTreeView
+===========================================================================
+- see 'Delegate Classes' in assistant, then create delegates for the module properties, rethink the 'delegate' role of the
+  QGraphicsItems which 'act' as delegates for my GraphicsView...
+- if a property changes(a child), the parent (module) should get updated in the GraphicsScene
+   SEE: void GraphicsScene::dataChanged(const QModelIndex&, const QModelIndex&)  FIXME: not implemented yet for PROPERTY 
+- properties:
+ - properties need an interface to be accessed via the model
+ - property may be registered only once, fail with exit(1)!
+ - properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
+- if setData did not work, because the validator discarded the value for any reason, the QStatusBar should be used to display why
+
+- concept: see assistant, the QTreeView there is basically what i want to clone
+  - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
+
+- fix this:
+  MainWidget.cpp:
+    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
+    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
+ -> but i want that be retrieved by data(..) but span is not used yet!
+
+
+
+
+
+
+
+
+
+20:27 < qknight> i wonder how to set a QAbstractItemDelegate* for a single QModelIndex in a QTreeView
+20:28 <+zbenjamin> !f delegate
+20:28 < qtassistant> zbenjamin: [delegates] http://doc.trolltech.com/latest/model-view-introduction.html#delegates
+20:28 <+zbenjamin> !rtfm setDelegate
+20:28 < qtassistant> zbenjamin: Qt 4.6: QFileDialog Class Reference - QFileDialog::setItemDelegate - http://doc.qt.nokia.com/qfiledialog.html#setItemDelegate
+20:28 < special> you can't.
+20:28 <+zbenjamin> !rtfm QAbstractItemView::setDelegate
+20:28 < special> you can set delegates for everything, for rows, or for columns, but not for individual indexes
+20:28 < qtassistant> zbenjamin: Qt 4.6: QAbstractItemView Class Reference - QAbstractItemView::setItemDelegate - 
+                     http://doc.qt.nokia.com/qabstractitemview.html#setItemDelegate
+20:29 < special> and row/column are by integer, not by QModelIndex, so in a heirarchical model, they apply to *every* row 2
+20:29 < special> seriously :|
+20:29 <+zbenjamin> you can
+20:29 <+zbenjamin> reimplement QAbstractItemDelegate * QAbstractItemView::itemDelegate ( const QModelIndex & index ) const
+20:29 <+zbenjamin> argh its not virtual
+20:29 <+zbenjamin> ok you cant
+20:29 < special> I was about to be excited, that would be a perfect solution
+20:30 <+zbenjamin> yeah :)
+20:30 < special> damn you, binary compatibility.
+20:30 <+zbenjamin> you could patch your own qt version if you ship it with your project :)
+20:31 < special> except that you have to deal with the LGPL requirements
+20:31 < qknight> so i could assign 'one' delegate for _all_ items. then within the context of that delegate i can find out about the type of the object and based on that i 
+                 can change the backend used for that delegate? is that right?
+20:31 < special> qknight: Yes. I've done that before.
+20:32 < qknight> special, zbenjamin: thanks very much
+20:32 < qknight> i think that is a good solution
+20:32 < qknight> isn't qt doing that? using one delegate for all editing things (in the default setup)
+20:33 <+zbenjamin> i was about to say the same
+20:33 < qknight> hehe! thanks a lot!
+20:33 <+zbenjamin> reimplement your own delegate and make the delegate change for every modelindex
+20:34 <+zbenjamin> s/change/behave different
+
+*yepee*
+[1] http://qt.nokia.com/products/appdev/add-on-products/catalog/4/Widgets/qtpropertybrowser/
+
+Q: how does [1] work?
+A: all examples seem to have their own model implementation for their properties, which is in short: "bad".
+   one registers a QtGroupPropertyManager with various childs as:
+    QtProperty *item0 = groupManager->addProperty("QObject");
+   and these managers do have their own guis
+
+   QtPointPropertyManager::setValue works like this:
+    0. the data structure: typedef QMap<const QtProperty *, Data> PropertyValueMap;
+    1. a property is probably unique as find is used on a ValueMap and the item found first is used and changed
+    2. then two signals are fired: propertyChanged and valueChanged
+   internally two m_intPropertyManager- are used
+
+Q: why is this bad?
+A: - this managers can't be used with my model (as they have their own data structure)
+   - they use their own widgets, no QTreeView stuff
+
+Q: which delegates does the 'srmg' require?
+A: basically: 
+   - float
+   - int 
+   - QPoint
+   - QPointF
+   - QStringDropdownList for GetNoiseQuality
+   - QList<ControlPoint>
+
+thoughts about the makro or function call to insert a new property:
+  insertProperty(codeName, guiName, description, type, minValue, maxValue);
+
+-> editors should be generated automatically based on the type given:
+  - QTreeView will use delegates
+  - GraphicsScene will provide it's own editor (a graphical modular approach)
+  - QGraphicsItem's additional editor/view: doubleclicking will open a new QWidget with an appropriate view/editor:
+    - libnoise-view                   mainly viewer, but also editor as it alters the module source position using transform
+    - Modifier::Terrace controllPoint editor
+    - Modifier::Curve   controllPoint editor
+    - Spring::mapgen                  editor
+
+Q: can i copy the delegates at least partially to use them with a QTreeView cell?
+A:
+
+Q: how to implement a delegate for a QTreeView at all?
+A: current guess: one delegate is assigned to all cels, on certain cells the delegate changes it's representation.. somehow
+
+modules="""                               properties
+Utils NoiseMapBuilderPlane      1 0 0     ?
+Utils RendererImage             1 0 0     ?
+Utils Image                     1 0 0     ?
+
+Generator Billow                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
+Generator Checkerboard          0 0 1     -
+Generator Const                 0 0 1     double constvalue
+Generator Cylinders             0 0 1     double frequency
+Generator Perlin                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
+Generator RidgedMulti           0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, int seed, 
+Generator Spheres               0 0 1     double frequency, 
+Generator Voronoi               0 0 1     bool distance, double displacement, double frequency, int seed, 
+
+Combiner Add                    2 0 1     -
+Combiner Max                    2 0 1     -
+Combiner Min                    2 0 1     -
+Combiner Multiply               2 0 1     -
+Combiner Power                  2 0 1     -
+
+Modifier Abs                    1 0 1     -
+Modifier Clamp                  1 0 1     -
+Modifier Curve                  1 0 1     several: AddControlPoint (double inputValue, double outputValue) / void   ClearAllControlPoints ()
+Modifier Exponent               1 0 1     double 0.0 to 1.0; setExponent, getExponent
+Modifier Invert                 1 0 1     -
+Modifier ScaleBias              1 0 1     several: double GetBias/SetBias, GetScale, SetScale
+Modifier Terrace                1 0 1     bool  InvertTerraces; addControlPoint(double), getControlPoint(..)
+
+Selector Blend                  2 1 1     -
+Selector Select                 2 1 1     double edgefalloff, double lowerbound, double upperbound, 
+
+Transformer Displace            1 3 1     -
+Transformer RotatePoint         1 0 1     double xangle, double yangle, double zangle
+Transformer ScalePoint          1 0 1     double scale, double xscale, double yscale, double zscale
+Transformer TranslatePoint      1 0 1     double translation, double xtranslation, double ytranslation, double ztranslation,
+Transformer Turbulence          1 0 1     double frequency, double power, int RoughnessCount, int seed, 
+
+Spring Mapgenerator             1 0 0     qpoint position, mapsize x,y (spring map sizetype)
+
+second backend object factory to build the libnoise chain:
+ - registers required properties at the Graphical Representation
+ - is able to collect properties from the Graphical Representation and uses them to build the libnoise-chain
+ - should not mix GraphicsScene coordinates with libnoise-properties as "Position" for instance, we need a 
+   gui string and an internal string, so that both 'could' be named/called "Position" but one uses gui_position to store it while the
+   other uses libnoise_position
+
+Q: implementation of PropertyComponent, where int a, int b are two components of QPoint, is that complicated to write?
+A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate, that can be done in two ways:
+   a) when inserting a property with setProperty("identifier", type);, the insert function uses type and adds two childs
+   b) such an item knows that and adds two childs itself somehow?!
+
+
+
+
+frontend modules are used to configure the backend module chain (libnoise). 
+
+class LibNoiseRenderer {
+  // see Utils::rendererImage, this is basically what this is about
+  // see also libnoise-view's backend system with QThread(s)
+}
+
+/*! checks for syntax/semantics of the network and then creates connects all modules 
+**  in the graph usable to render an image using LibNoiseRenderer */
+class LibNoiseConstructor {
+  libNoiseNetwork* constructNetwork(QModelIndex output module);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 REFACTORING:
 - check the specification for QAbstractItemModel: 
  - what must be implemented, is reset and layout changes mandatory?
@@ -26,13 +219,22 @@ REFACTORING:
    there are a few different ways:
    - slow: always use scene->items().contains(myItem) before acutally using that 'myItem'. this check would only check if that particular
      frontend item exists, before using it.
+     FAIL: this is slow as hell
 
    - all frontend items could implement an 'reference counter' using smart pointers. the object exists until the last reference is removed
+     FAIL: this does not work as the dependancy builds a loop between two objects
+
+   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
+     FAIL: so every QGraphicsItem (namely Port/Connection/Module) needs to inherit from QObject, setProperty currently used will
+           have to be renamed as well
 
    - frontend items do register or unregister their references manually:
      this can be very complex and error phrone [CURRENTLY IMPLEMENTED]
 
-   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
+   - use a messanger class which is used to forward messages between frontend classes: 
+    - objects can register and unregister at any time
+    - this messanger class could be implemented using an object counter (smart pointer(s)?)
+    - the last unregister will remove the messanger 
 
    problem viewed from the (frontend) module side:
      onModuleMove: foreach(module-port(s)-connection(s), Connection* c) c->updatePosition();
@@ -113,7 +315,8 @@ create a blog entry and discuss the O(?) problems as:
  - how many items can be inserted?
  - how fast is model 2 screen index and vice versa
  - overhead by removing/inserting of new items
- - view to view dependancies for faster drawing, discuss resutling issues
+ - messanger objects for frontend to frontend module function calls
+  - view to view dependancies for faster drawing, discuss resutling issues
 
 
 
@@ -128,15 +331,6 @@ create a blog entry and discuss the O(?) problems as:
 
 
      
-- see 'Delegate Classes' in assistant, then create delegates for the module properties, rethink the 'delegate' role of the
-  QGraphicsItems which 'act' as delegates for my GraphicsView...
-- if a property changes(a child), the parent (module) should get updated in the GraphicsScene
-   SEE: void GraphicsScene::dataChanged(const QModelIndex&, const QModelIndex&)  FIXME: not implemented yet for PROPERTY 
-- properties:
- - properties need an interface to be accessed via the model
- - property may be registered only once, fail with exit(1)!
- - properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
-- if setData did not work, because the validator discarded the value for any reason, the QStatusBar should be used to display why
 
 
 
@@ -147,7 +341,6 @@ create a blog entry and discuss the O(?) problems as:
 =================================================================================
   Model related: Adding, selecting, changing, removing of single/multiple items:
 =================================================================================
-- fix: ~Model and removeRows(..) for rootItem
 - QTreeView did not show anything lately:
   see FilterProxyModel changes.
   this bug didn't show up before as DataItemType::ROOT was actually 0. but now it is not anymore!
@@ -157,9 +350,6 @@ create a blog entry and discuss the O(?) problems as:
            especially with the handling of rootItem and QModelIndex()
          - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
 - bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up at some configurations. not sure why?!
-
-- concept: see assistant, the QTreeView there is basically what i want to clone
-  - QTreeView editor for pos should split QPoint up into x and y component as it is done in assistant. is that compilicated?
 
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);
@@ -223,13 +413,7 @@ create a blog entry and discuss the O(?) problems as:
   > if an item in the graphicsview is selected, the QTreeView should only show the respective properties of that item
   + if more items are selected, diplay all selected items
   + if no item is selected anymore, show all items in the QTreeView
-- think about how to integrate custom pixmaps rendered by libnoise as preview per Module : QGraphicsItem
 - fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
-- fix this:
-  MainWidget.cpp:
-    //void QTreeView::setFirstColumnSpanned ( int row, const QModelIndex & parent, bool span )
-    treeView->setFirstColumnSpanned(0, QModelIndex(), 1);
- -> but i want that be retrieved by data(..) but span is not used yet!
 
 GraphicsView:
  - zoomin/zoomout (mwheel or +/-) and zoomfit (gui button)
@@ -239,8 +423,7 @@ GraphicsView:
  - scrollbars in GraphicsView are currently disabled by the resizeEvent(..) implementation, maybe
    they should indicated the document width()/height() and making it work might be by using
    POSSIBLE FIX: centerOn(..) or scroll(..)
- - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should make an animation
- - add icons to the QMenu for categories as well as for single modules
+ - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should be animated for some time
 
 
 

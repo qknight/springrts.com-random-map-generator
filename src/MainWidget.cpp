@@ -16,7 +16,7 @@ MainWidget::MainWidget ( QMainWindow *parent ) : QMainWindow ( parent ) {
     connect (treeView, SIGNAL(clicked ( const QModelIndex & ) ),
              this, SLOT(clickRelay(const QModelIndex &)));
 
-    // the next line of code must be used if multi document support is required
+    // the next line of code can be used to change the document in a multi document setup
     changeActiveDocument ( doc );
 }
 

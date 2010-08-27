@@ -1,3 +1,6 @@
+2010-08-27
+ - not much code in this commit but TODO has a lot of interesting concepts waiting to be implemented
+
 2010-08-24
  - QTreeView is now expanded when loading modules via Document.cpp
  - CTRL+A selects all QGraphicsItems in the scene now

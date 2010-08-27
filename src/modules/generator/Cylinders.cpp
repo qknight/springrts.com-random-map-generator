@@ -7,7 +7,7 @@
 M_REGISTER(Cylinders);
 
 Cylinders::Cylinders() : DataAbstractModule(0,0,1) {
-  setProperty("FIXME", 112);
+  setProperty("Frequency", 0.034f);
 }
 
 Cylinders::~Cylinders() {

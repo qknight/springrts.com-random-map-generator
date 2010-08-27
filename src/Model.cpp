@@ -44,7 +44,6 @@ Model::Model() {
 Model::~Model() {
 //     qDebug() << __PRETTY_FUNCTION__;
     // we assume that if this function is called, no views are attached anymore
-//     removeRows(index(0,0, QModelIndex()));
     delete static_cast<DataRoot*> (rootItem);
 }
 
@@ -240,13 +239,13 @@ QVariant Model::headerData( int section, Qt::Orientation orientation, int role )
                 return "key";
             else
                 if ( role == Qt::ToolTipRole )
-                    return "FIXME";
+                    return "The name of the property (key)";
         case 1:
             if ( role == Qt::DisplayRole )
                 return "value";
             else
                 if ( role == Qt::ToolTipRole )
-                    return "FIXME";
+                    return "The value of the property (value)";
         }
     }
     return QVariant();
@@ -291,13 +290,7 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
         }
         DataAbstractItem* item = static_cast<DataAbstractItem*>( pitem.internalPointer() );
         if (item->getObjectType() == DataItemType::ROOT) {
-            qDebug() << __PRETTY_FUNCTION__ << "removing the ROOT item";
-//             while (item->childCount()) {
-// //                         qDebug() << "found a connection";
-//                 DataAbstractItem* z = item->childItems().first();
-//                 DataAbstractModule* m = static_cast<DataAbstractModule*>(z);
-//                 removeRows(QPersistentModelIndex( data2modelIndex(m)) );
-//             }
+            qDebug() << __PRETTY_FUNCTION__ << "no view can visualize the root item, so it can't be removed";
             continue;
         }
         if (item->getObjectType() == DataItemType::PORT) {
