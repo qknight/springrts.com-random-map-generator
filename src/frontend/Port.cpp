@@ -11,11 +11,35 @@
 //
 #include "Port.h"
 #include "Connection.h"
-#include <PortTypes.h>
+#include "PortTypes.h"
+#include "GraphicsItemRelay.h"
 
 Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int portType, int portNumber, ObjectPool* pool, QGraphicsItem* parent ) :
         QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index, pool ) {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
+
+    // 0. collect all connections for this port
+    QList<QModelIndex> v;
+    for(int i = 0; i < model->rowCount(index); ++i) {
+      v.push_back(model->index(i,0,index));
+    }
+    // 1. collect all reference-connections for this port
+    v += model->references(index);
+    
+    // 2. now check for all connections/references if a GraphicsItemRelay is needed
+    for(int i = 0; i < v.size(); ++i) {
+      qDebug() << __PRETTY_FUNCTION__;
+      QModelIndex cIndex = v[i];
+      
+      // if the connection does not yet have a frontend item representative, stop right here
+      QGraphicsItem* cg = pool->model2GraphicsItem ( cIndex );
+      if (cg == NULL)
+        continue;
+      
+      Connection* dstConnection = dynamic_cast<Connection*> ( cg );
+      new GraphicsItemRelay(this, dstConnection);
+    }
+
     m_portType=portType;
     m_portNumber=portNumber;
     m_portDirection=portDirection;
@@ -23,33 +47,37 @@ Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int p
 
 Port::~Port() {
 //     qDebug() << __PRETTY_FUNCTION__;
-    foreach ( Connection *c, connections ) {
-        c->suspend(this);
+    foreach(GraphicsItemRelay* r, relays) {
+        delete r;
     }
+
 // a Port MUST NOT contain childItems (connections) when being removed, Model::removeRows(..) should have removed already
-  if (childItems().size()) {
-    qDebug() << __PRETTY_FUNCTION__ << " CRITICAL ERROR: ~Port() removed, while connections are still existing";
-    exit(1);
-  }
-}
-
-void Port::updateConnections() {
-//       qDebug() << __PRETTY_FUNCTION__;
-    foreach ( Connection *c, connections ) {
-        c->updatePosition();
+    if (childItems().size()) {
+        qDebug() << __PRETTY_FUNCTION__ << " CRITICAL ERROR: ~Port() removed, while connections are still existing";
+        exit(1);
     }
 }
 
-void Port::addReference(Connection* c) {
-  connections.push_back(c);
+/*! called by Module to force a redraw of the Connection, after the position of the Module has changed */
+void Port::updateConnections() {
+    QPointF p = scenePos();
+//     qDebug() << __PRETTY_FUNCTION__ << p;
+    foreach (GraphicsItemRelay *r, relays ) {
+        r->updatePosition(p);
+    }
 }
 
-void Port::delReference(Connection* c) {
-//   qDebug() << __PRETTY_FUNCTION__ << connections.size();
-  int i = connections.removeAll(c);
+void Port::addRelay(GraphicsItemRelay* r) {
+//       qDebug() << __PRETTY_FUNCTION__;
+    relays.push_back(r);
+}
 
-  if (i <= 0)
-    qDebug() << __PRETTY_FUNCTION__ << "ERROR: no connection was removed?";
+void Port::delRelay(GraphicsItemRelay* r) {
+//       qDebug() << __PRETTY_FUNCTION__;
+    int i = relays.removeAll(r);
+
+    if (i <= 0)
+        qDebug() << __PRETTY_FUNCTION__ << "ERROR: no connection was removed?";
 }
 
 QRectF Port::boundingRect() const {
@@ -68,7 +96,7 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     // FIXME instead of saving the pan using a variable, maybe use the painter save/load stack?
     QBrush b;
     switch (m_portDirection) {
-      case PortDirection::OUT:
+    case PortDirection::OUT:
         b = QColor ( Qt::green );
         break;
     case PortDirection::MOD:

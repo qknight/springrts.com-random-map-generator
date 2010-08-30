@@ -1,14 +1,207 @@
+- bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up at some configurations. not sure why?!
+  Billow::out0 - connection - select::modput0 
+  then exit the program using alt+f4
+
+- fixme: reset() is not called, why?
+- fixme: portdirection is now wrong rendering the modput direction 'wrong' ;P
+  check also if Connection is using the right portdirections for the respective ports...
+
+
+connection and port do have:
+    QList<GraphicsItemRelay*> relays;
+    void addRelay(GraphicsItemRelay* r);
+    void delRelay(GraphicsItemRelay* r);
+- can multiple inheritance be used to reduce duplicated code?
+ - probably yes, implemnt this!
+ -> can it also help to use protected: to create a nice interface so that a GraphicsItemRelay may not call paint() which is protected in Connection
+- implement: GraphicsItemRelay must not be used more than once for an object, check for that condition
+
+
+
+
+
+REFACTORING:
+- check the specification for QAbstractItemModel: 
+ - Q: what must be implemented, is reset and layout changes mandatory?
+   A: yes, this important, implement it!
+ - does a Model have to know that a view is attached?
+
+12:30 <peer2> I've read posts where people tried having a QGraphcsView inside a QAbstractItemView but they run into problems
+12:30 <qknight> concept 1 of 2
+12:31 <qknight> a QGraphicsScene is a model and a QGraphicsScene can have several views, aka QGraphicsView. the QGraphicsScene model handles insertion and stuff as well as 
+                updating of all changed items in the QGraphicsView via it's own concepts
+12:31 <qknight> concept 2 of 2
+12:31 <qknight> Data <--> QAbstractItemModel <--> QGraphicsView is the other attempt doing the same thing but NOT using a QGraphicsScene or QGraphicsView
+12:31 <qknight> this has other benefits and pitfalls
+12:32 <qknight> so to summarize:
+12:33 <qknight> a QGraphicsScene/QGraphcisView works different from a QAbstractItemView in this way: a QGraphicsScene/QGraphcisView always needs all items to be in the 
+                scene and a QAbstractItemView works more or less like a delegate where items are queried on demand for rendering
+12:33 <qknight> well, that's it
+12:33 <qknight> i will add this to the discussion on my next posting
+
+===========================================================================
+   why QGraphicsItem(s) do need direct access to each other sometimes
+===========================================================================
+   the x,y position of a module is stored in the module property (backend) and is important for the QGraphicsScene/QGraphicsView basically.
+   when talking about Qt MVC the Model translates backend items into frontend items. one backend item may have several frontend items.
+
+   however, when moving a module using a drag'n'drop operation in the QGraphicsView the connections are redrawn immediately. this helps
+   to create a good looking arrangement of items as the drawing happens as fast as possible - realtime. it is important to note that the model
+   is not used while moving the item and therefore the graphical representation (frontend) and the acctual module (backend) are out of
+   sync. this changes when the drag'n'drop operation is finished using the 'QGraphicsItem::ItemPositionHasChanged'-signal which will 
+   write the new x,y coordinate to the backend immediately.
+   
+   altough it seems wise to do so, at least regarding the performance increase, it can result in pitfalls as it partially breaks the
+   MVC pattern, which basically says: a graphical representation (a frontend item as a module or connection) may not read data from 
+   another source than the model. since updating the connection depends on the position change information of a module (both frontend items)
+   we break that rule by using another frontend item (the module) to be accessed by a connection and vice versa.
+
+   the problem now is: how to solve the frontend dependancies without adding too much code and making the process of further code changes
+   more error phrone.
+
+   there are a few different ways:
+   - slow: always use scene->items().contains(myItem) before acutally using that 'myItem'. this check would only check if that particular
+     frontend item exists, before using it.
+     FAIL: this is slow as hell
+
+   - all frontend items could implement an 'reference counter' using smart pointers. the object exists until the last reference is removed
+     FAIL: this does not work as the dependancy builds a loop between two objects
+
+   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
+     FAIL: - so every QGraphicsItem (namely Port/Connection/Module) needs to inherit from QObject, setProperty currently used will
+             have to be renamed as well
+           - i don't want to add QObject to every frontend module/connection/port
+           - despite that: this would be a nice solution as it would be very flexible
+
+   - frontend items do register or unregister their references manually:
+     this can be very complex and error phrone [NOT IMPLEMENTED ANYMORE]
+
+   - use a messanger/relay class which is used to forward messages between frontend classes
+     [CURRENTLY IMPLEMENTED]
+
+   problem viewed from the (frontend) module side:
+     onModuleMove: foreach(module-port(s)-connection(s), Connection* c) c->updatePosition();
+
+    I if a connection is removed, it has to inform the port to not request update(); anymore
+   II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
+
+   -> therefore:
+     - graphical representations must be designed in a way that they can work even when not all dependacies are meat:
+       -> inserting a module (read PORT): [IMPLEMENTED]
+          creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
+          starts the drawing. see class 'Connection' for issues
+       -> deleting a module: [IMPLEMENTED]
+          same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
+          connection simply suspends accessing the module which is now not accessable anymore
+
+====================================================================================================
+  MESSANGER/RELAY DESIGN (LATE POPULATION of frontend items)
+====================================================================================================
+   - use a messanger/relay class which is used to forward messages between frontend classes: 
+    - this does not require to use QObject
+    - objects can register and unregister at any time
+    - this messanger class could be implemented using an object counter (smart pointer(s)?)
+    - the last unregister will remove the messanger 
+    - this class has two clients at max (bidirectional communication)
+
+a object creation cycle (when a GraphicsScene is populated using rowsInserted(..) by the class Model:
+    module1 (reference only)            problem1
+    module2 - con1 - module 3           problem2
+    module3 (reference only)
+    module4 - con2 - module1
+
+new module1:
+  PROBLEM1:
+    has only a reference so no 'connection' was added to connections and no crash will happen when moving the module which
+    will call:  
+        foreach ( QGraphicsItem *g, childItems()) {
+           g->updateConnections();
+  PROBLEM2:
+    module2 does have a child connection but as there is no frontend representation for module3 yet drawing con1 will crash the program.
+    the current implementation will not create the con1 in the first place, which means that there will be NO frontend 'Connection' object!
+
+  SOLUTION:
+  - PROBLEM1 
+    Q: can a class 'Port' know that it has references?
+    A: not yet
+    if a Port knows it has references assigned, it can complete the port <-> relay <-> connection process
+
+  class 'Relay' would work like that:
+    based on an identifier every object Port or Connection registers a 'Relay' r. r is used to pass messages between frontend items.
+    the identifier is only used to find r.
+
+  what must be changed to implement this system?
+    - Port must know about references and create one Relay 'r' per object
+    - Port must register one 'r' per outgoing connection
+
+  - PROBLEM2 
+    con1 is created, it can't find a 
+
+  module1 -- port1 -- relay -- connection -- relay -- port1 -- module2
+
+  one can do 'late population' as creating:
+   - module2, module1, connection or connection, module2, module1 does not have any problem with that
+  also deleting: one can delete a frontend item in an arbitrary order:
+   remove connection, module2, module1 or module1, module2, connection
+
+--- SOME PSEUDOCODE ---
+  -> Q: how to know (as a connection) which port1 sent the update? so which of the two QPoint coordinates has changed?
+     A: it can use the relay pointer or object as an identifier
+
+Port context (for connections and references):
+ r1 = new GraphicsItemRelay(portIndex, connectionIndex, QPoint initial_position);
+  and/or 
+ r2 = new GraphicsItemRelay(portIndex, referenceIndex, QPoint initial_position);
+
+Connection context:
+ r1 = new GraphicsItemRelay(srcIndex, connectionIndex);
+ r2 = new GraphicsItemRelay(dstIndex, connectionIndex);
+ srcPoint = r1->pos()
+ dstPoint = r2->pos()
+
+QVariant Module::itemChange ( GraphicsItemChange change, const QVariant & value ) {
+ calls:
+ Port::updateConnections()
+      foreach ( GraphicsItemRelay *r, relayedItems ) {
+        r->updatePosition(QPoint currentPosition);
+
+ Connection::updatePosition(this, QPoint pos);
+  this way, Connection c can know which of the the QPoint coordinates to udpate
+
+class GraphisItemRelay : public QObject {
+  GraphisItemRelay(QPersistentModelIndex con, QPoint position)
+};
+
+FIXME: Q: what is if a Connection is really deleted(backend)?
+       A: then all the related GraphisItemRelay objects must be removed as well.
+          -> see Port::addReference(..)/delReference(..)
+       this can be done this way:
+       the connection now runs the destructor, and the destructor must call:
+       foreach(relays, GraphisItemRelay* r)
+         r->shutdown();
+
+      GraphisItemRelay::shutdown() {
+        removeReference at all connected objects
+        emit deleteLater();
+      }
+       
+
+
+
+
+
+
 ===========================================================================
   DELEGATES, optimizing the QTreeView
 ===========================================================================
-- see 'Delegate Classes' in assistant, then create delegates for the module properties, rethink the 'delegate' role of the
-  QGraphicsItems which 'act' as delegates for my GraphicsView...
+- see 'Delegate Classes' in assistant, then create delegates for the module properties
+- rethink the 'delegate' role of the QGraphicsItems which 'act' as delegates for my GraphicsView...
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
    SEE: void GraphicsScene::dataChanged(const QModelIndex&, const QModelIndex&)  FIXME: not implemented yet for PROPERTY 
 - properties:
  - properties need an interface to be accessed via the model
- - property may be registered only once, fail with exit(1)!
- - properties should use type::int instead of "QString" for faster processing, along with a enum, which is replaced by a MAKRO
+ - property may be registered only once, fail with exit(1) on the second attempt!
+ - properties should use type::int instead of "QString" as identifier - faster processing.
 - if setData did not work, because the validator discarded the value for any reason, the QStatusBar should be used to display why
 
 - concept: see assistant, the QTreeView there is basically what i want to clone
@@ -191,65 +384,13 @@ class LibNoiseConstructor {
 
 
 
-REFACTORING:
-- check the specification for QAbstractItemModel: 
- - what must be implemented, is reset and layout changes mandatory?
- - does a Model have to know that a view is attached?
 
-===========================================================================
-   why QGraphicsItem(s) do need direct access to each other sometimes
-===========================================================================
-   the x,y position of a module is stored in the module property (backend) and is important for the QGraphicsScene/QGraphicsView basically.
-   when talking about Qt MVC the Model translates backend items into frontend items. one backend item may have several frontend items.
 
-   however, when moving a module using a drag'n'drop operation in the QGraphicsView the connections are redrawn immediately. this helps
-   to create a good looking arrangement of items as the drawing happens as fast as possible - realtime. it is important to note that the model
-   is not used while moving the item and therefore the graphical representation (frontend) and the acctual module (backend) are out of
-   sync. this changes when the drag'n'drop operation is finished using the 'QGraphicsItem::ItemPositionHasChanged'-signal which will 
-   write the new x,y coordinate to the backend immediately.
-   
-   altough it seems wise to do so, at least regarding the performance increase, it can result in pitfalls as it partially breaks the
-   MVC pattern, which basically says: a graphical representation (a frontend item as a module or connection) may not read data from 
-   another source than the model. since updating the connection depends on the position change information of a module (both frontend items)
-   we break that rule by using another frontend item (the module) to be accessed by a connection and vice versa.
 
-   the problem now is: how to solve the frontend dependancies without adding too much code and making the process of further code changes
-   more error phrone.
 
-   there are a few different ways:
-   - slow: always use scene->items().contains(myItem) before acutally using that 'myItem'. this check would only check if that particular
-     frontend item exists, before using it.
-     FAIL: this is slow as hell
 
-   - all frontend items could implement an 'reference counter' using smart pointers. the object exists until the last reference is removed
-     FAIL: this does not work as the dependancy builds a loop between two objects
 
-   - extend all QGraphicsItems by inheriting also QObject, then use signals+slots
-     FAIL: so every QGraphicsItem (namely Port/Connection/Module) needs to inherit from QObject, setProperty currently used will
-           have to be renamed as well
 
-   - frontend items do register or unregister their references manually:
-     this can be very complex and error phrone [CURRENTLY IMPLEMENTED]
-
-   - use a messanger class which is used to forward messages between frontend classes: 
-    - objects can register and unregister at any time
-    - this messanger class could be implemented using an object counter (smart pointer(s)?)
-    - the last unregister will remove the messanger 
-
-   problem viewed from the (frontend) module side:
-     onModuleMove: foreach(module-port(s)-connection(s), Connection* c) c->updatePosition();
-
-    I if a connection is removed, it has to inform the port to not request update(); anymore
-   II if a module (therefore the ports are removed) each port has to inform the connection not to use it anymore (in case of I)
-
-   -> therefore:
-     - graphical representations must be designed in a way that they can work even when not all dependacies are meat:
-       -> inserting a module: [NOT IMPLEMENTED]
-          creating a module, then creating a connection but the second module isn't there yet, if the second module is created the connection
-          starts the drawing. see class 'Connection' for issues
-       -> deleting a module: [IMPLEMENTED]
-          same when two modules exist and one connection. now the reset() clears all objects in arbitrary order: one module goes down, the 
-          connection simply suspends accessing the module which is now not accessable anymore
 
 13:17 <peer> Hi
 13:19 <peer> What is still unclear for me, is how you model the idea of connections from your QAIM.
@@ -280,6 +421,13 @@ if i recall correctly then:
                 items are interactive objects on your graphics view, that is not going to work.
 13:23 <peer> But: why not use the same approach as there is for the *editors* for item views: use a factory approach. That lets you specify what type of GraphicsItem 
                 should be used to represent what type of node in your model.
+THIS IS NOT POSSIBLE
+this is due to the nature of the 'QGraphicsScene' which requires (the scene) that all items, that is QGraphicsItem(s), are existent. 
+the QGraphicsView (when doing the rendering) treats paints these QGraphicsItems using the paint() function. 
+in contrast: a QTreeView can use delegates to create an editor of arbitrary choise because it is only used for drawing and DOES NOT have such
+a complex item dependancy as a QGraphicsScene/QGraphicsView where the items have a actual position in x,y and z coordinates.
+
+
 yes can actually do that without much trouble:
 in the gui part, just create a base class and then according to a type information create the object of your choice. in my cases i didn't need to yet.
 but if you want i can give you further hints, where to modify which code. in general this is:
@@ -317,7 +465,11 @@ create a blog entry and discuss the O(?) problems as:
  - overhead by removing/inserting of new items
  - messanger objects for frontend to frontend module function calls
   - view to view dependancies for faster drawing, discuss resutling issues
-
+ - blog entries order:
+  - 1/4 comparing concepts of 'QGraphicsScene(model) <-> QGraphicsView' vs GraphicsScene as a QAbstractItemView
+  - 2/4 QGraphicsScene as a QAbstractItemView (mention old entries)
+  - 3/4 helper functions in detail (objectPool)
+  - 3/4 discussion why GraphicsItemRelay was invented
 
 
 
@@ -349,7 +501,6 @@ create a blog entry and discuss the O(?) problems as:
 - FIXME: - have a look at Model::removeRows and Model::parent, there is some strange things going on, 
            especially with the handling of rootItem and QModelIndex()
          - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
-- bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up at some configurations. not sure why?!
 
 - implement QSettings for QTreeView column width
     MainWidget::changeActiveDocument() -> replace by QSettings... treeView->setColumnWidth(0, 230);

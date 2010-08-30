@@ -1,88 +1,82 @@
 #include <QtGui>
-
-#include "Connection.h"
 #include <math.h>
-#include <PortTypes.h>
+
+#include "PortTypes.h"
+#include "GraphicsItemRelay.h"
+#include "Connection.h"
+#include "GraphicsItemRelay.h"
 
 /*!
  * adds a graphical representation (see Connection.cpp/.h) spanning from
  * Port a to Port b (see Port.cpp/.h)
  * this function is called by the QAbstractItemModel after a connection has been inserted
  */
-Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool, QGraphicsItem* parent)
-        : QGraphicsPathItem(parent), GraphicsItemModelExtension(model, index, pool)
+Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool)
+        : QGraphicsPathItem(), GraphicsItemModelExtension(model, index, pool)
 {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
 
     // 0. dst QPersistentModelIndex (that is to be queried via the model)
     QPersistentModelIndex sPortIndex = index.parent();
     QPersistentModelIndex dPortIndex = QPersistentModelIndex(model->dst(index));
 
+    // do not store or use any Port* reference from here
     Port* srcPort = dynamic_cast<Port*> ( pool->model2GraphicsItem ( sPortIndex ) );
     Port* dstPort = dynamic_cast<Port*> ( pool->model2GraphicsItem ( dPortIndex ) );
 
-    if (srcPort == NULL || dstPort == NULL || srcPort == dstPort) {
-        if (srcPort == NULL)
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
-        if (dstPort == NULL)
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
-        if (srcPort == dstPort)
-            qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
+    if (srcPort == dstPort) {
+        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == dstModule";
         exit(1);
     }
+    if (srcPort == NULL) {
+        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "srcModule == NULL";
+    } else {
+        new GraphicsItemRelay(srcPort, this);
+    }
+    if (dstPort == NULL) {
+        qDebug() << __FILE__ << __PRETTY_FUNCTION__ << "dstModule == NULL";
+    } else {
+        new GraphicsItemRelay(dstPort, this);
+    }
 
-    m_sPort = srcPort;
-    m_dPort = dstPort;
-    
-    m_suspendsrcPort = false;
-    m_suspenddstPort = false;
-    
-    m_dPortDirection = m_dPort->portDirection();
-    m_sPortDirection = m_sPort->portDirection();
-    
-    m_sPort->addReference(this);
-    m_dPort->addReference(this);
+    m_dPortDirection = model->data(sPortIndex, customRole::PortDirection).toInt();
+    m_sPortDirection = model->data(dPortIndex, customRole::PortDirection).toInt();
 
-    updatePosition();
-    
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     setZValue(-5);
 }
 
-void Connection::suspend(Port* p) {
-  if (p == m_sPort)
-   m_suspendsrcPort = true;
-  if (p == m_dPort)
-    m_suspenddstPort = true;
-}
-
 Connection::~Connection() {
 //     qDebug() << __PRETTY_FUNCTION__;
-    if (!m_suspendsrcPort)
-      m_sPort->delReference(this);
-    if (!m_suspenddstPort)
-      m_dPort->delReference(this);
+    foreach(GraphicsItemRelay* r, relays) {
+        delete r;
+    }
+}
+
+void Connection::addRelay(GraphicsItemRelay* r) {
+//       qDebug() << __PRETTY_FUNCTION__;
+    relays.push_back(r);
+}
+
+void Connection::delRelay(GraphicsItemRelay* r) {
+//   qDebug() << __PRETTY_FUNCTION__;
+    int i = relays.removeAll(r);
+    
+
+    if (i <= 0)
+        qDebug() << __PRETTY_FUNCTION__ << "ERROR: no connection was removed?";
 }
 
 void Connection::updatePosition() {
-    if (m_suspendsrcPort || m_suspenddstPort)
-      return;
+    if (relays.size() == 2) {
+      srcPosition = relays[0]->pos();
+      dstPosition = relays[1]->pos();
 
-    QPointF n;
-    if (m_sPort->parentItem() != 0)
-        n = m_sPort->parentItem()->pos();
-    QPointF m;
-    if (m_dPort->parentItem() != 0)
-        m = m_dPort->parentItem()->pos();
-
-    srcParentPosition = n;
-    srcPosition = m_sPort->pos();
-    dstParentPosition = m;
-    dstPosition = m_dPort->pos();
-
-    setPath(connectionPath());
+      setPath(connectionPath());
+      update();
+    }
 }
 
 /*! increases the clickable range for item selection, when clicking near the line in a QGraphicsView */
@@ -95,9 +89,9 @@ QPainterPath Connection::shape() const {
 }
 
 QPainterPath Connection::connectionPath() const {
-    QPointF beginPoint = dstParentPosition + dstPosition;
-    QPointF endPoint = srcParentPosition + srcPosition;
-    
+    QPointF beginPoint = dstPosition;
+    QPointF endPoint = srcPosition;
+
     int stretch= qAbs(0.6 * -(beginPoint.x()-endPoint.x()));
     QPainterPath myPath(QPoint(beginPoint.x(),beginPoint.y()));
     QPointF xPoint;
@@ -116,7 +110,7 @@ QPainterPath Connection::connectionPath() const {
 
 void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
     QPen p = QPen ( QColor ( "red" ), 4, Qt::DashLine );
-    
+
     painter->drawPath ( connectionPath() );
     if ( isSelected() ) {
         painter->setPen ( p );

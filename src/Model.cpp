@@ -285,7 +285,7 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
     for (int i=0; i < items.size(); ++i) {
         QPersistentModelIndex pitem = items[i];
         if (!pitem.isValid()) {
-            qDebug() << __PRETTY_FUNCTION__ << " item is no longer valid, probably already deleted";
+//             qDebug() << __PRETTY_FUNCTION__ << " item is no longer valid, probably already deleted";
             continue;
         }
         DataAbstractItem* item = static_cast<DataAbstractItem*>( pitem.internalPointer() );
@@ -645,7 +645,7 @@ QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
 //     qDebug() << __PRETTY_FUNCTION__ ;
     if (item->getObjectType() == DataItemType::ROOT)
         return QModelIndex();
-    
+
     switch (item->getObjectType()) {
     case DataItemType::MODULE:
     case DataItemType::PORT:
@@ -663,3 +663,28 @@ QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
     return QModelIndex();
 }
 
+QList< QModelIndex > Model::references(QPersistentModelIndex index) {
+    qDebug() << __PRETTY_FUNCTION__;
+    QList< QModelIndex > l;
+    // 0. first is item a port?
+    if (data( index, customRole::TypeRole ).toInt() != DataItemType::PORT) {
+        qDebug() << __PRETTY_FUNCTION__ << " fatal error: item is not a PORT";
+        exit(1);
+    }
+
+    // 1. cast it to be a DataPort*
+    DataAbstractItem* item = static_cast<DataAbstractItem*> (index.internalPointer());
+    DataPort* p = static_cast<DataPort*> (item);
+
+    // 2. query the connection references
+    for (int i = 0; i < p->referenceCount(); ++i) {
+        DataConnection* c = static_cast<DataConnection*>(p->referenceChildItems()[i]);
+
+        // 3. transform them to QModelIndexes and put them into the list
+        QModelIndex cIndex = data2modelIndex(c);
+        l.append(cIndex);
+    }
+
+    // 4. return the list
+    return l;
+}

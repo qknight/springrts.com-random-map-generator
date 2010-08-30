@@ -8,10 +8,12 @@
 class QGraphicsLineItem;
 class QRectF;
 class QPainterPath;
+class GraphicsItemRelay;
 
 class Connection : public QGraphicsPathItem, public GraphicsItemModelExtension {
+  friend class GraphicsItemRelay;
 public:
-    Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool, QGraphicsItem *parent = 0);
+    Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool);
     ~Connection();
     void dataChanged();
     int type() const {
@@ -27,24 +29,20 @@ public:
         myColor = color;
     }
     void updatePosition();
-    void suspend(Port* p);
 protected:
+    void addRelay(GraphicsItemRelay* r);
+    void delRelay(GraphicsItemRelay* r);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0);
 
 private:
+    QList<GraphicsItemRelay*> relays;
     QPainterPath connectionPath() const;
-    Port *m_sPort;
-    Port *m_dPort;
     QColor myColor;
-    QPointF srcParentPosition;
     QPointF srcPosition;
-    QPointF dstParentPosition;
     QPointF dstPosition;
     int m_dPortDirection;
     int m_sPortDirection;
-    bool m_suspendsrcPort;
-    bool m_suspenddstPort;
 };
 
 #endif

@@ -79,6 +79,8 @@ class Model : public QAbstractItemModel {
     bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
     /*! given a connection index, this function returns the QModelIndex of the destination port */
     QModelIndex dst(QPersistentModelIndex item);
+    /*! given a Port this will return a list of all references to that port */
+    QList< QModelIndex > references(QPersistentModelIndex index);
     
   protected:
     /*! inserts a new Module based on it's type on either 0,0 or at QPoint */

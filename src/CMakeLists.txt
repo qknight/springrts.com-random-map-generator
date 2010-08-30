@@ -45,6 +45,7 @@ SET( srmg_SOURCES
   frontend/Port.cpp
   frontend/Connection.cpp
   frontend/GraphicsItemModelExtension.cpp
+  frontend/GraphicsItemRelay.cpp
 
   # libnoise module backends
   modules/utils/NoiseMapBuilderPlane.cpp
@@ -90,6 +91,7 @@ SET( srmg_MOC_HEADERS
 # frontend 
   frontend/GraphicsScene.h
   frontend/GraphicsView.h
+  frontend/GraphicsItemRelay.h
 )
 
 SET( srmg_UIs

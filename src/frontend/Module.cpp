@@ -16,6 +16,7 @@
 #include <DataAbstractModule.h>
 
 Module::Module(Model* model, QPersistentModelIndex index, ObjectPool* pool) : QGraphicsItem(), GraphicsItemModelExtension(model, index, pool) {
+    qDebug() << __PRETTY_FUNCTION__;
     int child_count = model->rowCount(index);
     int in=0, mod=0, out=0;
     for (int i = 0; i < child_count; ++i) {

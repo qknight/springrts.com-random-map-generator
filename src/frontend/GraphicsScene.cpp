@@ -125,6 +125,7 @@ void GraphicsScene::rowsInserted( const QModelIndex & parent, int start, int end
         default:
             //FIXME why does that happen?!
             qDebug() << __PRETTY_FUNCTION__ << " UNKNOWN?! " << model->data( item, customRole::TypeRole ).toInt();
+            exit(1);
         }
     }
 }

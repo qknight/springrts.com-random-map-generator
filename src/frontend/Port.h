@@ -17,6 +17,7 @@
 #include <QDebug>
 #include "GraphicsItemModelExtension.h"
 
+class GraphicsItemRelay;
 class Connection;
 
 /**
@@ -32,8 +33,9 @@ public:
                QWidget *widget);
     QRectF boundingRect() const;
     
-    void addReference(Connection* c);
-    void delReference(Connection* c);
+    void addRelay(GraphicsItemRelay* r);
+    void delRelay(GraphicsItemRelay* r);
+    
     // -> see DataItemType.h
     int portType();
     int portNumber();
@@ -49,6 +51,7 @@ public:
     int customType() const
          { return DataItemType::PORT; }
 private:
+    QList<GraphicsItemRelay*> relays;
     int m_portType;
     int m_portNumber;
     int m_portDirection;

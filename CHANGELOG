@@ -1,3 +1,15 @@
+2010-08-29
+this relase fixes one of my worst problems in frontend item handling
+ - created a easy to use interface to pass position changes from Ports to Connections
+  - a Connection does not hold a pointer to a Port
+  - a Port does not hold a pointer to a Connection
+  -> see class GraphicsItemRelay
+  -> also see the whole discussion: 'why QGraphicsItem(s) do need direct access to each other sometimes'
+  - when a module is inserted after a connection is inserted, then the relays are inserted now
+  -> this framework still needs some love (see TODO) and testing
+ - added Model::references(..) function to query a list of QModelIndexes (connections) for a certain Port
+ - found a use-case where a certain bug is always triggered, see top item in TODO
+
 2010-08-27
  - not much code in this commit but TODO has a lot of interesting concepts waiting to be implemented
 
