@@ -42,7 +42,7 @@ Model::Model() {
 }
 
 Model::~Model() {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     // we assume that if this function is called, no views are attached anymore
     delete static_cast<DataRoot*> (rootItem);
 }

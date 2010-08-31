@@ -4,14 +4,13 @@
 #include <QGraphicsPathItem>
 #include "Port.h"
 #include "GraphicsItemModelExtension.h"
+#include "GraphicsItemRelayInterface.h"
 
 class QGraphicsLineItem;
 class QRectF;
 class QPainterPath;
-class GraphicsItemRelay;
 
-class Connection : public QGraphicsPathItem, public GraphicsItemModelExtension {
-  friend class GraphicsItemRelay;
+class Connection : public QGraphicsPathItem, public GraphicsItemModelExtension, public GraphcisItemRelayInterface {
 public:
     Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool);
     ~Connection();
@@ -30,13 +29,10 @@ public:
     }
     void updatePosition();
 protected:
-    void addRelay(GraphicsItemRelay* r);
-    void delRelay(GraphicsItemRelay* r);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = 0);
 
 private:
-    QList<GraphicsItemRelay*> relays;
     QPainterPath connectionPath() const;
     QColor myColor;
     QPointF srcPosition;

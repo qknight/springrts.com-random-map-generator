@@ -16,6 +16,7 @@
 #include <QPainter>
 #include <QDebug>
 #include "GraphicsItemModelExtension.h"
+#include "GraphicsItemRelayInterface.h"
 
 class GraphicsItemRelay;
 class Connection;
@@ -23,7 +24,7 @@ class Connection;
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
-class Port : public QGraphicsItem, public GraphicsItemModelExtension {
+class Port : public QGraphicsItem, public GraphicsItemModelExtension, public GraphcisItemRelayInterface {
 public:
     QList<Connection*> connections;
 public:
@@ -32,9 +33,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
     QRectF boundingRect() const;
-    
-    void addRelay(GraphicsItemRelay* r);
-    void delRelay(GraphicsItemRelay* r);
     
     // -> see DataItemType.h
     int portType();
@@ -51,7 +49,6 @@ public:
     int customType() const
          { return DataItemType::PORT; }
 private:
-    QList<GraphicsItemRelay*> relays;
     int m_portType;
     int m_portNumber;
     int m_portDirection;

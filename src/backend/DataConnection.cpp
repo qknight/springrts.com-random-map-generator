@@ -21,13 +21,13 @@
 #include "DataAbstractModule.h"
 
 DataConnection::DataConnection ( DataAbstractItem* src, DataAbstractItem* dst) : DataAbstractItem ( src ) {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     m_src = src;
     m_dst = dst;
 }
 
 DataConnection::~DataConnection() {
-//   qDebug() << __PRETTY_FUNCTION__;
+  qDebug() << __PRETTY_FUNCTION__;
 }
 
 DataAbstractItem* DataConnection::src () {

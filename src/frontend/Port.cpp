@@ -15,7 +15,7 @@
 #include "GraphicsItemRelay.h"
 
 Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int portType, int portNumber, ObjectPool* pool, QGraphicsItem* parent ) :
-        QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index, pool ) {
+        QGraphicsItem ( parent ), GraphicsItemModelExtension ( model, index, pool ), GraphcisItemRelayInterface() {
     qDebug() << __PRETTY_FUNCTION__;
 
     // 0. collect all connections for this port
@@ -47,10 +47,6 @@ Port::Port ( Model* model, QPersistentModelIndex index, int portDirection, int p
 
 Port::~Port() {
 //     qDebug() << __PRETTY_FUNCTION__;
-    foreach(GraphicsItemRelay* r, relays) {
-        delete r;
-    }
-
 // a Port MUST NOT contain childItems (connections) when being removed, Model::removeRows(..) should have removed already
     if (childItems().size()) {
         qDebug() << __PRETTY_FUNCTION__ << " CRITICAL ERROR: ~Port() removed, while connections are still existing";
@@ -65,19 +61,6 @@ void Port::updateConnections() {
     foreach (GraphicsItemRelay *r, relays ) {
         r->updatePosition(p);
     }
-}
-
-void Port::addRelay(GraphicsItemRelay* r) {
-//       qDebug() << __PRETTY_FUNCTION__;
-    relays.push_back(r);
-}
-
-void Port::delRelay(GraphicsItemRelay* r) {
-//       qDebug() << __PRETTY_FUNCTION__;
-    int i = relays.removeAll(r);
-
-    if (i <= 0)
-        qDebug() << __PRETTY_FUNCTION__ << "ERROR: no connection was removed?";
 }
 
 QRectF Port::boundingRect() const {

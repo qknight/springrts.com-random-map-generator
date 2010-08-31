@@ -26,7 +26,7 @@ MainWidget::~MainWidget() {
 
 void MainWidget::changeActiveDocument ( Document* doc ) {
     // filter out port and connection elements
-    treeView->setModel(doc->filter);
+    treeView->setModel(doc->model);
     //FIXME this should go into QSettings
     treeView->setColumnWidth(0, 230);
     

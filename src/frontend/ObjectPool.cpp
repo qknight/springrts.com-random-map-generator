@@ -14,7 +14,9 @@ ObjectPool::ObjectPool(GraphicsScene* scene) {
     m_scene = scene;
 }
 
-ObjectPool::~ObjectPool() {}
+ObjectPool::~ObjectPool() {
+    qDebug() << __PRETTY_FUNCTION__;
+}
 
 /*! * searches all items() in the QGraphicsScene for the _one_ with the matching index */
 QGraphicsItem* ObjectPool::model2GraphicsItem ( QPersistentModelIndex index ) {

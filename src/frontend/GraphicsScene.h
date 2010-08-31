@@ -60,6 +60,8 @@ private:
 protected Q_SLOTS:
     /*! helper function to implement a reset call for a custom view */
     void reset();
+    
+    void layoutChanged();
     /*! callback which is called by the model on item insertion operations */
     void rowsInserted( const QModelIndex & parent, int start, int end );
     /*! callback which is called by the model on item removal operations */

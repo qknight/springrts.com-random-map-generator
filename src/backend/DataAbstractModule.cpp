@@ -21,6 +21,7 @@
 #include "DataProperty.h"
 
 DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) {
+    qDebug() << __PRETTY_FUNCTION__;
     // ports need to be created from insertModule(..) in Model.cpp, see also the insertPort(..) implementation
     this->inputs=inputs;
     this->modputs=modputs;
@@ -28,7 +29,7 @@ DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) 
 }
 
 DataAbstractModule::~DataAbstractModule() {
-//   qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     // we have to take care about the Ports and properties, just remove all of them!
     foreach(DataAbstractItem* item, m_childItems) {
         removeChild(m_childItems.indexOf(item));

@@ -46,6 +46,7 @@ SET( srmg_SOURCES
   frontend/Connection.cpp
   frontend/GraphicsItemModelExtension.cpp
   frontend/GraphicsItemRelay.cpp
+  frontend/GraphicsItemRelayInterface.cpp
 
   # libnoise module backends
   modules/utils/NoiseMapBuilderPlane.cpp

@@ -1,3 +1,13 @@
+2010-08-31
+- implemented GraphcisItemRelayInterface using multiple inheritance to reduce duplicated code
+    QList<GraphicsItemRelay*> relays;
+    void addRelay(GraphicsItemRelay* r);
+    void delRelay(GraphicsItemRelay* r);
+  are now found in GraphcisItemRelayInterface
+
+2010-08-30
+ - Connection(s) to modputs are now drawn correctly, fixed a simple assignment but in Connection::Connection(..)
+
 2010-08-29
 this relase fixes one of my worst problems in frontend item handling
  - created a easy to use interface to pass position changes from Ports to Connections

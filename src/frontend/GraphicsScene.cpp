@@ -25,6 +25,8 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
     // as this GraphicsScene is now somehow a QAbstractItemView, we need to connect the functionality
     connect( model, SIGNAL(modelReset ()),
              this, SLOT(reset()));
+    connect( model, SIGNAL(layoutChanged ()),
+             this, SLOT(layoutChanged()));
     connect( model, SIGNAL(rowsInserted ( const QModelIndex & , int , int  )),
              this, SLOT(rowsInserted ( const QModelIndex & , int , int  )));
     connect( model, SIGNAL(rowsAboutToBeRemoved ( const QModelIndex & , int , int  )),
@@ -35,6 +37,7 @@ GraphicsScene::GraphicsScene ( Model *model, QWidget * parent ) : QGraphicsScene
 }
 
 GraphicsScene::~GraphicsScene() {
+    qDebug() << __PRETTY_FUNCTION__;
     delete pool;
 }
 
@@ -100,6 +103,11 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
 }
 
 void GraphicsScene::reset() {
+    qDebug() << __PRETTY_FUNCTION__ << "FIXME: implement me";
+    exit(1);
+}
+
+void GraphicsScene::layoutChanged() {
     qDebug() << __PRETTY_FUNCTION__ << "FIXME: implement me";
     exit(1);
 }
@@ -223,7 +231,7 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     }
     //FIXME zoom in
     //FIXME zoom out
-    
+
     //select all selectable items on the scene using 'ctrl+a' modifiers
     if ((keyEvent->key() == Qt::Key_A) &&( keyEvent->modifiers() == Qt::ControlModifier )) {
 //         qDebug() << "Selects all items in the scene";

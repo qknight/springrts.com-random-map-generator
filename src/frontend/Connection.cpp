@@ -12,8 +12,8 @@
  * this function is called by the QAbstractItemModel after a connection has been inserted
  */
 Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* pool)
-        : QGraphicsPathItem(), GraphicsItemModelExtension(model, index, pool)
-{
+        : QGraphicsPathItem(), GraphicsItemModelExtension(model, index, pool), GraphcisItemRelayInterface()
+{                                                                               
     qDebug() << __PRETTY_FUNCTION__;
 
     // 0. dst QPersistentModelIndex (that is to be queried via the model)
@@ -39,8 +39,8 @@ Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* po
         new GraphicsItemRelay(dstPort, this);
     }
 
-    m_dPortDirection = model->data(sPortIndex, customRole::PortDirection).toInt();
-    m_sPortDirection = model->data(dPortIndex, customRole::PortDirection).toInt();
+    m_sPortDirection = model->data(sPortIndex, customRole::PortDirection).toInt();
+    m_dPortDirection = model->data(dPortIndex, customRole::PortDirection).toInt();
 
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
@@ -50,23 +50,6 @@ Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* po
 
 Connection::~Connection() {
 //     qDebug() << __PRETTY_FUNCTION__;
-    foreach(GraphicsItemRelay* r, relays) {
-        delete r;
-    }
-}
-
-void Connection::addRelay(GraphicsItemRelay* r) {
-//       qDebug() << __PRETTY_FUNCTION__;
-    relays.push_back(r);
-}
-
-void Connection::delRelay(GraphicsItemRelay* r) {
-//   qDebug() << __PRETTY_FUNCTION__;
-    int i = relays.removeAll(r);
-    
-
-    if (i <= 0)
-        qDebug() << __PRETTY_FUNCTION__ << "ERROR: no connection was removed?";
 }
 
 void Connection::updatePosition() {

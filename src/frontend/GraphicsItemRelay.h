@@ -15,10 +15,11 @@ class GraphicsItemRelay : public QObject {
     Q_OBJECT
     friend class Port;
     friend class Connection;
+    friend class GraphcisItemRelayInterface;
     
 protected:
     GraphicsItemRelay(Port* p, Connection* c);
-    ~GraphicsItemRelay();
+     ~GraphicsItemRelay();
     /*! this function is called when one of the client objects is destroyed */
     void updatePosition(QPointF pos);
     QPointF pos();
