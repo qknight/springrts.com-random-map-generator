@@ -16,7 +16,6 @@ Connection::Connection(Model* model, QPersistentModelIndex index, ObjectPool* po
 {
     qDebug() << __PRETTY_FUNCTION__;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
-//     setFlag(QGraphicsItem::ItemIsMovable, true);
 
     // 0. dst QPersistentModelIndex (that is to be queried via the model)
     QPersistentModelIndex sPortIndex = index.parent();
@@ -72,12 +71,6 @@ QPainterPath Connection::shape() const {
     return path;
 }
 
-// bool Connection::contains( const QPointF & point ) const {
-//     bool z = shape().contains(point);
-//     qDebug() << __PRETTY_FUNCTION__ << z << "isEnabled: " << isEnabled();
-//     return z;
-// }
-
 QPainterPath Connection::connectionPath() const {
     QPointF beginPoint = dstPosition;
     QPointF endPoint = srcPosition;
@@ -114,21 +107,4 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
 void Connection::dataChanged() {
     //nothing to do here, since port(s) do not have a specific role except being connectable
-}
-
-void Connection::mousePressEvent ( QGraphicsSceneMouseEvent * event ) {
-  qDebug() << "here";
-//   QGraphicsItem::mousePressEvent(event);
-  setSelected(true);
-}
-
-void Connection::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event ) {
-  qDebug() << "here2";
-//   QGraphicsItem::mouseDoubleClickEvent(event);
-//    mousePressEvent(event);
-}
-
-void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "here3";
-//     QGraphicsItem::mouseReleaseEvent(event);
 }

@@ -276,7 +276,7 @@ void GraphicsScene::mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
                     line->setZValue ( 2000 );
                     addItem ( line );
                 }
-                return;
+//                 return;
             }
         }
     QGraphicsScene::mousePressEvent ( mouseEvent );
