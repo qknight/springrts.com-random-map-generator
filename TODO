@@ -1,4 +1,45 @@
-REFACTORING:
+- regression: selection of connections does not work well?
+ -> works when the port is clicked (which is not selectable)??!! don't know, maybe because of my current changes....
+
+what is the conceptional difference between:
+ - [1] qgraphicslineitem
+ - [2] qgraphicspathitem
+ -> [1] can receive mousePressEvents out of the box while [2] can not?!
+
+
+
+- fix all FIXME lines in all frontend classes
+ - connection
+ - port
+ - module
+
+- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
+       however: if the second output usage is removed one can connect the input ports as expected, later the second output
+                can be connected again...?!
+       - this fails silently, create a debug message
+       - this bug is in Model::insertConnection(..) for sure
+       to reproduce:
+       insert perlin p1; selector s1, selector s2; connect s1.out1 to s2.in1 and s1.out1 to s2.in2, then try to connect p1 to 
+              s1.in1 and s2.put1 as well, will not work. will work if no double use of s1.out1 is made!
+       FIX is: first find similar connections as (s1.out1 - s2.in1) AND (s1.out1 - s2.in2), and then only process one of these
+       IMPORTANT: add a qDebug() statement why it does fail
+
+ - blog entries order:
+  -> use FAQ 
+  - 1/4 comparing concepts of 'QGraphicsScene(model) <-> QGraphicsView' vs GraphicsScene as a QAbstractItemView
+  - 2/4 QGraphicsScene as a QAbstractItemView (mention old entries)
+  - 3/4 helper functions in detail (objectPool)
+  - 4/4 discussion why GraphicsItemRelay was invented
+
+comment on: 
+ - http://mupuf.org/blog/article/34/
+ - http://labs.trolltech.com/blogs/2008/10/24/itemviews-the-next-generation/
+ - http://doc.trolltech.com/4.5/graphicsview-diagramscene.html
+
+
+===========================================================================
+   REFACTORING
+===========================================================================
 - check the specification for QAbstractItemModel: 
  - Q: what must be implemented, is reset and layout changes mandatory?
    A: yes, this important, implement it!
@@ -16,50 +57,18 @@ REFACTORING:
            especially with the handling of rootItem and QModelIndex()
          - the rootItem should return a valid QModelIndex() and rootItem->parent() should return QModelIndex()
 
-
-
-
- - considering the next bug it would be wise to refactore DataAbstractItem to create new objects not using
+- considering the next bug it would be wise to refactore DataAbstractItem to create new objects not using
        DataConnection* dc = new DataConnection( abstractItemA, abstractItemB );
    but instead do:
        DataPort* p; p->insertConnection( abstractItemA, abstractItemB );
    -> that way one could _NOT_ create dc objects externally
    -> DataConnection should register the object and the reference automatically
      -> also if the reference OR the connection is removed also the respectively object is removed 
-
 - bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up with this configuration:
   Billow::out0 - connection - select::modput0 
   then exit the program using alt+f4
  -> the problem is a cyclic dependancy (not implemented) because calling removeReference must also remove the connection and vice versa
    WARNING: current fix is to disable the deletion of connections/references in DataPort::~DataPort() {
-
-
-- bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
-       however: if the second output usage is removed one can connect the input ports as expected, later the second output
-                can be connected again...?!
-       - this fails silently, create a debug message
-       - this bug is in Model::insertConnection(..) for sure
-       to reproduce:
-       insert perlin p1; selector s1, selector s2; connect s1.out1 to s2.in1 and s1.out1 to s2.in2, then try to connect p1 to 
-              s1.in1 and s2.put1 as well, will not work. will work if no double use of s1.out1 is made!
-       FIX is: first find similar connections as (s1.out1 - s2.in1) AND (s1.out1 - s2.in2), and then only process one of these
-       IMPORTANT: add a qDebug() statement why it does fail
-
- - blog entries order:
-  - 1/4 comparing concepts of 'QGraphicsScene(model) <-> QGraphicsView' vs GraphicsScene as a QAbstractItemView
-  - 2/4 QGraphicsScene as a QAbstractItemView (mention old entries)
-  - 3/4 helper functions in detail (objectPool)
-  - 4/4 discussion why GraphicsItemRelay was invented
-
-comment on: 
- - http://mupuf.org/blog/article/34/
- - http://labs.trolltech.com/blogs/2008/10/24/itemviews-the-next-generation/
- - http://doc.trolltech.com/4.5/graphicsview-diagramscene.html
-
-
-
-
-
 
 ===========================================================================
   DELEGATES, optimizing the QTreeView
@@ -248,7 +257,6 @@ class LibNoiseConstructor {
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
-- selection of connections does not work well?
 - fixme: when selecting an module, and while hoovering&moving it: delete it using 'del'-key. 
          the next item will instantly port to 'x,y=0,0', when moving it, using a drag'n'drop operation
          issue might be: when the item is removed, there is still some pos() thing going on and when the next item is moved it is
@@ -263,7 +271,6 @@ class LibNoiseConstructor {
   the source port to the mouse cursor (basically what it does currently) until the next click which then checks if a valid port was clicked.
   this would enable connecting two ports which are not in the same view as the scene might be bigger than the current view port
 - QStatusBar should receive messages, especially when loops are formed or connection attemps are done the wrong way
-- fix all FIXME lines in all frontend classes
 - creat 'visual indication' like a red ball behind the port to represent various PortType(s)
 - also add a little 'x' button on the top right side of the module (similar to widgets)
 - make items selectable with:
@@ -281,11 +288,11 @@ class LibNoiseConstructor {
  - it's funny that clicking a item in the right side will now focus over the respecitive QGraphicsItem (didn't work before)
  - scrollbars should always be there
 - softscroll to item instead of immediate focus
+- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
 - implement singleselection:
   > if an item in the graphicsview is selected, the QTreeView should only show the respective properties of that item
   + if more items are selected, diplay all selected items
   + if no item is selected anymore, show all items in the QTreeView
-- fix regression: QTreeView modules can't be clicked to focus the QGraphicsView over it anymore
 
 GraphicsView:
  - zoomin/zoomout (mwheel or +/-) and zoomfit (gui button)
@@ -316,6 +323,9 @@ GraphicsView:
 ========================================================================
   General concepts to consider:
 ========================================================================
+- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
+  - load+save viewport-position in document
+
 - documentation: include a qwebkit browser with some html documentation about the modules
 - concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
 - Design choice:
@@ -339,8 +349,6 @@ GraphicsView:
   textures, the textures do have a fixed orientation. later this might be adapted to reflect
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 
-- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
-  - load+save viewport-position in document
 - fix copyright, linking to the (l)gpl? library .... is that possible?
 
 - integrate 3d viewer (adapted/copied from qtlobby)

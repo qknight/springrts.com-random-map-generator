@@ -29,8 +29,11 @@ public:
     }
     void updatePosition();
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget = 0);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+//     bool contains( const QPointF & point ) const;
+    void mousePressEvent ( QGraphicsSceneMouseEvent * event );
+    void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     QPainterPath connectionPath() const;
