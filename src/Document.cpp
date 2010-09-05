@@ -38,12 +38,15 @@ Document::Document() {
     //          - it is there to make testing easier
     //          - after the xml save/load function is implemented
     //          - additionally: this interface is not guaranteed to be stable
-    
+
+    QModelIndex m4 = model->insertModule("Selector::Select",     QPoint(100,0));
+    QModelIndex m1 = model->insertModule("Generator::Billow",    QPoint(-250,150));
+
 //     QModelIndex m1b = model->insertModule("Transformer::Turbulence",    QPoint(-50,-150));
 //     QModelIndex m2 = model->insertModule("Generator::Perlin",    QPoint(-200,100));
 //     QModelIndex m3 = model->insertModule("Generator::Perlin",    QPoint( 0,250));
-    QModelIndex m4 = model->insertModule("Selector::Select",     QPoint(100,0));
-    QModelIndex m1 = model->insertModule("Generator::Billow",    QPoint(-250,-150));
+//     QModelIndex m4 = model->insertModule("Selector::Select",     QPoint(100,0));
+//     QModelIndex m1 = model->insertModule("Generator::Billow",    QPoint(-250,-150));
 //     QModelIndex m5 = model->insertModule("Utils::Image" ,        QPoint( 350,50));
 //     QModelIndex m6 = model->insertModule("Spring::Mapgenerator" ,QPoint( 300,250));
 

@@ -1,8 +1,126 @@
-- fix all FIXME lines in all frontend classes
- - connection
- - port
- - module
+backend -- model -- frontend
 
+frontend and backend are separated. 
+ - frontend items don't have an important role they just view an image which is updated onChange
+ - the model is used to insert/remove new connections or to change module properties -> onChange ;-)
+   therefore: if the program is running gui-less everything still works
+ - every module will have a 'bool conditions_met' variable. if it is true the view will get a valid renderer
+ - the libnoise network is generated on the fly for each module in the hierarchy. there is no caching and
+   therefore the garbage collection isn't complicated. it is encapsulated in a class called NoiseNetwork
+
+class NoiseNetwork {
+  ~NoiseNetwork() {
+     foreach (noise::Module* m, all_modules)
+       delete m;
+  }
+  noise::Module* network() { return m; };
+  private:
+   QVector<noise::Module*> all_modules;
+};
+
+changes a GraphicsView/GraphicsItem is interested in:
+ - position (x,y coordinates)
+ - RenderEngine (which generates a rendering(preview) for the Module-GraphicsItem (GraphicsScene)
+all others are ignored as:
+ - all Module properties, which are exported through the model to the QTreeView
+
+changes a QTreeView is not interested in:
+ - RenderEngine (which generates a preview for the Module-GraphicsItem (GraphicsScene)
+
+the frontend QGraphicsItem is updated when a certain 'event' has happened:
+ -> module parameter changed
+ -> connection added/removed (changes the readyState)
+this event must be tracked by the Model and NOT by the frontend NOR by the backend
+
+concept:
+only the backend is used to produce output, the view only views it (if there are any)
+
+
+
+
+
+===========================================================================
+  libNoise(Abstraction) layer
+===========================================================================
+- libNoiseAbstraction (frontend) need to be created
+   WARNING: a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
+            an exception which we most likely don't handle which will bring down the whole program.
+            therefore: every property has to provide an input checker, which skips invalid input with some feedback.
+- libNoise (backend) and
+
+thoughts about the makro or function call to insert a new property:
+  insertProperty(codeName, guiName, description, type, minValue, maxValue);
+
+modules="""                               properties
+Utils NoiseMapBuilderPlane      1 0 0     ?
+Utils RendererImage             1 0 0     ?
+Utils Image                     1 0 0     ?
+
+Generator Billow                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
+Generator Checkerboard          0 0 1     -
+Generator Const                 0 0 1     double constvalue
+Generator Cylinders             0 0 1     double frequency
+Generator Perlin                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
+Generator RidgedMulti           0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, int seed, 
+Generator Spheres               0 0 1     double frequency, 
+Generator Voronoi               0 0 1     bool distance, double displacement, double frequency, int seed, 
+
+Combiner Add                    2 0 1     -
+Combiner Max                    2 0 1     -
+Combiner Min                    2 0 1     -
+Combiner Multiply               2 0 1     -
+Combiner Power                  2 0 1     -
+
+Modifier Abs                    1 0 1     -
+Modifier Clamp                  1 0 1     -
+Modifier Curve                  1 0 1     several: AddControlPoint (double inputValue, double outputValue) / void   ClearAllControlPoints ()
+Modifier Exponent               1 0 1     double 0.0 to 1.0; setExponent, getExponent
+Modifier Invert                 1 0 1     -
+Modifier ScaleBias              1 0 1     several: double GetBias/SetBias, GetScale, SetScale
+Modifier Terrace                1 0 1     bool  InvertTerraces; addControlPoint(double), getControlPoint(..)
+
+Selector Blend                  2 1 1     -
+Selector Select                 2 1 1     double edgefalloff, double lowerbound, double upperbound, 
+
+Transformer Displace            1 3 1     -
+Transformer RotatePoint         1 0 1     double xangle, double yangle, double zangle
+Transformer ScalePoint          1 0 1     double scale, double xscale, double yscale, double zscale
+Transformer TranslatePoint      1 0 1     double translation, double xtranslation, double ytranslation, double ztranslation,
+Transformer Turbulence          1 0 1     double frequency, double power, int RoughnessCount, int seed, 
+
+Spring Mapgenerator             1 0 0     qpoint position, mapsize x,y (spring map sizetype)
+
+second backend object factory to build the libnoise chain:
+ - registers required properties at the Graphical Representation
+ - is able to collect properties from the Graphical Representation and uses them to build the libnoise-chain
+ - should not mix GraphicsScene coordinates with libnoise-properties as "Position" for instance, we need a 
+   gui string and an internal string, so that both 'could' be named/called "Position" but one uses gui_position to store it while the
+   other uses libnoise_position
+
+frontend modules are used to configure the backend module chain (libnoise). 
+
+class LibNoiseRenderer {
+  // see Utils::rendererImage, this is basically what this is about
+  // see also libnoise-view's backend system with QThread(s)
+}
+
+/*! checks for syntax/semantics of the network and then creates connects all modules 
+**  in the graph usable to render an image using LibNoiseRenderer */
+class LibNoiseNetwork {
+  noise::module* m;
+};
+
+===========================================================================
+  changed noise modules
+===========================================================================
+ - every module (Module.cpp/.h) has several functionalities combined:
+  - Transformer::Translatepoint (which helps to move the center of the module to a new point)
+  - a view is attached
+ -> modules start to render a preview if the incomming connection dependancies are resolved
+
+===========================================================================
+   REFACTORING
+===========================================================================
 - bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
        however: if the second output usage is removed one can connect the input ports as expected, later the second output
                 can be connected again...?!
@@ -14,22 +132,6 @@
        FIX is: first find similar connections as (s1.out1 - s2.in1) AND (s1.out1 - s2.in2), and then only process one of these
        IMPORTANT: add a qDebug() statement why it does fail
 
- - blog entries order:
-  -> use FAQ 
-  - 1/4 comparing concepts of 'QGraphicsScene(model) <-> QGraphicsView' vs GraphicsScene as a QAbstractItemView
-  - 2/4 QGraphicsScene as a QAbstractItemView (mention old entries)
-  - 3/4 helper functions in detail (objectPool)
-  - 4/4 discussion why GraphicsItemRelay was invented
-
-comment on: 
- - http://mupuf.org/blog/article/34/
- - http://labs.trolltech.com/blogs/2008/10/24/itemviews-the-next-generation/
- - http://doc.trolltech.com/4.5/graphicsview-diagramscene.html
-
-
-===========================================================================
-   REFACTORING
-===========================================================================
 - check the specification for QAbstractItemModel: 
  - Q: what must be implemented, is reset and layout changes mandatory?
    A: yes, this important, implement it!
@@ -59,6 +161,22 @@ comment on:
   then exit the program using alt+f4
  -> the problem is a cyclic dependancy (not implemented) because calling removeReference must also remove the connection and vice versa
    WARNING: current fix is to disable the deletion of connections/references in DataPort::~DataPort() {
+
+===========================================================================
+  write blog entry
+===========================================================================
+  -> use FAQ 
+  - 1/4 comparing concepts of 'QGraphicsScene(model) <-> QGraphicsView' vs GraphicsScene as a QAbstractItemView
+  - 2/4 QGraphicsScene as a QAbstractItemView (mention old entries)
+  - 3/4 helper functions in detail (objectPool)
+  - 4/4 discussion why GraphicsItemRelay was invented
+  -> why is the registermodule_macro (registermodule_macro.cpp) so handy?
+  -> WARNING: do not use automate as example, use the spring random map generator instead (more up 2date)
+
+comment on: 
+ - http://mupuf.org/blog/article/34/
+ - http://labs.trolltech.com/blogs/2008/10/24/itemviews-the-next-generation/
+ - http://doc.trolltech.com/4.5/graphicsview-diagramscene.html
 
 ===========================================================================
   DELEGATES, optimizing the QTreeView
@@ -142,9 +260,6 @@ A: basically:
    - QStringDropdownList for GetNoiseQuality
    - QList<ControlPoint>
 
-thoughts about the makro or function call to insert a new property:
-  insertProperty(codeName, guiName, description, type, minValue, maxValue);
-
 -> editors should be generated automatically based on the type given:
   - QTreeView will use delegates
   - GraphicsScene will provide it's own editor (a graphical modular approach)
@@ -160,82 +275,10 @@ A:
 Q: how to implement a delegate for a QTreeView at all?
 A: current guess: one delegate is assigned to all cels, on certain cells the delegate changes it's representation.. somehow
 
-modules="""                               properties
-Utils NoiseMapBuilderPlane      1 0 0     ?
-Utils RendererImage             1 0 0     ?
-Utils Image                     1 0 0     ?
-
-Generator Billow                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
-Generator Checkerboard          0 0 1     -
-Generator Const                 0 0 1     double constvalue
-Generator Cylinders             0 0 1     double frequency
-Generator Perlin                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
-Generator RidgedMulti           0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, int seed, 
-Generator Spheres               0 0 1     double frequency, 
-Generator Voronoi               0 0 1     bool distance, double displacement, double frequency, int seed, 
-
-Combiner Add                    2 0 1     -
-Combiner Max                    2 0 1     -
-Combiner Min                    2 0 1     -
-Combiner Multiply               2 0 1     -
-Combiner Power                  2 0 1     -
-
-Modifier Abs                    1 0 1     -
-Modifier Clamp                  1 0 1     -
-Modifier Curve                  1 0 1     several: AddControlPoint (double inputValue, double outputValue) / void   ClearAllControlPoints ()
-Modifier Exponent               1 0 1     double 0.0 to 1.0; setExponent, getExponent
-Modifier Invert                 1 0 1     -
-Modifier ScaleBias              1 0 1     several: double GetBias/SetBias, GetScale, SetScale
-Modifier Terrace                1 0 1     bool  InvertTerraces; addControlPoint(double), getControlPoint(..)
-
-Selector Blend                  2 1 1     -
-Selector Select                 2 1 1     double edgefalloff, double lowerbound, double upperbound, 
-
-Transformer Displace            1 3 1     -
-Transformer RotatePoint         1 0 1     double xangle, double yangle, double zangle
-Transformer ScalePoint          1 0 1     double scale, double xscale, double yscale, double zscale
-Transformer TranslatePoint      1 0 1     double translation, double xtranslation, double ytranslation, double ztranslation,
-Transformer Turbulence          1 0 1     double frequency, double power, int RoughnessCount, int seed, 
-
-Spring Mapgenerator             1 0 0     qpoint position, mapsize x,y (spring map sizetype)
-
-second backend object factory to build the libnoise chain:
- - registers required properties at the Graphical Representation
- - is able to collect properties from the Graphical Representation and uses them to build the libnoise-chain
- - should not mix GraphicsScene coordinates with libnoise-properties as "Position" for instance, we need a 
-   gui string and an internal string, so that both 'could' be named/called "Position" but one uses gui_position to store it while the
-   other uses libnoise_position
-
 Q: implementation of PropertyComponent, where int a, int b are two components of QPoint, is that complicated to write?
 A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate, that can be done in two ways:
    a) when inserting a property with setProperty("identifier", type);, the insert function uses type and adds two childs
    b) such an item knows that and adds two childs itself somehow?!
-
-
-
-
-frontend modules are used to configure the backend module chain (libnoise). 
-
-class LibNoiseRenderer {
-  // see Utils::rendererImage, this is basically what this is about
-  // see also libnoise-view's backend system with QThread(s)
-}
-
-/*! checks for syntax/semantics of the network and then creates connects all modules 
-**  in the graph usable to render an image using LibNoiseRenderer */
-class LibNoiseConstructor {
-  libNoiseNetwork* constructNetwork(QModelIndex output module);
-};
-
-
-
-
-
-
-
-
-
-
 
 =================================================================================
   Model related: Adding, selecting, changing, removing of single/multiple items:
@@ -294,28 +337,13 @@ GraphicsView:
    POSSIBLE FIX: centerOn(..) or scroll(..)
  - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should be animated for some time
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ========================================================================
   General concepts to consider:
 ========================================================================
 - integrate xml save/load functionality (add an object serializer to all nodes in the graph)
   - load+save viewport-position in document
 
+- create a icon for this project
 - documentation: include a qwebkit browser with some html documentation about the modules
 - concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
 - Design choice:
@@ -323,15 +351,9 @@ GraphicsView:
   enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
   imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
 
-- libNoiseAbstraction (frontend) need to be created
-   WARNING: a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
-            an exception which we most likely don't handle which will bring down the whole program.
-            therefore: every property has to provide an input checker, which skips invalid input with some feedback.
-- libNoise (backend) and
+- integrate spring map exporter (smf or s3m)
 
 - integrate libNoise-view (first refactore it)
-
-- integrate spring map exporter (smf or s3m)
 
 - integrate height-colorizer and height-texturizer
   the height-colorizer is easy to implement and gives a basic look&feel for the heightmap

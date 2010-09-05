@@ -102,11 +102,13 @@ void GraphicsScene::setLoadableModuleNames ( QVector<QString> loadableModuleName
     this->loadableModuleNames=loadableModuleNames;
 }
 
+/*! is needed when a new document is loaded, see load/save functionality */
 void GraphicsScene::reset() {
     qDebug() << __PRETTY_FUNCTION__ << "FIXME: implement me";
     exit(1);
 }
 
+/*! TODO */
 void GraphicsScene::layoutChanged() {
     qDebug() << __PRETTY_FUNCTION__ << "FIXME: implement me";
     exit(1);
@@ -276,7 +278,6 @@ void GraphicsScene::mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
                     line->setZValue ( 2000 );
                     addItem ( line );
                 }
-//                 return;
             }
         }
     QGraphicsScene::mousePressEvent ( mouseEvent );

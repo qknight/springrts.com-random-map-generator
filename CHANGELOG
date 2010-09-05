@@ -1,3 +1,7 @@
+2010-09-05
+ - some minor fixes
+ - last commit without libnoise dependancy
+
 2010-09-01
  - fixed: selection of Connections now works as expected. the problem was that 
    void GraphicsScene::mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {

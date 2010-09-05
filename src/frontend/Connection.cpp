@@ -58,7 +58,6 @@ void Connection::updatePosition() {
         dstPosition = relays[1]->pos();
 
         setPath(connectionPath());
-        update();
     }
 }
 
@@ -97,12 +96,8 @@ void Connection::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
     painter->drawPath ( connectionPath() );
     if ( isSelected() ) {
         painter->setPen ( p );
+        painter->drawPath ( connectionPath() );
     }
-
-    painter->drawPath ( connectionPath() );
-    QPen p1 = QPen ( QColor ( "green" ), 1);
-    painter->setPen(p1);
-    painter->drawPath(shape());
 }
 
 void Connection::dataChanged() {

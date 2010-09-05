@@ -70,13 +70,10 @@ QRectF Port::boundingRect() const {
 }
 
 void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget )     {
-    QPen oldpen = painter->pen();
     QPen p ( Qt::black, 1 );
-    QBrush oldbrush = painter->brush();
     QRadialGradient gradient ( 50, 50, 50, 50, 50 );
     gradient.setColorAt ( 0, QColor::fromRgbF ( 0, 1, 0, 1 ) );
     gradient.setColorAt ( 1, QColor::fromRgbF ( 0, 0, 0, 0 ) );
-    // FIXME instead of saving the pan using a variable, maybe use the painter save/load stack?
     QBrush b;
     switch (m_portDirection) {
     case PortDirection::OUT:
@@ -97,9 +94,6 @@ void Port::paint ( QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     QPainterPath* mypath = new QPainterPath;
     mypath->addEllipse ( -10, -10, 20, 20 );
     painter->drawPath ( *mypath );
-
-    painter->setPen ( oldpen );
-    painter->setBrush ( oldbrush );
 }
 
 int Port::portType() {

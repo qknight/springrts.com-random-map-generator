@@ -609,6 +609,11 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
     }
     endInsertRows();
 //     qDebug() << "successfully added a new connection";
+
+    //FIXME: implement this
+    // when a new connection is added we have to check if this module is 'ready' to render a libnoise preview,
+    // we also have to check all modules in all output direction(s) recursively
+
     return index(row, 0, a);
 }
 
