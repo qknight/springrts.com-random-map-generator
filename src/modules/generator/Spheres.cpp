@@ -1,4 +1,3 @@
-
 #include "Spheres.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Spheres::Spheres() : DataAbstractModule(0,0,1) {
 Spheres::~Spheres() {
 }
 
-QString Spheres::identify() {
-    return ID;
-}

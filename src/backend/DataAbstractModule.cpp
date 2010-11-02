@@ -96,4 +96,3 @@ int DataAbstractModule::ports ( int type ) {
         return 0;
     }
 }
-

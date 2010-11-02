@@ -1,4 +1,3 @@
-
 #ifndef GENERATOR_VORONOI__HH
 #define GENERATOR_VORONOI__HH
 

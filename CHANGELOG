@@ -1,3 +1,12 @@
+2010-11-02
+ - added doc/graphicssceneasabstractitemview.odg and doc/graphicssceneasabstractitemview.png
+ - created new class NoiseNetwork which will do 'garbage collection' for libnoise
+ - extended class_generator.py:
+  - properties are now registered based on the script
+  - altough using class_generator.py it's nice to make certain changes to Perlin.cpp/.h (and others) without having
+    to compile all libnoise modules again
+ - extended registermodule_macro.cpp to also generate a generic identify(), modules have less code now
+
 2010-09-05
  - some minor fixes
  - last commit without libnoise dependancy

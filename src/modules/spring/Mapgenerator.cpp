@@ -1,4 +1,3 @@
-
 #include "Mapgenerator.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Mapgenerator::Mapgenerator() : DataAbstractModule(1,0,0) {
 Mapgenerator::~Mapgenerator() {
 }
 
-QString Mapgenerator::identify() {
-    return ID;
-}

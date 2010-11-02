@@ -1,4 +1,3 @@
-
 #include "ScalePoint.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ ScalePoint::ScalePoint() : DataAbstractModule(1,0,1) {
 ScalePoint::~ScalePoint() {
 }
 
-QString ScalePoint::identify() {
-    return ID;
-}

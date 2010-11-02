@@ -1,4 +1,3 @@
-
 #include "Max.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Max::Max() : DataAbstractModule(2,0,1) {
 Max::~Max() {
 }
 
-QString Max::identify() {
-    return ID;
-}

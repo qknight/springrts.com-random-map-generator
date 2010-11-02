@@ -49,6 +49,8 @@ SET( srmg_SOURCES
   frontend/GraphicsItemRelayInterface.cpp
 
   # libnoise module backends
+  modules/RenderEngine.cpp
+  modules/NoiseNetwork.cpp
   modules/utils/NoiseMapBuilderPlane.cpp
   modules/utils/RendererImage.cpp
   modules/utils/Image.cpp
@@ -80,7 +82,6 @@ SET( srmg_SOURCES
   modules/transformer/TranslatePoint.cpp
   modules/transformer/Turbulence.cpp
   modules/spring/Mapgenerator.cpp
-
 )
 
 SET( srmg_MOC_HEADERS
@@ -125,7 +126,7 @@ INCLUDE_DIRECTORIES(
   # QT4_WRAP_UI writes ui_whatever.h here (that is './' and uic is used)
   ${CMAKE_CURRENT_BINARY_DIR}
   # this is the external library used (includes of libnoise live here)
-#   "/usr/include/noise/"
+  "/usr/include/noise/"
 )
 
 # QT4_WRAP_UI(outfiles inputfile ... OPTIONS ...)
@@ -139,7 +140,6 @@ QT4_ADD_RESOURCES(srmg_SOURCES ${srmg_RESOURCES})
 ADD_EXECUTABLE(srmg ${srmg_SOURCES} ${srmg_RESOURCES})
 
 # -lnoise if for the external library
-# TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} "-lnoise" )
-TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} )
+TARGET_LINK_LIBRARIES( srmg ${QT_LIBRARIES} "-lnoise" )
 
 INSTALL ( TARGETS srmg DESTINATION bin )

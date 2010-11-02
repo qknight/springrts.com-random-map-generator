@@ -1,4 +1,3 @@
-
 #ifndef COMBINER_MAX__HH
 #define COMBINER_MAX__HH
 

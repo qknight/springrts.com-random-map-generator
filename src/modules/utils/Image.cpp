@@ -1,4 +1,3 @@
-
 #include "Image.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Image::Image() : DataAbstractModule(1,0,0) {
 Image::~Image() {
 }
 
-QString Image::identify() {
-    return ID;
-}

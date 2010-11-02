@@ -1,4 +1,3 @@
-
 #include "Add.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Add::Add() : DataAbstractModule(2,0,1) {
 Add::~Add() {
 }
 
-QString Add::identify() {
-    return ID;
-}

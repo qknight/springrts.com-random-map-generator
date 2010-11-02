@@ -1,4 +1,3 @@
-
 #ifndef COMBINER_MULTIPLY__HH
 #define COMBINER_MULTIPLY__HH
 

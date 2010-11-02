@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_INVERT__HH
 #define MODIFIER_INVERT__HH
 

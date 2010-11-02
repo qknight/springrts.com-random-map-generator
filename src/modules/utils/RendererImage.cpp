@@ -1,4 +1,3 @@
-
 #include "RendererImage.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ RendererImage::RendererImage() : DataAbstractModule(1,0,0) {
 RendererImage::~RendererImage() {
 }
 
-QString RendererImage::identify() {
-    return ID;
-}

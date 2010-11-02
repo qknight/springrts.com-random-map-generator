@@ -1,4 +1,3 @@
-
 #include "Abs.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Abs::Abs() : DataAbstractModule(1,0,1) {
 Abs::~Abs() {
 }
 
-QString Abs::identify() {
-    return ID;
-}

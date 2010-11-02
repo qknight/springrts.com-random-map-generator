@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_SCALEBIAS__HH
 #define MODIFIER_SCALEBIAS__HH
 

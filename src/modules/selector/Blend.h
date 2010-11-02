@@ -1,4 +1,3 @@
-
 #ifndef SELECTOR_BLEND__HH
 #define SELECTOR_BLEND__HH
 

@@ -1,4 +1,3 @@
-
 #include "Checkerboard.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Checkerboard::Checkerboard() : DataAbstractModule(0,0,1) {
 Checkerboard::~Checkerboard() {
 }
 
-QString Checkerboard::identify() {
-    return ID;
-}

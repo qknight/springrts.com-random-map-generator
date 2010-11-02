@@ -1,4 +1,3 @@
-
 #ifndef COMBINER_POWER__HH
 #define COMBINER_POWER__HH
 

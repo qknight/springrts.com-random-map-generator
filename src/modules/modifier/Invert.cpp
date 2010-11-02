@@ -1,4 +1,3 @@
-
 #include "Invert.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Invert::Invert() : DataAbstractModule(1,0,1) {
 Invert::~Invert() {
 }
 
-QString Invert::identify() {
-    return ID;
-}

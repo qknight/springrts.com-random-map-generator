@@ -1,4 +1,3 @@
-
 #include "Voronoi.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Voronoi::Voronoi() : DataAbstractModule(0,0,1) {
 Voronoi::~Voronoi() {
 }
 
-QString Voronoi::identify() {
-    return ID;
-}

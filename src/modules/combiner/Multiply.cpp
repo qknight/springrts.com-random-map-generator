@@ -1,4 +1,3 @@
-
 #include "Multiply.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Multiply::Multiply() : DataAbstractModule(2,0,1) {
 Multiply::~Multiply() {
 }
 
-QString Multiply::identify() {
-    return ID;
-}

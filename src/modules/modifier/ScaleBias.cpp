@@ -1,4 +1,3 @@
-
 #include "ScaleBias.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ ScaleBias::ScaleBias() : DataAbstractModule(1,0,1) {
 ScaleBias::~ScaleBias() {
 }
 
-QString ScaleBias::identify() {
-    return ID;
-}

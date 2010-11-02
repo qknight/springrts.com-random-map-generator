@@ -1,4 +1,3 @@
-
 #ifndef COMBINER_ADD__HH
 #define COMBINER_ADD__HH
 

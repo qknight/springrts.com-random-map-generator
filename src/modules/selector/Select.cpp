@@ -1,4 +1,3 @@
-
 #include "Select.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Select::Select() : DataAbstractModule(2,1,1) {
 Select::~Select() {
 }
 
-QString Select::identify() {
-    return ID;
-}

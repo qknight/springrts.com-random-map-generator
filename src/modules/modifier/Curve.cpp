@@ -1,4 +1,3 @@
-
 #include "Curve.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Curve::Curve() : DataAbstractModule(1,0,1) {
 Curve::~Curve() {
 }
 
-QString Curve::identify() {
-    return ID;
-}

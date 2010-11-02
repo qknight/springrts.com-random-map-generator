@@ -46,4 +46,8 @@ DataAbstractModule* RMI_##_##CLASSNAME::CreateModule() {                        
   return new CLASSNAME();                                                            \
 }                                                                                    \
                                                                                      \
+QString CLASSNAME::identify() {                                                      \
+    return ID;                                                                       \
+}                                                                                    \
+                                                                                     \
 static RMI_##_##CLASSNAME f = RMI_##_##CLASSNAME();

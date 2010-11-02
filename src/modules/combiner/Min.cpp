@@ -1,4 +1,3 @@
-
 #include "Min.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Min::Min() : DataAbstractModule(2,0,1) {
 Min::~Min() {
 }
 
-QString Min::identify() {
-    return ID;
-}

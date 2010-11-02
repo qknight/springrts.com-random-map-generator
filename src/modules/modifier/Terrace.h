@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_TERRACE__HH
 #define MODIFIER_TERRACE__HH
 

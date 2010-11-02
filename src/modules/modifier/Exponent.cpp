@@ -1,4 +1,3 @@
-
 #include "Exponent.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Exponent::Exponent() : DataAbstractModule(1,0,1) {
 Exponent::~Exponent() {
 }
 
-QString Exponent::identify() {
-    return ID;
-}

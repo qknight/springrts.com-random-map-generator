@@ -1,4 +1,3 @@
-
 #include "Terrace.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Terrace::Terrace() : DataAbstractModule(1,0,1) {
 Terrace::~Terrace() {
 }
 
-QString Terrace::identify() {
-    return ID;
-}

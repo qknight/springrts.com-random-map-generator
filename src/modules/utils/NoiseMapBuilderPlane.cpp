@@ -1,4 +1,3 @@
-
 #include "NoiseMapBuilderPlane.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ NoiseMapBuilderPlane::NoiseMapBuilderPlane() : DataAbstractModule(1,0,0) {
 NoiseMapBuilderPlane::~NoiseMapBuilderPlane() {
 }
 
-QString NoiseMapBuilderPlane::identify() {
-    return ID;
-}

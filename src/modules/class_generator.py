@@ -44,11 +44,11 @@ Transformer Turbulence          1 0 1
 Spring Mapgenerator             1 0 0
 """
 
-myclass_h="""
-#ifndef $MYIFNDEF
+myclass_h="""#ifndef $MYIFNDEF
 #define $MYIFNDEF
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "$MYMODULENAME"
 
@@ -73,8 +73,7 @@ public:
 #s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myModuleName, MYIFNDEF=myIFNDEF)
 #print s
 
-myclass_cpp="""
-#include "$MYMODULENAME.h"
+myclass_cpp="""#include "$MYMODULENAME.h"
 #include "ModuleFactory.h"
 
 #include "registermodule_macro.cpp"
@@ -88,9 +87,6 @@ $MYCLASS::$MYCLASS() : DataAbstractModule($IN,$MOD,$OUT) {
 $MYCLASS::~$MYCLASS() {
 }
 
-QString $MYCLASS::identify() {
-    return ID;
-}
 """
 # testing code for the .cpp creation
 #t = Template(myclass_cpp)

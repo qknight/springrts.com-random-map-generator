@@ -1,4 +1,3 @@
-
 #include "TranslatePoint.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ TranslatePoint::TranslatePoint() : DataAbstractModule(1,0,1) {
 TranslatePoint::~TranslatePoint() {
 }
 
-QString TranslatePoint::identify() {
-    return ID;
-}

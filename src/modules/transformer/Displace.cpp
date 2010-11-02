@@ -1,4 +1,3 @@
-
 #include "Displace.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Displace::Displace() : DataAbstractModule(1,3,1) {
 Displace::~Displace() {
 }
 
-QString Displace::identify() {
-    return ID;
-}

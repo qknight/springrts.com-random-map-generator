@@ -1,4 +1,3 @@
-
 #include "Power.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Power::Power() : DataAbstractModule(2,0,1) {
 Power::~Power() {
 }
 
-QString Power::identify() {
-    return ID;
-}

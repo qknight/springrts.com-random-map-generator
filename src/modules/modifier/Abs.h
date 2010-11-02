@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_ABS__HH
 #define MODIFIER_ABS__HH
 

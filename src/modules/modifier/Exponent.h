@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_EXPONENT__HH
 #define MODIFIER_EXPONENT__HH
 

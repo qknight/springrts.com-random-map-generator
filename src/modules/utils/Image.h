@@ -1,4 +1,3 @@
-
 #ifndef UTILS_IMAGE__HH
 #define UTILS_IMAGE__HH
 

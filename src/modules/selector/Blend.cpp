@@ -1,4 +1,3 @@
-
 #include "Blend.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Blend::Blend() : DataAbstractModule(2,1,1) {
 Blend::~Blend() {
 }
 
-QString Blend::identify() {
-    return ID;
-}

@@ -1,4 +1,3 @@
-
 #include "Turbulence.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Turbulence::Turbulence() : DataAbstractModule(1,0,1) {
 Turbulence::~Turbulence() {
 }
 
-QString Turbulence::identify() {
-    return ID;
-}

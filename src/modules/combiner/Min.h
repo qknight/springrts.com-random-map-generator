@@ -1,4 +1,3 @@
-
 #ifndef COMBINER_MIN__HH
 #define COMBINER_MIN__HH
 

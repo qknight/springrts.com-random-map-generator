@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_CLAMP__HH
 #define MODIFIER_CLAMP__HH
 

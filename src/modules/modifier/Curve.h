@@ -1,4 +1,3 @@
-
 #ifndef MODIFIER_CURVE__HH
 #define MODIFIER_CURVE__HH
 

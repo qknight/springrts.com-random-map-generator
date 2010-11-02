@@ -1,4 +1,3 @@
-
 #include "RotatePoint.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ RotatePoint::RotatePoint() : DataAbstractModule(1,0,1) {
 RotatePoint::~RotatePoint() {
 }
 
-QString RotatePoint::identify() {
-    return ID;
-}

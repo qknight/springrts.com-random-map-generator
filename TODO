@@ -8,16 +8,6 @@ frontend and backend are separated.
  - the libnoise network is generated on the fly for each module in the hierarchy. there is no caching and
    therefore the garbage collection isn't complicated. it is encapsulated in a class called NoiseNetwork
 
-class NoiseNetwork {
-  ~NoiseNetwork() {
-     foreach (noise::Module* m, all_modules)
-       delete m;
-  }
-  noise::Module* network() { return m; };
-  private:
-   QVector<noise::Module*> all_modules;
-};
-
 changes a GraphicsView/GraphicsItem is interested in:
  - position (x,y coordinates)
  - RenderEngine (which generates a rendering(preview) for the Module-GraphicsItem (GraphicsScene)
@@ -49,14 +39,21 @@ only the backend is used to produce output, the view only views it (if there are
 - libNoise (backend) and
 
 thoughts about the makro or function call to insert a new property:
-  insertProperty(codeName, guiName, description, type, minValue, maxValue);
+  insertProperty( type, setFunction, codeName, guiName, minValue, maxValue, description);
 
 modules="""                               properties
 Utils NoiseMapBuilderPlane      1 0 0     ?
 Utils RendererImage             1 0 0     ?
 Utils Image                     1 0 0     ?
 
-Generator Billow                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
+Generator Billow                0 0 1     
+ double, SetFrequency, m_frequency, Frequency, min, max, "Sets the frequency of the first octave" 
+ double, SetLacunarity, m_lacunarity, Lacunarity, min, max, "Sets the lacunarity of the billowy noise"
+ int, SetNoiseQuality, m_noisequality, Noise Quality, min, max, "Sets the quality of the billowy noise"      // GetNoiseQuality (FAST/STD/BEST)
+ int, SetOctaveCount, m_octavecount, Octave Count, 1, noise::module::BILLOW_MAX_OCTAVE, "Sets the number of octaves that generate the billowy noise"
+ double, SetPersistence, m_persistence, 0.0, 1.0 , "Sets the persistence value of the billowy noise"
+ int, SetSeed, m_seed, Seed, min, max, "Sets the seed value used by the billowy-noise function"
+
 Generator Checkerboard          0 0 1     -
 Generator Const                 0 0 1     double constvalue
 Generator Cylinders             0 0 1     double frequency

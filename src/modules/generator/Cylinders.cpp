@@ -1,4 +1,3 @@
-
 #include "Cylinders.h"
 #include "ModuleFactory.h"
 
@@ -7,12 +6,9 @@
 M_REGISTER(Cylinders);
 
 Cylinders::Cylinders() : DataAbstractModule(0,0,1) {
-  setProperty("Frequency", 0.034f);
+  setProperty("FIXME", 112);
 }
 
 Cylinders::~Cylinders() {
 }
 
-QString Cylinders::identify() {
-    return ID;
-}

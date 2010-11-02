@@ -1,4 +1,3 @@
-
 #ifndef GENERATOR_BILLOW__HH
 #define GENERATOR_BILLOW__HH
 

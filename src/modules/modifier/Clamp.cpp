@@ -1,4 +1,3 @@
-
 #include "Clamp.h"
 #include "ModuleFactory.h"
 
@@ -13,6 +12,3 @@ Clamp::Clamp() : DataAbstractModule(1,0,1) {
 Clamp::~Clamp() {
 }
 
-QString Clamp::identify() {
-    return ID;
-}

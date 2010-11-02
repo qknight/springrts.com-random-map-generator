@@ -1,4 +1,3 @@
-
 #ifndef GENERATOR_SPHERES__HH
 #define GENERATOR_SPHERES__HH
 

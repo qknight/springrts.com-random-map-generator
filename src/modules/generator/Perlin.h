@@ -1,4 +1,3 @@
-
 #ifndef GENERATOR_PERLIN__HH
 #define GENERATOR_PERLIN__HH
 
