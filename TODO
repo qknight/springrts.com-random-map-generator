@@ -1,6 +1,13 @@
+three things to do:
+ 1. construct a proper backend property handler (Perlin.cpp/.h)
+ 2. connect the backend property with a corresponding gui delegate editor/view
+ 3. implement libnoise rendering for preview rendering
+
+
+
 backend -- model -- frontend
 
-frontend and backend are separated. 
+frontend and backend are separated
  - frontend items don't have an important role they just view an image which is updated onChange
  - the model is used to insert/remove new connections or to change module properties -> onChange ;-)
    therefore: if the program is running gui-less everything still works
@@ -28,18 +35,17 @@ only the backend is used to produce output, the view only views it (if there are
 
 
 
-
 ===========================================================================
   libNoise(Abstraction) layer
 ===========================================================================
 - libNoiseAbstraction (frontend) need to be created
-   WARNING: a property might have serious dependancies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
+   WARNING: a property might have several dependencies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
             an exception which we most likely don't handle which will bring down the whole program.
             therefore: every property has to provide an input checker, which skips invalid input with some feedback.
 - libNoise (backend) and
 
 thoughts about the makro or function call to insert a new property:
-  insertProperty( type, setFunction, codeName, guiName, minValue, maxValue, description);
+  insertProperty( type, setFunction, codeName, guiName, minValue, maxValue, description );
 
 modules="""                               properties
 Utils NoiseMapBuilderPlane      1 0 0     ?
@@ -55,12 +61,36 @@ Generator Billow                0 0 1
  int, SetSeed, m_seed, Seed, min, max, "Sets the seed value used by the billowy-noise function"
 
 Generator Checkerboard          0 0 1     -
-Generator Const                 0 0 1     double constvalue
-Generator Cylinders             0 0 1     double frequency
-Generator Perlin                0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, double persistence (), int seed, 
-Generator RidgedMulti           0 0 1     double frequency, double lacunarity,  GetNoiseQuality (FAST/STD/BEST), int octavecount, int seed, 
-Generator Spheres               0 0 1     double frequency, 
-Generator Voronoi               0 0 1     bool distance, double displacement, double frequency, int seed, 
+
+Generator Const                 0 0 1     
+ double constvalue
+
+Generator Cylinders             0 0 1     
+ double frequency
+
+Generator Perlin                0 0 1     
+ double frequency, 
+ double lacunarity,  
+ GetNoiseQuality (FAST/STD/BEST), 
+ int octavecount, 
+ double persistence (), 
+ int seed, 
+
+Generator RidgedMulti           0 0 1     
+ double frequency, 
+ double lacunarity,  
+ GetNoiseQuality (FAST/STD/BEST), 
+ int octavecount, 
+ int seed, 
+
+Generator Spheres               0 0 1     
+ double frequency, 
+
+Generator Voronoi               0 0 1     
+ bool distance, 
+ double displacement, 
+ double frequency, 
+ int seed, 
 
 Combiner Add                    2 0 1     -
 Combiner Max                    2 0 1     -
@@ -113,7 +143,32 @@ class LibNoiseNetwork {
  - every module (Module.cpp/.h) has several functionalities combined:
   - Transformer::Translatepoint (which helps to move the center of the module to a new point)
   - a view is attached
- -> modules start to render a preview if the incomming connection dependancies are resolved
+ -> modules start to render a preview if the incomming connection dependencies are resolved
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ===========================================================================
    REFACTORING
@@ -156,24 +211,8 @@ class LibNoiseNetwork {
 - bug: 'virtual void DataPort::removeChild(unsigned int) this should not happen' does show up with this configuration:
   Billow::out0 - connection - select::modput0 
   then exit the program using alt+f4
- -> the problem is a cyclic dependancy (not implemented) because calling removeReference must also remove the connection and vice versa
+ -> the problem is a cyclic dependency (not implemented) because calling removeReference must also remove the connection and vice versa
    WARNING: current fix is to disable the deletion of connections/references in DataPort::~DataPort() {
-
-===========================================================================
-  write blog entry
-===========================================================================
-  -> use FAQ 
-  - 1/4 comparing concepts of 'QGraphicsScene(model) <-> QGraphicsView' vs GraphicsScene as a QAbstractItemView
-  - 2/4 QGraphicsScene as a QAbstractItemView (mention old entries)
-  - 3/4 helper functions in detail (objectPool)
-  - 4/4 discussion why GraphicsItemRelay was invented
-  -> why is the registermodule_macro (registermodule_macro.cpp) so handy?
-  -> WARNING: do not use automate as example, use the spring random map generator instead (more up 2date)
-
-comment on: 
- - http://mupuf.org/blog/article/34/
- - http://labs.trolltech.com/blogs/2008/10/24/itemviews-the-next-generation/
- - http://doc.trolltech.com/4.5/graphicsview-diagramscene.html
 
 ===========================================================================
   DELEGATES, optimizing the QTreeView
