@@ -2,6 +2,7 @@
 #define COMBINER_MULTIPLY__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Combiner::Multiply"
 
@@ -16,6 +17,8 @@ public:
     ~Multiply();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

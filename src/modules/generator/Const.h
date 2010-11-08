@@ -2,6 +2,7 @@
 #define GENERATOR_CONST__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Const"
 
@@ -16,6 +17,8 @@ public:
     ~Const();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define GENERATOR_VORONOI__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Voronoi"
 
@@ -16,6 +17,8 @@ public:
     ~Voronoi();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

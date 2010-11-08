@@ -2,6 +2,7 @@
 #define GENERATOR_CHECKERBOARD__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Checkerboard"
 
@@ -16,6 +17,8 @@ public:
     ~Checkerboard();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

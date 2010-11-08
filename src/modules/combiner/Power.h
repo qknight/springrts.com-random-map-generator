@@ -2,6 +2,7 @@
 #define COMBINER_POWER__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Combiner::Power"
 
@@ -16,6 +17,8 @@ public:
     ~Power();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

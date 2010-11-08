@@ -1,3 +1,12 @@
+[not done yet] 2010-11-08
+ - changed some internals see Model.cpp::insertModule(..) and DataAbstractItem.cpp
+   as ports are now created in the data structure.
+ - module tiles are now autmatically created, dependent on the network
+ - added NoiseNetwork and NoiseNetworkRenderer
+  - a NoiseNetwork is used to encapsulate the 'noise library backend' but also for 'garbage collection'
+  - NoiseNetworkRenderer returns a rendered 2d image (raw), given a NoiseNetwork.
+    this is used to generate the preview tile for each Module but can be used as done in the libnoise-viewer
+
 2010-11-02
  - added doc/graphicssceneasabstractitemview.odg and doc/graphicssceneasabstractitemview.png
  - created new class NoiseNetwork which will do 'garbage collection' for libnoise

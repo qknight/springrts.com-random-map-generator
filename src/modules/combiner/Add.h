@@ -2,6 +2,7 @@
 #define COMBINER_ADD__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Combiner::Add"
 
@@ -16,6 +17,8 @@ public:
     ~Add();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

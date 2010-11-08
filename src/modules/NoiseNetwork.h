@@ -5,9 +5,14 @@
 #include <noise.h>
 
 class NoiseNetwork {
-  NoiseNetwork();
-  //private:
-    //QVector<noise::module*> modules;
+  public:
+    ~NoiseNetwork();
+    void addModule(noise::module::Module* m);
+    noise::module::Module* topLevelModule();
+    
+    
+  private:
+    QVector<noise::module::Module*> modules;
 };
 
 #endif

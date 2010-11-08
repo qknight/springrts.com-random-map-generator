@@ -2,6 +2,7 @@
 #define MODIFIER_TERRACE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Modifier::Terrace"
 
@@ -16,6 +17,8 @@ public:
     ~Terrace();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

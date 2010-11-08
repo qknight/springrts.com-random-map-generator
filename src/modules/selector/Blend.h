@@ -2,6 +2,7 @@
 #define SELECTOR_BLEND__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Selector::Blend"
 
@@ -16,6 +17,8 @@ public:
     ~Blend();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

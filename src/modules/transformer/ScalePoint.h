@@ -2,6 +2,7 @@
 #define TRANSFORMER_SCALEPOINT__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Transformer::ScalePoint"
 
@@ -16,6 +17,8 @@ public:
     ~ScalePoint();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

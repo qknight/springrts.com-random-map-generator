@@ -2,6 +2,7 @@
 #define MODIFIER_INVERT__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Modifier::Invert"
 
@@ -16,6 +17,8 @@ public:
     ~Invert();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

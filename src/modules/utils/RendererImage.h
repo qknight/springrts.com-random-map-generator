@@ -2,6 +2,7 @@
 #define UTILS_RENDERERIMAGE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Utils::RendererImage"
 
@@ -16,6 +17,8 @@ public:
     ~RendererImage();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

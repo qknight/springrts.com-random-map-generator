@@ -2,6 +2,7 @@
 #define GENERATOR_CYLINDERS__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Cylinders"
 
@@ -16,6 +17,8 @@ public:
     ~Cylinders();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

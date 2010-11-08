@@ -22,10 +22,29 @@
 
 DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) {
     qDebug() << __PRETTY_FUNCTION__;
-    // ports need to be created from insertModule(..) in Model.cpp, see also the insertPort(..) implementation
+
     this->inputs=inputs;
     this->modputs=modputs;
     this->outputs=outputs;
+    
+    for (int i = 0; i < ports(PortDirection::IN); ++i) {
+        DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
+        DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+        portItem->setParent(this);
+        appendChild(portItem);
+    }
+    for (int i = 0; i < ports(PortDirection::MOD); ++i) {
+        DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::MOD, i);
+        DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+        portItem->setParent(this);
+        appendChild(portItem);
+    }
+    for (int i = 0; i < ports(PortDirection::OUT); ++i) {
+        DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::OUT, i);
+        DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+        portItem->setParent(this);
+        appendChild(portItem);
+    }
 }
 
 DataAbstractModule::~DataAbstractModule() {
@@ -96,3 +115,4 @@ int DataAbstractModule::ports ( int type ) {
         return 0;
     }
 }
+

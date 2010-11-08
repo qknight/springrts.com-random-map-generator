@@ -2,6 +2,7 @@
 #define GENERATOR_RIDGEDMULTI__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::RidgedMulti"
 
@@ -16,6 +17,8 @@ public:
     ~RidgedMulti();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

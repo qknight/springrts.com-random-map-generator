@@ -2,6 +2,7 @@
 #define UTILS_IMAGE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Utils::Image"
 
@@ -16,6 +17,8 @@ public:
     ~Image();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

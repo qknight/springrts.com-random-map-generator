@@ -49,11 +49,12 @@ SET( srmg_SOURCES
   frontend/GraphicsItemRelayInterface.cpp
 
   # libnoise module backends
-  modules/RenderEngine.cpp
+  modules/NoiseNetworkRenderer.cpp
   modules/NoiseNetwork.cpp
-  modules/utils/NoiseMapBuilderPlane.cpp
-  modules/utils/RendererImage.cpp
-  modules/utils/Image.cpp
+  #modules/utils/NoiseMapBuilderPlane.cpp
+  #modules/utils/RendererImage.cpp
+  #modules/utils/Image.cpp
+  #modules/spring/Mapgenerator.cpp
   modules/generator/Perlin.cpp
   modules/generator/Billow.cpp
   modules/generator/RidgedMulti.cpp
@@ -81,7 +82,6 @@ SET( srmg_SOURCES
   modules/transformer/ScalePoint.cpp
   modules/transformer/TranslatePoint.cpp
   modules/transformer/Turbulence.cpp
-  modules/spring/Mapgenerator.cpp
 )
 
 SET( srmg_MOC_HEADERS
@@ -110,6 +110,7 @@ INCLUDE_DIRECTORIES(
   # src/NoiseGenBillow.h lives here (that is './')
   ${CMAKE_SOURCE_DIR}
   # modules
+  "${CMAKE_CURRENT_SOURCE_DIR}/modules/"
   "${CMAKE_CURRENT_SOURCE_DIR}/modules/selector"
   "${CMAKE_CURRENT_SOURCE_DIR}/modules/generator"
   "${CMAKE_CURRENT_SOURCE_DIR}/modules/utils"

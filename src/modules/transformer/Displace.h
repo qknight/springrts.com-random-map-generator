@@ -2,6 +2,7 @@
 #define TRANSFORMER_DISPLACE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Transformer::Displace"
 
@@ -16,6 +17,8 @@ public:
     ~Displace();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

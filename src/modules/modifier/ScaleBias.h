@@ -2,6 +2,7 @@
 #define MODIFIER_SCALEBIAS__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Modifier::ScaleBias"
 
@@ -16,6 +17,8 @@ public:
     ~ScaleBias();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

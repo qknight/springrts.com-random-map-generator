@@ -2,6 +2,7 @@
 #define TRANSFORMER_TURBULENCE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Transformer::Turbulence"
 
@@ -16,6 +17,8 @@ public:
     ~Turbulence();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

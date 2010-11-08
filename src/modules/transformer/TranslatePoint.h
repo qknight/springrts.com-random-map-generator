@@ -2,6 +2,7 @@
 #define TRANSFORMER_TRANSLATEPOINT__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Transformer::TranslatePoint"
 
@@ -16,6 +17,8 @@ public:
     ~TranslatePoint();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

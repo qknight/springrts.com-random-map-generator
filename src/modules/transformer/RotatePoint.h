@@ -2,6 +2,7 @@
 #define TRANSFORMER_ROTATEPOINT__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Transformer::RotatePoint"
 
@@ -16,6 +17,8 @@ public:
     ~RotatePoint();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

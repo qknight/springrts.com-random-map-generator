@@ -2,6 +2,7 @@
 #define MODIFIER_EXPONENT__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Modifier::Exponent"
 
@@ -16,6 +17,8 @@ public:
     ~Exponent();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

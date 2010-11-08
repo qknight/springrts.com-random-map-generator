@@ -2,6 +2,7 @@
 #define MODIFIER_ABS__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Modifier::Abs"
 
@@ -16,6 +17,8 @@ public:
     ~Abs();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

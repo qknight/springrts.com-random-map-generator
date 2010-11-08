@@ -2,6 +2,7 @@
 #define SPRING_MAPGENERATOR__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Spring::Mapgenerator"
 
@@ -16,6 +17,8 @@ public:
     ~Mapgenerator();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

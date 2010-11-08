@@ -2,6 +2,7 @@
 #define COMBINER_MAX__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Combiner::Max"
 
@@ -16,6 +17,8 @@ public:
     ~Max();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

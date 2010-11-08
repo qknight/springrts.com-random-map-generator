@@ -26,6 +26,7 @@
 #include "PortTypes.h"
 
 class DataProperty;
+class NoiseNetwork;
 
 /*! a node represents 'a node' in the data */
 class DataAbstractModule : public DataAbstractItem {
@@ -38,6 +39,8 @@ public:
     void removeChild ( unsigned int index );
     /*! used to identify modules, used by the ModuleFactaory */
     virtual QString identify() = 0;
+    virtual NoiseNetwork* network() = 0;
+    virtual bool ready() = 0;
     int ports ( int type );
     
     QVariant property(QString key);
@@ -50,7 +53,6 @@ protected:
     ** with parent->appendChild(..) and parent->removeChild(..) as removing might be quite complex. */
     virtual ~DataAbstractModule();
 private:
-
     /*! This container holds all child items which reference this object as input/modput */
     QList<DataAbstractItem*> m_childItemsReferences;
     bool insertPort ( DataConnection* c );

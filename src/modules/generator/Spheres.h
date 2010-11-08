@@ -2,6 +2,7 @@
 #define GENERATOR_SPHERES__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Spheres"
 
@@ -16,6 +17,8 @@ public:
     ~Spheres();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

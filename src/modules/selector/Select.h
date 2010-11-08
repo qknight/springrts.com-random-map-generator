@@ -2,6 +2,7 @@
 #define SELECTOR_SELECT__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Selector::Select"
 
@@ -16,6 +17,8 @@ public:
     ~Select();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define COMBINER_MIN__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Combiner::Min"
 
@@ -16,6 +17,8 @@ public:
     ~Min();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

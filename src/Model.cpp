@@ -402,24 +402,24 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
         if (module != NULL) {
             rootItem->appendChild( module );
 
-            for (int i = 0; i < module->ports(PortDirection::IN); ++i) {
-                DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
-                DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
-                portItem->setParent(module);
-                module->appendChild(portItem);
-            }
-            for (int i = 0; i < module->ports(PortDirection::MOD); ++i) {
-                DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::MOD, i);
-                DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
-                portItem->setParent(module);
-                module->appendChild(portItem);
-            }
-            for (int i = 0; i < module->ports(PortDirection::OUT); ++i) {
-                DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::OUT, i);
-                DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
-                portItem->setParent(module);
-                module->appendChild(portItem);
-            }
+//             for (int i = 0; i < module->ports(PortDirection::IN); ++i) {
+//                 DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
+//                 DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+//                 portItem->setParent(module);
+//                 module->appendChild(portItem);
+//             }
+//             for (int i = 0; i < module->ports(PortDirection::MOD); ++i) {
+//                 DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::MOD, i);
+//                 DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+//                 portItem->setParent(module);
+//                 module->appendChild(portItem);
+//             }
+//             for (int i = 0; i < module->ports(PortDirection::OUT); ++i) {
+//                 DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::OUT, i);
+//                 DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
+//                 portItem->setParent(module);
+//                 module->appendChild(portItem);
+//             }
         } else {
             qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
             exit(1);

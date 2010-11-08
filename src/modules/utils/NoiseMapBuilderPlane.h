@@ -2,6 +2,7 @@
 #define UTILS_NOISEMAPBUILDERPLANE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Utils::NoiseMapBuilderPlane"
 
@@ -16,6 +17,8 @@ public:
     ~NoiseMapBuilderPlane();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

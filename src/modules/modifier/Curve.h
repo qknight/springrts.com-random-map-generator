@@ -2,6 +2,7 @@
 #define MODIFIER_CURVE__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Modifier::Curve"
 
@@ -16,6 +17,8 @@ public:
     ~Curve();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

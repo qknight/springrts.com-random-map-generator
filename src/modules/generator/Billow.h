@@ -2,6 +2,7 @@
 #define GENERATOR_BILLOW__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Billow"
 
@@ -16,6 +17,8 @@ public:
     ~Billow();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

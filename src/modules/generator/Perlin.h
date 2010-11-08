@@ -2,6 +2,7 @@
 #define GENERATOR_PERLIN__HH
 
 #include <DataAbstractModule.h>
+#include <noise.h>
 
 #define ID "Generator::Perlin"
 
@@ -16,6 +17,8 @@ public:
     ~Perlin();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif

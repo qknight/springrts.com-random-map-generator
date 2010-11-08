@@ -4,11 +4,12 @@ import os
 import string
 from string import Template 
 
-modules="""
-Utils NoiseMapBuilderPlane      1 0 0 
-Utils RendererImage             1 0 0
-Utils Image                     1 0 0
+#Utils NoiseMapBuilderPlane      1 0 0 
+#Utils RendererImage             1 0 0
+#Utils Image                     1 0 0
+#Spring Mapgenerator             1 0 0
 
+modules="""
 Generator Perlin                0 0 1
 Generator Billow                0 0 1
 Generator RidgedMulti           0 0 1
@@ -40,8 +41,6 @@ Transformer RotatePoint         1 0 1
 Transformer ScalePoint          1 0 1
 Transformer TranslatePoint      1 0 1
 Transformer Turbulence          1 0 1
-
-Spring Mapgenerator             1 0 0
 """
 
 myclass_h="""#ifndef $MYIFNDEF
@@ -63,6 +62,8 @@ public:
     ~$MYCLASS();
 
     QString identify();
+    NoiseNetwork* network();
+    bool ready();
 };
 
 #endif
@@ -75,18 +76,58 @@ public:
 
 myclass_cpp="""#include "$MYMODULENAME.h"
 #include "ModuleFactory.h"
+#include "NoiseNetwork.h"
 
 #include "registermodule_macro.cpp"
 
 M_REGISTER($MYCLASS);
 
 $MYCLASS::$MYCLASS() : DataAbstractModule($IN,$MOD,$OUT) {
-  setProperty("FIXME", 112);
+  setProperty("FIXME", 112); // FIXME setting properties should be done via makros
 }
 
 $MYCLASS::~$MYCLASS() {
 }
 
+NoiseNetwork* $MYCLASS::network() {
+  // 0. query module for readieness
+  if (ready()) {
+  //   1. create a noiseNetwork (if generator module)
+       NoiseNetwork* noiseNetwork = new NoiseNetwork;
+  
+  //   2. construct the local module (in this case Perlin)
+       noise::module::$MYCLASS* m_$MYCLASS = new noise::module::$MYCLASS();
+       noiseNetwork->addModule(m_$MYCLASS);
+
+  //   3. assign all properties
+  //   m_perlin->SetOctaveCount (property("OctaveCount"));
+  //   ...
+  
+  //   4. connect all source modules (in case of a generator module: none) & merge the NoiseNetwork(s)
+  
+  //   foreach(input i)
+  //       m_perlin->SetSourceModule(i->portnumber, i->topLevelModule);
+  //       noiseNetwork->merge(i->network)
+  //     OR IN SHORT:
+  //       //noiseNetwork->setSourceNetwork(i, i->network)
+  //   foreach(input m)
+  //     m_perlin->SetControlModule(m->topLevelModule);
+  //     noiseNetwork->merge(m->network)
+
+    return noiseNetwork;
+  }
+  return NULL;
+}
+
+bool $MYCLASS::ready() {
+  //   foreach(input i)
+  //     if (i is unused)
+  //       return false;
+  //   foreach(modput m)
+  //     if (m is unused)
+  //       return false;
+  return true;
+}
 """
 # testing code for the .cpp creation
 #t = Template(myclass_cpp)
@@ -119,6 +160,8 @@ for i in newlines:
   t = Template(myclass_cpp)
   s = t.substitute(MYCLASS=myClassName, MYMODULENAME=myClassName,IN=portIN,MOD=portMOD,OUT=portOUT)
   f.write(s)
+  
+  print "modules/" + myCategoryName.lower() + "/" + myClassName + ".h"
   
   # creating the .h file
   f.close()
