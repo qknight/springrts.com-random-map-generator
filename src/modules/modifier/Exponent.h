@@ -18,7 +18,6 @@ public:
 
     QString identify();
     NoiseNetwork* network();
-    bool ready();
 };
 
 #endif

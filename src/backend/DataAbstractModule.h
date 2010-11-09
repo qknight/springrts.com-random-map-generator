@@ -40,7 +40,7 @@ public:
     /*! used to identify modules, used by the ModuleFactaory */
     virtual QString identify() = 0;
     virtual NoiseNetwork* network() = 0;
-    virtual bool ready() = 0;
+    bool ready();
     int ports ( int type );
     
     QVariant property(QString key);
@@ -55,7 +55,6 @@ protected:
 private:
     /*! This container holds all child items which reference this object as input/modput */
     QList<DataAbstractItem*> m_childItemsReferences;
-    bool insertPort ( DataConnection* c );
     int inputs, outputs, modputs;
 };
 

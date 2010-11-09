@@ -46,7 +46,8 @@ namespace customRole {
     ConnectionDestinationRole, // use to get the destination of a connection, that is a QModelIndex
     PortType,
     PortDirection,
-    PortNumber
+    PortNumber,
+    ReadyRole
   };
 }
 

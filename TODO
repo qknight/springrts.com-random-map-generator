@@ -1,64 +1,14 @@
 ========================================================================
  1. implement libnoise rendering: for preview rendering
 ========================================================================
-backend -- model -- frontend
 
-see Perlin.cpp/Perlin.h
+ - create a 'ready' background image or frame:
+  - green (for working), maybe animated for 3 secs
+  - black (for not working yet)
+ - create the module tile dynamically
 
 FIXME need to move the port allocation routine from Model.cpp::insertModule() to the DataAbstractModule.cpp constructor
       this is done but now the connection is not added correctly anymore
-
-/*! updates the local libNoiseNetwork and returns a libnoisenetwork if all dependencies are resolved or NULL*/
-NoiseNetwork* Perlin::network() {
-  // 0. query module for readieness
-  if (ready()) {
-  //   1. create a noiseNetwork (if generator module)
-       NoiseNetwork* noiseNetwork = new NoiseNetwork;
-  
-  //   2. construct the local module (in this case Perlin)
-       noise::module::Perlin m_perlin = new noise::module::Perlin();
-
-  //   3. assign all properties
-  //   m_perlin->SetOctaveCount (property("OctaveCount"));
-  //   ...
-  
-  //   4. connect all source modules (in case of a generator module: none) & merge the NoiseNetwork(s)
-  
-  //   foreach(input i)
-  //       m_perlin->SetSourceModule(i->portnumber, i->topLevelModule);
-  //       noiseNetwork->merge(i->network)
-  //     OR IN SHORT:
-  //       //noiseNetwork->setSourceNetwork(i, i->network)
-  //   foreach(input m)
-  //     m_perlin->SetControlModule(m->topLevelModule);
-  //     noiseNetwork->merge(m->network)
-
-  //   return noiseNetwork;
-  }
-  return NULL;
-}
-
-bool Perlin::ready() {
-  //   foreach(input i)
-  //     if (i is unused)
-  //       return false;
-  //   foreach(modput m)
-  //     if (m is unused)
-  //       return false;
-  return true;
-}
-
-frontend and backend are separated
- - frontend items don't have an important role as they just visualize the backend
- - the model is used to:
-    - insert/remove new connections 
-    - to change module properties
- - every DataAbstractModule deriving class implements 'virtual bool ready() = 0'
-   - ready() is true for all generator modules (as Perlin)
-   - LibNoiseNetwork* noiseNetwork();
-   - all other modules return true if all incoming ports are used and if all of these also report read()==true
- - the libnoise network is generated on the fly for each module in the hierarchy 
-   -> there is no caching, therefore the garbage collection can be encapsulated in a class called NoiseNetwork
 
 changes a GraphicsView/GraphicsItem is interested in:
  - position (x,y coordinates)
@@ -66,33 +16,10 @@ changes a GraphicsView/GraphicsItem is interested in:
 all others are ignored, as:
  - all Module properties, which are exported through the model to the QTreeView
 
-changes a QTreeView is not interested in:
- - RenderEngine (which generates a preview for the Module-GraphicsItem (GraphicsScene)
-
 the frontend QGraphicsItem is updated when a certain 'event' has happened:
  -> module parameter changed
  -> connection added/removed (changes the 'bool ready()' state)
 this event must be tracked by the Model and NOT by the frontend NOR by the backend
-
-
-class NoiseNetwork {
-  NoiseNetwork* merge..?
-  QVector<noise::module::Module*> modules;
-
-}
-
-class NoiseNetworkRenderer {
-  QImage* render(NoiseNetwork*);
-  // see Utils::rendererImage, this is basically what this is about
-  // see also libnoise-view's backend system with QThread(s)
-}
-
-module::Billow myBillow;
-module::Select mySelect;
-
-mySelect.SetSourceModule(0, myBillow);
-mySelect.SetSourceModule(1, myPerlin);
-mySelect.SetControlModule(myRidgedMulti);
 
 ========================================================================
  2. construct a proper backend property handler (Perlin.cpp/.h)

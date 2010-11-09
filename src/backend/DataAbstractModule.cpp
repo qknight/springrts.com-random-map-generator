@@ -99,7 +99,7 @@ void DataAbstractModule::removeChild ( unsigned int index ) {
     delete child;
 }
 
-// will return how many ports are used per type
+/*! returns the amount of ports per given type */
 int DataAbstractModule::ports ( int type ) {
     switch ( type ) {
     case PortDirection::IN:
@@ -116,3 +116,26 @@ int DataAbstractModule::ports ( int type ) {
     }
 }
 
+bool DataAbstractModule::ready() {
+    // check if references exist, that is: inputs and modputs must be all in use
+    for (int x=0; x < childCount(); ++x) {
+        DataAbstractItem* chi = childItems()[x];
+        if (chi->getObjectType() == DataItemType::PORT) {
+            DataPort* p = static_cast<DataPort*>(chi);
+            if (p->PortDirection() == PortDirection::IN || p->PortDirection() == PortDirection::MOD) {
+                if (p->referenceCount() != 1) // happens if one port is not used
+                    return false;
+                // idea: follow the reference and see if the remote module is also 'ready()'?
+                // 1. reconstruct the Connection
+                DataConnection* c = static_cast<DataConnection*> (p->referenceChildItems().first());
+                // 2. reconstruct the remote port
+                DataAbstractItem* abstractPort = c->dst();
+                // 3. reconstruct the remote module
+                DataAbstractModule* module = static_cast<DataAbstractModule*> (abstractPort->parent());
+                // 4. check if it is ready
+                return module->ready();
+            }
+        }
+    }
+    return true;
+}

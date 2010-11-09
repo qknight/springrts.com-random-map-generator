@@ -56,9 +56,7 @@ Module::Module(Model* model, QPersistentModelIndex index, ObjectPool* pool) : QG
     QGraphicsTextItem* labelItem = new QGraphicsTextItem(m_label, this);
     labelItem->moveBy(-15,-25);
     
-    //FIXME later remove the next line and the QGraphicsPixmapItem include
-    icon = new QGraphicsPixmapItem(QPixmap(":perlin.png"), this);
-    
+   
     w=120;
     h=120;
     x=0;
@@ -131,6 +129,11 @@ void Module::dataChanged() {
     if (modelPosition != pos()) {
         setPos( modelPosition );
     }
+
+    if (modelData (customRole::ReadyRole).toBool())
+      icon = new QGraphicsPixmapItem(QPixmap(":perlin.png"), this);
+    else
+      icon = new QGraphicsPixmapItem(QPixmap(":unknown.png"), this);
 }
 
 void Module::createLayout() {

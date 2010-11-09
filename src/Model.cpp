@@ -162,7 +162,12 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
         if ( n->getObjectType() == DataItemType::PROPERTY )
             return QBrush( QColor( 255, 255, 191, 100 ));
     }
-
+    if ( role == customRole::ReadyRole) {
+        if ( n->getObjectType() == DataItemType::MODULE ) {
+            DataAbstractModule* am = dynamic_cast<DataAbstractModule*>(n);
+            return am->ready();
+        }
+    }
     switch ( index.column() ) {
     case 0:
         switch ( role ) {
@@ -610,9 +615,13 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
     endInsertRows();
 //     qDebug() << "successfully added a new connection";
 
+    // 9. when a new connection is added we have to check the module at the input/modput side if it is ready() for
+    //    rendering a new preview using network() with NoiseNetworkRenderer. this has to be done recursively for all
+    //    following modules.
     //FIXME: implement this
-    // when a new connection is added we have to check if this module is 'ready' to render a libnoise preview,
-    // we also have to check all modules in all output direction(s) recursively
+    // 1. if (dst module is ready())
+    // 2.   updaate module and follow the same algorithm to find other modules
+//     if (abstractItemB->
 
     return index(row, 0, a);
 }
@@ -643,7 +652,7 @@ QModelIndex Model::dst(QPersistentModelIndex connection) {
     QModelIndex parentModule = index(dPortItem->parent()->row(), 0 , QModelIndex());
 
     // 4. now we need to find the QModelIndex of dst (dst is a DataPort)
-    return index(dPortItem->row(),0 , parentModule);
+    return index(dPortItem->row(), 0, parentModule);
 }
 
 QModelIndex Model::data2modelIndex(DataAbstractItem* item) {
