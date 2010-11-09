@@ -1,25 +1,21 @@
 ========================================================================
  1. implement libnoise rendering: for preview rendering
 ========================================================================
+ - module tiles are now autmatically created, dependent on the NoiseNetwork (that is the graphical configuration of the modules)
+ - create the module tile dynamically
+  -> NoiseNetworkRenderer singleton
+  -> Thread support
+  -> custom renderings, as: NoiseNetwork*, pos x,y and widht,height, coloring
 
+ - create a LibNoiseRole which indicates that the network has changed
+
+ - need to move the port allocation routine from Model.cpp::insertModule() to the DataAbstractModule.cpp constructor
+   this is done but now the connection is not added correctly anymore
  - create a 'ready' background image or frame:
   - green (for working), maybe animated for 3 secs
   - black (for not working yet)
- - create the module tile dynamically
-
-FIXME need to move the port allocation routine from Model.cpp::insertModule() to the DataAbstractModule.cpp constructor
-      this is done but now the connection is not added correctly anymore
-
-changes a GraphicsView/GraphicsItem is interested in:
- - position (x,y coordinates)
- - NoiseNetworkRender (which generates a rendering(preview) for the Module-GraphicsItem (GraphicsScene)
-all others are ignored, as:
- - all Module properties, which are exported through the model to the QTreeView
-
-the frontend QGraphicsItem is updated when a certain 'event' has happened:
- -> module parameter changed
- -> connection added/removed (changes the 'bool ready()' state)
-this event must be tracked by the Model and NOT by the frontend NOR by the backend
+ 
+ -> check that dataChanged for class Module is only called when it is needed
 
 ========================================================================
  2. construct a proper backend property handler (Perlin.cpp/.h)
@@ -354,8 +350,9 @@ GraphicsView:
 ========================================================================
   General concepts to consider:
 ========================================================================
-- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
-  - load+save viewport-position in document
+
+- integrate libNoise-view (first refactore it)
+- integrate spring map exporter (smf or s3m)
 
 - create a icon for this project
 - documentation: include a qwebkit browser with some html documentation about the modules
@@ -365,9 +362,8 @@ GraphicsView:
   enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
   imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
 
-- integrate spring map exporter (smf or s3m)
-
-- integrate libNoise-view (first refactore it)
+- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
+  - load+save viewport-position in document
 
 - integrate height-colorizer and height-texturizer
   the height-colorizer is easy to implement and gives a basic look&feel for the heightmap

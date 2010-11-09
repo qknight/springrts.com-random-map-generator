@@ -26,7 +26,7 @@ DataAbstractModule::DataAbstractModule ( int inputs, int modputs, int outputs ) 
     this->inputs=inputs;
     this->modputs=modputs;
     this->outputs=outputs;
-    
+
     for (int i = 0; i < ports(PortDirection::IN); ++i) {
         DataPort* p = new DataPort(PortType::LIBNOISE, PortDirection::IN, i);
         DataAbstractItem* portItem = dynamic_cast<DataAbstractItem*>(p);
@@ -116,6 +116,7 @@ int DataAbstractModule::ports ( int type ) {
     }
 }
 
+/*! a module is ready when all inputs are connected and all connected modules are also ready. a generator module is always ready. */
 bool DataAbstractModule::ready() {
     // check if references exist, that is: inputs and modputs must be all in use
     for (int x=0; x < childCount(); ++x) {
@@ -129,11 +130,12 @@ bool DataAbstractModule::ready() {
                 // 1. reconstruct the Connection
                 DataConnection* c = static_cast<DataConnection*> (p->referenceChildItems().first());
                 // 2. reconstruct the remote port
-                DataAbstractItem* abstractPort = c->dst();
+                DataAbstractItem* abstractPort = c->src();
                 // 3. reconstruct the remote module
                 DataAbstractModule* module = static_cast<DataAbstractModule*> (abstractPort->parent());
-                // 4. check if it is ready
-                return module->ready();
+                // 4. check if that module is ready
+                if(!module->ready())
+                 return false;
             }
         }
     }

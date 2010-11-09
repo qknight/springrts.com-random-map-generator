@@ -1,15 +1,22 @@
-[not done yet] 2010-11-08
+2010-11-09
+ - a new screenshot: screenshots/interface7.png illustrating the current state of the project
  - changed some internals see Model.cpp::insertModule(..) and DataAbstractItem.cpp
    as ports are now created in the data structure.
- - module tiles are now autmatically created, dependent on the NoiseNetwork (that is the graphical configuration of the modules)
  - added NoiseNetwork and NoiseNetworkRenderer
   - a NoiseNetwork is used to encapsulate the 'noise library backend' but also for 'garbage collection'
   - NoiseNetworkRenderer returns a rendered 2d image (raw), given a NoiseNetwork.
     this is used to generate the preview tile for each Module but can be used as done in the libnoise-viewer
+    WARNING: this is not complete yet
  also:
  - the NoiseNetwork is generated 'on the fly' for each module in the hierarchy 
    -> there is no caching
    -> the garbage collection is encapsulated in the class NoiseNetwork and the last user must delete it
+
+  the frontend QGraphicsItem is updated when a certain 'event' has happened, see Model.cpp:
+  -> [done] module parameter changed     -> Model::setData()
+  -> [done] connection   added           -> Model::insertConnection()
+  -> [done] connection removed           -> Model::removeRows()      
+  this event must be tracked by the Model and NOT by the frontend NOR by the backend
 
 2010-11-02
  - added doc/graphicssceneasabstractitemview.odg and doc/graphicssceneasabstractitemview.png

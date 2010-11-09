@@ -105,9 +105,9 @@ void Module::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event ) {
 }
 
 QRectF Module::boundingRect() const {
-    qreal penWidth = 1;
+    qreal penWidth = 2;
     return QRectF(x - penWidth / 2, y - penWidth / 2,
-                  w + penWidth / 2, h + penWidth / 2);
+                  w + 2*penWidth / 2, h + 2*penWidth / 2);
 }
 
 void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -115,14 +115,15 @@ void Module::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         painter->save();
         QPen p = QPen ( QColor ( "red" ), 4, Qt::DashLine );
         painter->setPen(p);
-        painter->drawRect(x, y, w, h);
+        painter->drawRect(x-1, y-1, w+2, h+2);
         painter->restore();
     }
+    //QPen p = QPen ( QColor ( "black" ));
     painter->drawRect(x, y, w, h);
 }
 
 void Module::dataChanged() {
-//     qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     m_label = modelData( Qt::DisplayRole ).toString();
     QPoint modelPosition = modelData ( customRole::PosRole ).toPoint();
 //     qDebug() << __PRETTY_FUNCTION__ << modelPosition;

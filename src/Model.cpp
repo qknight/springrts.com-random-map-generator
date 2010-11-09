@@ -221,6 +221,11 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
         DataProperty* p = static_cast<DataProperty*>(item);
         p->setValue(value);
         emit dataChanged(index,index);
+        
+        //as a property has changed, we need to update the libnoise chain preview as well
+        DataAbstractModule* m = static_cast<DataAbstractModule*>(item->parent());
+        dataChanged(data2modelIndex(m),data2modelIndex(m));
+        
         return true;
     }
     if (item->getObjectType() == DataItemType::MODULE && role == customRole::PosRole) {
@@ -288,6 +293,7 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
 //     qDebug() << __PRETTY_FUNCTION__ << " removing: " << items.size() << " item(s)";
 
     for (int i=0; i < items.size(); ++i) {
+        DataAbstractModule* cParentModule = NULL;
         QPersistentModelIndex pitem = items[i];
         if (!pitem.isValid()) {
 //             qDebug() << __PRETTY_FUNCTION__ << " item is no longer valid, probably already deleted";
@@ -307,7 +313,9 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
             continue;
         }
         if (item->getObjectType() == DataItemType::CONNECTION) {
-            // no special preparations needed
+            DataConnection* c = static_cast<DataConnection*>(item);
+            DataPort* cParentPort = static_cast<DataPort*>(c->dst());
+            cParentModule = static_cast<DataAbstractModule*>(cParentPort->parent());
         }
         if (item->getObjectType() == DataItemType::MODULE) {
             for (int x=0; x < item->childCount(); ++x) {
@@ -341,10 +349,15 @@ bool Model::removeRows( QList< QPersistentModelIndex > items ) {
         }
         beginRemoveRows( parent, row, row );
         {
-            //crash on removing a module here. the gui code is alright but the backend code crashes
             abstractitem->removeChild( row );
         }
         endRemoveRows();
+        
+        // after a connection has been removed, we need to update the modules it was connected to
+        if (cParentModule) {
+          updateModule(cParentModule);
+          cParentModule = NULL;
+        }
     }
     return true;
 }
@@ -438,8 +451,8 @@ QModelIndex Model::insertModule(QString type, QPoint pos) {
  * this could be read as:
  *  - insertConnection(Port* a, Port* b); or
  *  - insertConnection(DataPort* a, DataPort* b);
- * WARNING: - only add/remove connections using insertConnection and removeConnection
- *          - when removing a module using removeModule(..) ensure that removeModule(..) deletes
+ * WARNING: - only add/remove connections using insertConnection and removeRows
+ *          - when removing a module using removeRows(..) ensure that removeRows(..) deletes
  *            all connections and then all ports before said module is removed
  * very important design goals:
  * - connections can only be bidirectional (between exactly two ports)
@@ -615,15 +628,38 @@ QModelIndex Model::insertConnection(QPersistentModelIndex a,
     endInsertRows();
 //     qDebug() << "successfully added a new connection";
 
-    // 9. when a new connection is added we have to check the module at the input/modput side if it is ready() for
-    //    rendering a new preview using network() with NoiseNetworkRenderer. this has to be done recursively for all
-    //    following modules.
-    //FIXME: implement this
-    // 1. if (dst module is ready())
-    // 2.   updaate module and follow the same algorithm to find other modules
-//     if (abstractItemB->
+    // 9. when a connection is added/removed we have to check the prevous module (at the input/modput side) for being ready().
+    //    if it is ready() we can use network() with the NoiseNetworkRenderer to generate a new preview tile (and others).
+    //    this has to be done recursively for all follow up modules.
+    DataAbstractModule* module = static_cast<DataAbstractModule*>(abstractItemB->parent());
+    updateModule(module);
 
     return index(row, 0, a);
+}
+
+/*! when a connection is created/removed or changed we have to update all modules where the ready state was effected */
+void Model::updateModule(DataAbstractModule* module) {
+    // race down all module output paths and update all modules found
+    DataAbstractModule* m = module;
+    dataChanged(data2modelIndex(module),data2modelIndex(module));
+    for (int x=0; x < m->childCount(); ++x) {
+        DataAbstractItem* chi = m->childItems()[x];
+        if (chi->getObjectType() == DataItemType::PORT) {
+            DataPort* p = static_cast<DataPort*>(chi);
+            if (p->PortDirection() == PortDirection::OUT) {
+                for (int y; y < p->childCount(); ++y) {
+                    // 1. reconstruct the Connection
+                    DataConnection* c = static_cast<DataConnection*> (p->childItems()[y]);
+                    // 2. reconstruct the remote port
+                    DataAbstractItem* abstractPort = c->dst();
+                    // 3. reconstruct the remote module
+                    DataAbstractModule* dstModule = static_cast<DataAbstractModule*> (abstractPort->parent());
+                    // 4. issue the update for the module's childs
+                    updateModule(dstModule);
+                }
+            }
+        }
+    }
 }
 
 QVector<QString> Model::LoadableModuleNames() {

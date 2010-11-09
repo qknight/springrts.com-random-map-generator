@@ -108,7 +108,7 @@ class Model : public QAbstractItemModel {
     bool removeRows( QList<  QPersistentModelIndex > items );
     bool removeRows( QPersistentModelIndex item );
     QModelIndex data2modelIndex(DataAbstractItem* item);
-    
+    void updateModule(DataAbstractModule* module);
   protected:
     /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)
     ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>
