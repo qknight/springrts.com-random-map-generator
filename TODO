@@ -1,31 +1,53 @@
 ========================================================================
  1. implement libnoise rendering: for preview rendering
 ========================================================================
- - module tiles are now autmatically created, dependent on the NoiseNetwork (that is the graphical configuration of the modules)
+- if a network() says it is fully connected but the libnoise library is actually not we need a mechanism to not segfault in libnoise
+  - need to test this
+
+ - fix DataAbstractModule::network(), this means: fix class_generator.py
  - create the module tile dynamically
-  -> NoiseNetworkRenderer singleton
-  -> Thread support
-  -> custom renderings, as: NoiseNetwork*, pos x,y and widht,height, coloring
+ -> custom renderings, parameters used:
+    - NoiseNetwork*, 
+    - quality, 
+    - pos: x,y and widht,height, 
+    - coloring sheme
+ -> QtConcurrent/QThread support
+
+ NoiseNetworkRenderer clients are:
+  - preview tile per module
+  - graphics exporter
+  - spring map exporter
+    -> current design idea is that only the heightmap is produced using libnoise while the colored image (colormap) is only
+       interpolated when scaling up the heightmap. the colormap (compared to the heightmap) is of much higher resolution.
+       also i currently think: the heightmap points must be interpolated linear, considering the coloring as using a
+                               higher-resolution libnoise network rasterization resulted in wrongly colored heightmaps as
+                               some meshes had problematic coloring.
+  - libnoise-viewer like preview widget 2d and 3d (later: both started from a graphical module)
 
  - create a LibNoiseRole which indicates that the network has changed
 
  - need to move the port allocation routine from Model.cpp::insertModule() to the DataAbstractModule.cpp constructor
    this is done but now the connection is not added correctly anymore
- - create a 'ready' background image or frame:
-  - green (for working), maybe animated for 3 secs
-  - black (for not working yet)
+
+ - FIXME/incomplete class_generator.py to handle SetSourceModule and SetControlModule properly
  
- -> check that dataChanged for class Module is only called when it is needed
+ -> check that dataChanged for class Module is only called when it is needed, that is NOT every time a property changes
+  -> fix dataChanged to use the LibNoiseRole
+  -> filter the NoiseNetworkRendered tile from the QTreeView, as it is no property
 
 ========================================================================
  2. construct a proper backend property handler (Perlin.cpp/.h)
+========================================================================
+this forms the basis for step (3) (see below)
+
+
+
+========================================================================
  3. connect the backend property with a corresponding gui delegate editor/view
 ========================================================================
-- libNoiseAbstraction (frontend) need to be created
    WARNING: a property might have several dependencies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
             an exception which we most likely don't handle which will bring down the whole program.
             therefore: every property has to provide an input checker, which skips invalid input with some feedback.
-- libNoise (backend) and
 
 thoughts about the makro or function call to insert a new property:
   insertProperty( type, setFunction, codeName, guiName, minValue, maxValue, description );
@@ -110,7 +132,6 @@ second backend object factory to build the libnoise chain:
 ===========================================================================
   DELEGATES, optimizing the QTreeView
 
-
 - see 'Delegate Classes' in assistant, then create delegates for the module properties
 - rethink the 'delegate' role of the QGraphicsItems which 'act' as delegates for my GraphicsView...
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
@@ -166,7 +187,7 @@ second backend object factory to build the libnoise chain:
 [1] http://qt.nokia.com/products/appdev/add-on-products/catalog/4/Widgets/qtpropertybrowser/
 
 Q: how does [1] work?
-A: all examples seem to have their own model implementation for their properties, which is in short: "bad".
+A: all examples seem to have their own model implementation for their properties, which is: in short - "bad".
    one registers a QtGroupPropertyManager with various childs as:
     QtProperty *item0 = groupManager->addProperty("QObject");
    and these managers do have their own guis
@@ -203,38 +224,12 @@ Q: can i copy the delegates at least partially to use them with a QTreeView cell
 A:
 
 Q: how to implement a delegate for a QTreeView at all?
-A: current guess: one delegate is assigned to all cels, on certain cells the delegate changes it's representation.. somehow
+A: current guess: one delegate is assigned to all cells, on certain cells the delegate changes it's representation.. somehow
 
 Q: implementation of PropertyComponent, where int a, int b are two components of QPoint, is that complicated to write?
 A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate, that can be done in two ways:
    a) when inserting a property with setProperty("identifier", type);, the insert function uses type and adds two childs
    b) such an item knows that and adds two childs itself somehow?!
-
-===========================================================================
-  changed noise modules
-===========================================================================
- - every module (Module.cpp/.h) has several functionalities combined:
-  - Transformer::Translatepoint (which helps to move the center of the module to a new point)
-  - a view is attached
- -> modules start to render a preview if the incomming connection dependencies are resolved
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -246,6 +241,7 @@ A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate
 ===========================================================================
    REFACTORING
 ===========================================================================
+
 - check if all the in/mod/out put roles are needed in Model.cpp anymore 
 - bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
        however: if the second output usage is removed one can connect the input ports as expected, later the second output
@@ -288,8 +284,6 @@ A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate
  -> the problem is a cyclic dependency (not implemented) because calling removeReference must also remove the connection and vice versa
    WARNING: current fix is to disable the deletion of connections/references in DataPort::~DataPort() {
 
-
-
 =================================================================================
   Model related: Adding, selecting, changing, removing of single/multiple items:
 =================================================================================
@@ -300,6 +294,18 @@ A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate
 ========================================================================
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
+usability:
+- hovering over an QGraphicsItem should highlight the entry in the list on the right
+- selecting an QGraphicsItem should set a filter on the list on the right to only show selected items
+- items in the list on the right should be sorted based on the view position on the screen
+- hovering over an item in the list on the right should animate an QGraphisItem on the right
+- item list on the right should have a string filter textbox
+- middle click should drag the view as well as cursor keys
+- QGraphicsItems should not have a QGraphicsView context menu
+  - instead a menu covering: 
+    - libnoiseview
+    - libnoiseview3d
+
 - fixme: when selecting an module, and while hoovering&moving it: delete it using 'del'-key. 
          the next item will instantly port to 'x,y=0,0', when moving it, using a drag'n'drop operation
          issue might be: when the item is removed, there is still some pos() thing going on and when the next item is moved it is
@@ -348,22 +354,11 @@ GraphicsView:
  - when selecting a GraphicsItem using a click on the respecitive QTreeView item, the item should be animated for some time
 
 ========================================================================
-  General concepts to consider:
+  Timeline...
 ========================================================================
-
 - integrate libNoise-view (first refactore it)
 - integrate spring map exporter (smf or s3m)
-
-- create a icon for this project
-- documentation: include a qwebkit browser with some html documentation about the modules
 - concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
-- Design choice:
-  using min/max or select with libnoise can have interesting outcomes. the colorizer should know of which root the pixel was from to
-  enable context sensitive coloring. this would be funny as one could create different effects on the same height. 
-  imagine a landscape with flat hills. on top of the hills are various holes but these holes are textured differently.
-
-- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
-  - load+save viewport-position in document
 
 - integrate height-colorizer and height-texturizer
   the height-colorizer is easy to implement and gives a basic look&feel for the heightmap
@@ -371,15 +366,24 @@ GraphicsView:
   textures, the textures do have a fixed orientation. later this might be adapted to reflect
   the gradient of the landscape and other parameters as wind-pressure artefacts in sand dunes...
 
-- fix copyright, linking to the (l)gpl? library .... is that possible?
+- new moduels which might be nice:
+ - rain simulation (also known as erosion)
+ - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
+                the same image, the same goes for intel vs spark)
+
+- think about cuda/openCL integration
+
+- create a icon for this project
+- documentation: include a qwebkit browser with some html documentation about the modules
+
+- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
+  - load+save viewport-position in document
 
 - integrate 3d viewer (adapted/copied from qtlobby)
 
 - doxygen (adapt the libnoise-doc Doxygen script)
 
+- FIX all TODO/FIXME/BUG lines
+
 - official release of 'the source as package'
 
-- new moduels which might be nice:
- - rain simulation (also known as erosion)
- - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
-                the same image, the same goes for intel vs spark)

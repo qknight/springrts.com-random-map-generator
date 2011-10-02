@@ -29,7 +29,7 @@
 
 2010-09-05
  - some minor fixes
- - last commit without libnoise dependancy
+ - last commit without libnoise dependency
 
 2010-09-01
  - fixed: selection of Connections now works as expected. the problem was that 
@@ -156,7 +156,7 @@ this relase fixes one of my worst problems in frontend item handling
 2010-08-10
  - reorganizing modules/
  - renamed property 'pos' to 'Position'
- - removed dependancy to noise.h and -lnoise from the backend modules
+ - removed dependency to noise.h and -lnoise from the backend modules
    (this will be done differently soon)
 2010-08-09 
  - Model::setData(..) implemented
