@@ -1,19 +1,13 @@
 ========================================================================
  1. implement libnoise rendering: for preview rendering
 ========================================================================
-- if a network() says it is fully connected but the libnoise library is actually not we need a mechanism to not segfault in libnoise
-  - need to test this
+  idea:
+  - create the module tile dynamically; either colored or BW
+  - fix DataAbstractModule::network(), this means: fix class_generator.py
 
- - fix DataAbstractModule::network(), this means: fix class_generator.py
- - create the module tile dynamically
- -> custom renderings, parameters used:
-    - NoiseNetwork*, 
-    - quality, 
-    - pos: x,y and widht,height, 
-    - coloring sheme
- -> QtConcurrent/QThread support
-
+------------------------------------
  NoiseNetworkRenderer clients are:
+------------------------------------
   - preview tile per module
   - graphics exporter
   - spring map exporter
@@ -24,6 +18,25 @@
                                some meshes had problematic coloring.
   - libnoise-viewer like preview widget 2d and 3d (later: both started from a graphical module)
 
+------------------------------------
+ NoiseNetworkRenderer properties are:
+------------------------------------
+ - NoiseNetwork*, 
+ - quality, 
+ - pos: x,y and widht,height, 
+ - coloring sheme
+ - priority (preview tiles have a high priority; QGraphicsItem relatives have a high priority; libnoise-view has a low priority)
+
+------------------------------------
+ affected files
+------------------------------------
+ - NoiseNetwork.cpp/.h            container abstraction for the libnoise library which is passed to NoiseNetworkRenderer
+ - NoiseNetworkRenderer.cpp/.h    renders tiles given a NoiseNetwork; implemented as singleton; returns raw data; implements QtConcurrent/QThreading
+ - all clients (see list above)
+
+------------------------------------
+ misc
+------------------------------------
  - create a LibNoiseRole which indicates that the network has changed
 
  - need to move the port allocation routine from Model.cpp::insertModule() to the DataAbstractModule.cpp constructor
@@ -34,6 +47,13 @@
  -> check that dataChanged for class Module is only called when it is needed, that is NOT every time a property changes
   -> fix dataChanged to use the LibNoiseRole
   -> filter the NoiseNetworkRendered tile from the QTreeView, as it is no property
+
+------------------------------------
+ QA
+------------------------------------
+ - if a network() says it is fully connected but the libnoise library is actually not, we need a mechanism to not segfault in libnoise
+   - need to test this
+
 
 ========================================================================
  2. construct a proper backend property handler (Perlin.cpp/.h)
@@ -48,6 +68,8 @@ this forms the basis for step (3) (see below)
    WARNING: a property might have several dependencies as: int 1,2,4,8 and if one set's 5 the libnoise library will create
             an exception which we most likely don't handle which will bring down the whole program.
             therefore: every property has to provide an input checker, which skips invalid input with some feedback.
+
+-- THIS DOES NOT INCLUDE DELEGATE DEVELOPMENT (SEE NEXT POINT)--
 
 thoughts about the makro or function call to insert a new property:
   insertProperty( type, setFunction, codeName, guiName, minValue, maxValue, description );
@@ -129,9 +151,9 @@ second backend object factory to build the libnoise chain:
    gui string and an internal string, so that both 'could' be named/called "Position" but one uses gui_position to store it while the
    other uses libnoise_position
 
-===========================================================================
+========================================================================
   DELEGATES, optimizing the QTreeView
-
+========================================================================
 - see 'Delegate Classes' in assistant, then create delegates for the module properties
 - rethink the 'delegate' role of the QGraphicsItems which 'act' as delegates for my GraphicsView...
 - if a property changes(a child), the parent (module) should get updated in the GraphicsScene
@@ -139,7 +161,7 @@ second backend object factory to build the libnoise chain:
 - properties:
  - properties need an interface to be accessed via the model
  - property may be registered only once, fail with exit(1) on the second attempt!
- - properties should use type::int instead of "QString" as identifier - faster processing.
+ - properties should use type::int instead of "QString" as identifier - faster processing
 - if setData did not work, because the validator discarded the value for any reason, the QStatusBar should be used to display why
 
 - concept: see assistant, the QTreeView there is basically what i want to clone
@@ -241,7 +263,6 @@ A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate
 ===========================================================================
    REFACTORING
 ===========================================================================
-
 - check if all the in/mod/out put roles are needed in Model.cpp anymore 
 - bug: if a module makes doubleuse of a outgoing port, one can NOT connect new connections to any input port of that module!
        however: if the second output usage is removed one can connect the input ports as expected, later the second output
@@ -295,7 +316,9 @@ A: a DataItemType::PROPERTY needs to insert two childs both with an int delegate
   Fixing QGraphicsItem(s) and the behaviour of the QGraphicsView:
 ========================================================================
 usability:
-- hovering over an QGraphicsItem should highlight the entry in the list on the right
+- hovering over an QGraphicsItem should:
+ - highlight the entry in the 'list on the right'
+ - highlight all used connections in a blinking fashion for 3 toggles
 - selecting an QGraphicsItem should set a filter on the list on the right to only show selected items
 - items in the list on the right should be sorted based on the view position on the screen
 - hovering over an item in the list on the right should animate an QGraphisItem on the right
@@ -356,6 +379,9 @@ GraphicsView:
 ========================================================================
   Timeline...
 ========================================================================
+- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
+  - load+save viewport-position in document
+
 - integrate libNoise-view (first refactore it)
 - integrate spring map exporter (smf or s3m)
 - concept: each item MUST be able to host one/many QWidget(s) as for instance: an editor or a libnoise-view
@@ -371,13 +397,10 @@ GraphicsView:
  - blur filter (imagemagick filters in general, if they are arch-independant say 32vs64bit should output
                 the same image, the same goes for intel vs spark)
 
-- think about cuda/openCL integration
+- think about cuda/openCL integration <---> libnoise or filtering
 
-- create a icon for this project
+- create an icon for this project
 - documentation: include a qwebkit browser with some html documentation about the modules
-
-- integrate xml save/load functionality (add an object serializer to all nodes in the graph)
-  - load+save viewport-position in document
 
 - integrate 3d viewer (adapted/copied from qtlobby)
 

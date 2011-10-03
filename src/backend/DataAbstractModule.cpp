@@ -116,7 +116,10 @@ int DataAbstractModule::ports ( int type ) {
     }
 }
 
-/*! a module is ready when all inputs are connected and all connected modules are also ready. a generator module is always ready. */
+/*! a module is ready when all inputs are connected and all connected modules are also ready. a generator module is always ready. 
+** the idea behind ready() is to have a way to know when it is safe to use the libnoise library to render graphics without
+** running into a segfault
+*/
 bool DataAbstractModule::ready() {
     // check if references exist, that is: inputs and modputs must be all in use
     for (int x=0; x < childCount(); ++x) {
